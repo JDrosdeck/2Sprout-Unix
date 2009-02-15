@@ -8,3 +8,4 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 for x in xrange(999):
 	time.sleep(.01)
 	s.sendto(msg,(host,port))
+#test
