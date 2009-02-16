@@ -130,14 +130,14 @@ The libcurl library is used to contact 2sprout.com over http using tcp protocol,
 By being directed to the webpage the ipaddress is added to the database, and feeds are then sent
 to that particular client
 */
-int announce(string portNumber)
+int announce()
 {
 
   curl = curl_easy_init(); //initialize curl
   if(curl) 
   {
   	url = "http://2sprout.com/onClient/?port="; //access this webpage to be added to the database
-    url +=portNumber;
+    url +=MYPORT;
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
     /* Perform the request, res will get the return code */
@@ -156,13 +156,13 @@ int announce(string portNumber)
 This will allow users using the API to stop recieving packets. It relays a POST to the server containing its port number
 it will then delete the proper value from the database based on the ip address it gathers and its port number
 */
-int closeAnnounce(string portNumber)
+int closeAnnounce()
 {
 	curl = curl_easy_init();
 	if(curl)
 	{
 		url = "http://2sprout.com/client/close/?port=";
-		url += portNumber;
+		url += MYPORT;
 		curl_easy_setopt(curl,CURLOPT_URL, url.c_str());
 		res = curl_easy_perform(curl);
 		curl_easy_cleanup(curl);
@@ -937,12 +937,12 @@ Information is passed through the api via named pipes
 		
 			if(command[0] == "stopFeed")
 			{
-				closeAnnounce(command[1]);
+				closeAnnounce();
 			}	
 	
 			if(command[0] == "startFeed")
 			{
-				announce(command[1]);
+				announce();
 			}
 	
 			if(command[0] == "getFeed")
@@ -990,7 +990,7 @@ int main(int argc, char *argv[])
     if(useDatabase == true)
     {
 		MYPORT = atoi(argv[1]); //set the port
-		announce(argv[1]); //announce to the server that we're ready to recieve
+		announce(); //announce to the server that we're ready to recieve
     	int rc, i , status;
 		pthread_t threads[8];
 		printf("Starting Threads...\n");
@@ -1029,7 +1029,7 @@ int main(int argc, char *argv[])
 	{
 		printf("Not using Database\n");
 		MYPORT = atoi(argv[1]); //set the port value
-		announce(argv[1]); //announce to the server that we're ready to recieve
+		announce(); //announce to the server that we're ready to recieve
 		int rc, i , status;
 		pthread_t threads[8];
 		printf("Starting Threads...\n");

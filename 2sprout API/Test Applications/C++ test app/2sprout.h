@@ -13,7 +13,7 @@
 #include <queue>
 
 
-int startFeed(int portNumber);
-int stopFeed(int portNumber);
+int startFeed();
+int stopFeed();
 int getFeed();
 char* getNextItem();

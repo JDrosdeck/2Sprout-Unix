@@ -38,7 +38,7 @@ using namespace std;
 
 int main()
 {
-startFeed(34534);
+startFeed();
 
 int rc, i , status;
 pthread_t threads[2];
