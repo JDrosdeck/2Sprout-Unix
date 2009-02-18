@@ -18,12 +18,20 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <ctype.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
 #include <queue>
+#include <vector>
+#include <algorithm>
+
 #include <pthread.h>
 #include <fstream>
 #include <sstream>
 #include <signal.h>
+
+
+
 #include "md5.h"
+
 
 
 
@@ -91,15 +99,12 @@ pthread_mutex_t mylock = PTHREAD_MUTEX_INITIALIZER;
 string connectionString;
 
 
-const int maxArraySize = 1000;
+vector<int> packetsRecieved;
+vector<int> packetsMissed;
 int packetNumberCount = 0;
-int packetNumbers[maxArraySize];
-int lostPacketCount = 0;
-int lostPackets[maxArraySize];
 
 
-int temporayPacketNumbers[maxArraySize];
-int temporaryNumberCount = 0;
+
 
 
 
@@ -308,11 +313,12 @@ void* checkPacketReliability(void *thread_arg)
 								//the dates have changed so we should be reading to start recieving packet numbers starting at 0
 								
 							}
-							//Add the packet Number to the array of recieved packetNumbers
+							
 				
-						   //	packetNumbers[packetNumberCount] = atoi(section[3].c_str());
-						     packetNumberCount++;
 						
+							//push the packet to the vector of recieved packet numbers
+							packetsRecieved.push_back(atoi(section[3].c_str()));
+						    	
 							
 							
 					
@@ -350,22 +356,6 @@ void* checkPacketReliability(void *thread_arg)
 
 
 
-
-
-
-/*
-comparePacketNumbers function is called by std::qsort()
-It will compare the values and return weither it is larger or smaller
-*/
-
-int comparePacketNumbers(const void * firstpacket, const void *secoundpacket)
-{
-	return (* (int *)firstpacket - * (int *)secoundpacket);
-}
-
-
-
-
 /*
 TODO: umm make sure this works
 Number will come in looking like month/day/year/packetNumber
@@ -383,98 +373,172 @@ If a packet is found to be missing use libcurl to issue a send request
 void* checkLostPackets(void *thread_arg)
 {
 	
+	vector<int> tempVector;
+	vector<int> brandNewPacket; //this stores packets #'s that we have not been searching for and need to check missing packets based on
+	
+	
 	while(1)
 	{
-		pthread_mutex_lock(&mylock);
-		int oneThird = maxArraySize / 3;
-		int twoThird = oneThird + oneThird;
+			printf("******************************\n");	
+				
+			sleep(15);
+			if(!packetsRecieved.empty())
+			{
+			printf("******************************\n");	
+			printf("Getting Ready to check packets\n");
+			printf("******************************\n");	
 			
-		if(packetNumberCount < twoThird) // if there are not a sufficient number of packets recieved
-		{
+			//start of critical section
+			pthread_mutex_lock(&mylock);
+			tempVector = packetsRecieved;
 			pthread_mutex_unlock(&mylock);
+			//end critial section
+			printf("******************************\n");	
+			printf("Clearing old Vector\n");
+			printf("******************************\n");	
+			packetsRecieved.clear();		
+					
+			//sort the tempVector
+			printf("******************************\n");	
+			printf("Sorting the Vector\n");
+			printf("******************************\n");
+			sort(tempVector.begin(),tempVector.end());
 			
-			if(usleep(100000) == -1)
+			
+			
+			int sizeOfVector = (int) packetsMissed.size();
+					
+			//Check the recieved packets against what was missing
+					
+			if(!packetsMissed.empty()) //there have been missed packets
 			{
-				printf("Sleeping Error");
-			}
-		}
-		else
-		{
-			sleep(5);
-		
-			//Copy the array quickly
-			
-		  temporaryNumberCount = packetNumberCount;
-		  printf("emptying array\n");
-		int j;
-		  for( j = 0; j < packetNumberCount - 1; j++) //loop for 1 minus the total length
-		  {
-				packetNumbers[j] = '\0';
-		  }
-	      
-		  packetNumberCount = 0;
-		  memcpy(temporayPacketNumbers, packetNumbers, sizeof(temporayPacketNumbers));
-		
-		  pthread_mutex_unlock(&mylock);					
-		
-		
-			//sort the array 
-			printf("Sorting\n");
-			qsort(temporayPacketNumbers, sizeof(temporayPacketNumbers), sizeof(int), comparePacketNumbers);
-			printf("Sorting complete\n");
-			
-			int i;
-			int temp1;
-			int temp2;
-			int remainder;
-			int lostPacket;
-			printf("Comparing\n");
-	
-			for( i = 1; i < temporaryNumberCount; i++) //loop for 1 minus the total length
-			{
-				
-				printf("temp %i\n", temporayPacketNumbers[i]);
-				
-				/*
-				temp1 = packetNumbers[i];
-				temp2 = packetNumbers[i+1];
-				remainder = temp2 - temp1; //this will give the exact number of lost packets 
-				
-				printf("temp1 %i\n", temp1);
-				printf("temp2 %i\n", temp2);
-				printf("Remainder is: %i\n", remainder);
-			
-				curl = curl_easy_init(); //initialize curl
-				while ( remainder != 0)
-				{
-					lostPacket = temp1 + remainder;
-				
-  					if(curl) 
-					{	
-    					url = "http://2sprout.com/lostPacket/?port="; //access this webpage to be added to the database
-    					url += lostPacket;
-   						curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    				// Perform the request, res will get the return code/
-    					res = curl_easy_perform(curl);
-    			
-						//Add the lost packets to the lostPacket array
-						lostPackets[lostPacketCount] = lostPacket;	
-						lostPacketCount++;
+				printf("******************************\n");	
+				printf("There have been missing packets\n");
+				printf("******************************\n");
+				//search for missed packets for anything new that may have come in
+			    vector<int>::iterator searchMissingPackets;
 						
-    					if(usleep(100000) == -1)
-						{
-							printf("Sleeping Error");
-						}	
-    				}
-    			curl_easy_cleanup(curl);
-				remainder --;
+			   	int loop;
+				for(loop = 0; loop < sizeOfVector; loop++)
+				{
+					int match[] = {packetsMissed[loop]};
+					
+					cout << "looking for match: " << match[0] << endl;
+					
+					searchMissingPackets = search(tempVector.begin(),tempVector.end(),match, match+1);
+					if(searchMissingPackets != tempVector.end())
+					{
+						printf("A missing packet has been found\n");
+						//Missing packet has been found so delete it from the missing packet queue and the temp queue
+						packetsMissed.erase(packetsMissed.begin()+searchMissingPackets[0]);
+						//erase that value from the tempVector
+						tempVector.erase(tempVector.begin()+loop);
+						//decrease the loop amount so that it dosent skip a value
+						loop--;
+					}
+					else //we were not waiting on this old packet so put in the actually recieved vector
+					{
+							printf("******************************\n");	
+							printf("Not replacing lost packet...adding to new vector\n");
+							printf("******************************\n");
+							brandNewPacket.push_back(tempVector[loop]); //add this to the new vector
+							printf("******************************\n");	
+							printf("Erasing value from old vector\n");
+							printf("******************************\n");
+							tempVector.erase(tempVector.begin()); //delete from the old vector
+							//loop--;//decrease the loop so as not to skip a value
+					}
+							
+							//No matter what by this point tempVector should be totally empty
 				}
-				
-				*/
+												
 			}
-				//Clear out the array
+			else
+			{
+				
+					printf("******************************\n");	
+					printf("Not replacing lost packet...adding to new vector\n");
+					printf("******************************\n");
+					brandNewPacket = tempVector; //add this to the new vector
+					printf("******************************\n");	
+					printf("Erasing value from old vector\n");
+					printf("******************************\n");
+					tempVector.clear(); //delete from the old vector
+			}
+					
+					
+	
+			//Figure out which are the missing packets
+			int sizeOfNewPackets = (int) brandNewPacket.size();
+					
+			int i;
+			printf("******************************\n");	
+			printf("Calculating lost packets\n");
+			printf("******************************\n");
+			
+			cout << "size of new packets: " << sizeOfNewPackets << endl;
+			int remainder;
+			for (i = 0; i < sizeOfNewPackets-1; i++)
+			{
+				cout << "packets: " <<  brandNewPacket[i+1] << " " << brandNewPacket[i] << endl;
+				remainder = brandNewPacket[i+1] - brandNewPacket[i];
 		
+				
+				if(( remainder != 1)) //if they are not sequential
+				{
+					printf("******************************\n");	
+					printf("There are missing packets\n");
+					printf("******************************\n");
+					
+					cout << "remainder: " << remainder << endl;
+					int j;
+					for(j = 1; j < remainder; j ++)
+					{
+						//add these values to the missing packet vector
+						cout << "pushing packet " << brandNewPacket[i] + j <<endl;
+						
+					 	packetsMissed.push_back(brandNewPacket[i] + j);
+					
+					}
+							
+				}
+				cout << i << endl;
+						
+			}
+			brandNewPacket.clear(); //empty this vector
+						
 		}
+		
+				printf("******************************\n");	
+				printf("No Missing packets WOOHOO\n");
+				printf("******************************\n");
+			//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
+		
+			/*
+			int sizeOfLostPackets = (int)packetsMissed.size();	
+			curl = curl_easy_init(); //initialize curl
+			int lostPacket;
+			int l;
+			for(l = 0; l < sizeOfLostPackets; l++)
+			{
+				lostPacket = packetsMissed[l];
+				if(curl) 
+				{	
+    				url = "http://2sprout.com/lostPacket/?port="; //access this webpage to be added to the database
+    				url += lostPacket;
+   					curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    				// Perform the request, res will get the return code/
+    				res = curl_easy_perform(curl);
+    				if(usleep(100000) == -1)
+					{
+						printf("Sleeping Error");
+					}	
+    			}
+    			curl_easy_cleanup(curl);
+			}
+			*/	
+		
+						
 	}
 }
 
@@ -992,7 +1056,7 @@ int main(int argc, char *argv[])
 		MYPORT = atoi(argv[1]); //set the port
 		announce(); //announce to the server that we're ready to recieve
     	int rc, i , status;
-		pthread_t threads[8];
+		pthread_t threads[9];
 		printf("Starting Threads...\n");
 		pthread_create(&threads[0], NULL, castListener, NULL);
 		printf("Socket Thread Started\n");
@@ -1006,14 +1070,15 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[6], NULL, checkPacketReliability, NULL);	
 		pthread_create(&threads[7], NULL, checkPacketReliability, NULL);
 		
-	//	pthread_create(&threads[8], NULL, checkLostPackets, NULL);
+		printf("lost packets starting\n");
+		pthread_create(&threads[8], NULL, checkLostPackets, NULL);
 		
 		
 		printf("Checking Packets \n");
 		
 		
 
-		for(i =0; i < 8; i++)
+		for(i =0; i < 9; i++)
 		{
 			rc = pthread_join(threads[i], (void **) &status); 
 		}

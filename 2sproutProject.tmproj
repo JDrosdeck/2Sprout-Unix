@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>compile command line</string>
+	<string>Standard UDP/Client/SproutClient.cpp</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -37,7 +37,9 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-02-16T02:04:31Z</date>
+					<date>2009-02-17T21:15:30Z</date>
+					<key>selected</key>
+					<true/>
 				</dict>
 			</array>
 			<key>expanded</key>
@@ -127,8 +129,6 @@
 							<string>Ruby</string>
 						</dict>
 					</array>
-					<key>expanded</key>
-					<true/>
 					<key>name</key>
 					<string>Test Applications</string>
 				</dict>
@@ -171,13 +171,7 @@
 									<key>lastUsed</key>
 									<date>2009-02-04T22:41:49Z</date>
 								</dict>
-								<dict>
-									<key>filename</key>
-									<string>2sprout API/Dynamic libraries/Python/2sprout.conf</string>
-								</dict>
 							</array>
-							<key>expanded</key>
-							<true/>
 							<key>name</key>
 							<string>Python</string>
 						</dict>
@@ -192,29 +186,23 @@
 									<key>filename</key>
 									<string>2sprout API/Dynamic libraries/Ruby/2sprout.h</string>
 									<key>lastUsed</key>
-									<date>2009-02-16T02:13:00Z</date>
+									<date>2009-02-16T12:08:02Z</date>
 								</dict>
 								<dict>
 									<key>filename</key>
 									<string>2sprout API/Dynamic libraries/Ruby/2sprout.cpp</string>
 									<key>lastUsed</key>
-									<date>2009-02-16T02:13:58Z</date>
+									<date>2009-02-16T22:27:19Z</date>
 								</dict>
 							</array>
-							<key>expanded</key>
-							<true/>
 							<key>name</key>
 							<string>Ruby</string>
 						</dict>
 					</array>
-					<key>expanded</key>
-					<true/>
 					<key>name</key>
 					<string>Dynamic Libraries</string>
 				</dict>
 			</array>
-			<key>expanded</key>
-			<true/>
 			<key>name</key>
 			<string>2sprout API</string>
 		</dict>
@@ -261,13 +249,9 @@
 					<key>filename</key>
 					<string>compile command line</string>
 					<key>lastUsed</key>
-					<date>2009-02-16T02:13:58Z</date>
-					<key>selected</key>
-					<true/>
+					<date>2009-02-16T12:07:53Z</date>
 				</dict>
 			</array>
-			<key>expanded</key>
-			<true/>
 			<key>name</key>
 			<string>Compile Commands</string>
 		</dict>
@@ -357,34 +341,6 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>2sprout API/Dynamic libraries/Ruby/2sprout.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>14</integer>
-				<key>line</key>
-				<integer>33</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>12</integer>
-		</dict>
-		<key>2sprout API/Dynamic libraries/Ruby/2sprout.h</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>13</integer>
-				<key>line</key>
-				<integer>15</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
 		<key>2sprout API/Test Applications/C++ test app/2sprout.conf</key>
 		<dict>
 			<key>caret</key>
@@ -460,14 +416,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>18</integer>
+				<integer>3</integer>
 				<key>line</key>
-				<integer>939</integer>
+				<integer>481</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1013</integer>
+			<integer>465</integer>
 		</dict>
 		<key>Standard UDP/Client/webCast.cpp</key>
 		<dict>
@@ -483,54 +439,14 @@
 			<key>firstVisibleLine</key>
 			<integer>116</integer>
 		</dict>
-		<key>compile command line</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>26</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>18</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>26</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>29</integer>
-			</dict>
-		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
-		<string>2sprout API/2sprout.cpp</string>
-		<string>2sprout API/2sprout.h</string>
-		<string>2sprout API/Test Applications/C++ test app/2sprout.h</string>
-		<string>2sprout API/Test Applications/C++ test app/2sprout.conf</string>
-		<string>2sprout API/Dynamic libraries/Python/2sprout.h</string>
-		<string>2sprout API/Dynamic libraries/Python/2sprout.cpp</string>
-		<string>2sprout API/Dynamic libraries/Ruby/2sprout.h</string>
-		<string>2sprout API/Dynamic libraries/Ruby/2sprout.cpp</string>
-		<string>compile command line</string>
-		<string>2sprout API/Test Applications/C++ test app/test.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{1750, -443}, {964, 878}}</string>
+	<string>{{1638, -12}, {964, 878}}</string>
 </dict>
 </plist>
