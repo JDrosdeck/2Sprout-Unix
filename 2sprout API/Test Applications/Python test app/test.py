@@ -16,3 +16,7 @@ class get2sproutItem(threading.Thread):
 sprout.startFeed()
 get2sproutFeed().start()
 get2sproutItem().start()
+
+sleep(1)
+get2sproutFeed().join()
+get2sproutItem().join()

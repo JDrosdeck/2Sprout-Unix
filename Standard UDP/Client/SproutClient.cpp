@@ -357,19 +357,11 @@ void* checkPacketReliability(void *thread_arg)
 
 
 /*
-TODO: umm make sure this works
+TODO: ADD IN DATE DETECTION AND SHIT
 Number will come in looking like month/day/year/packetNumber
 
-keep a global variable for the day
-parse out the packet number
-
-
-
-checkPackets Goes through an ordered array of packet numbers looking for lost packets
-If a packet is found to be missing use libcurl to issue a send request
 */
 
-//TODO Fix this
 void* checkLostPackets(void *thread_arg)
 {
 	
@@ -1023,8 +1015,6 @@ Information is passed through the api via named pipes
  
   
 /*
-TODO: Have the named pipes in a seperate folder within the main client directory.
-
 
 sproutClient takes 1 argument, which is the port number, This will be upated for username/password.
 The defualt port used is 4950, otherwise set it to the user specified port. Once the port number
