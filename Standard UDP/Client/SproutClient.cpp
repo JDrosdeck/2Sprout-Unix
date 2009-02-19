@@ -411,37 +411,53 @@ void* checkLostPackets(void *thread_arg)
 			    vector<int>::iterator searchMissingPackets;
 						
 			   	int loop;
+			
 				for(loop = 0; loop < sizeOfVector; loop++)
 				{
 					int match[] = {packetsMissed[loop]};
 					
 					cout << "looking for match: " << match[0] << endl;
 					
-					searchMissingPackets = search(tempVector.begin(),tempVector.end(),match, match+1);
-					if(searchMissingPackets != tempVector.end())
+	
+					printf("Searching for missing packet in newley recived packets\n");
+					cout << "before Search " << tempVector.size() << endl;
+					
+	
+					if(tempVector.empty() == false)
 					{
-						printf("A missing packet has been found\n");
-						//Missing packet has been found so delete it from the missing packet queue and the temp queue
-						packetsMissed.erase(packetsMissed.begin()+searchMissingPackets[0]);
-						//erase that value from the tempVector
-						tempVector.erase(tempVector.begin()+loop);
-						//decrease the loop amount so that it dosent skip a value
-						loop--;
-					}
-					else //we were not waiting on this old packet so put in the actually recieved vector
-					{
-							printf("******************************\n");	
-							printf("Not replacing lost packet...adding to new vector\n");
-							printf("******************************\n");
-							brandNewPacket.push_back(tempVector[loop]); //add this to the new vector
-							printf("******************************\n");	
-							printf("Erasing value from old vector\n");
-							printf("******************************\n");
-							tempVector.erase(tempVector.begin()); //delete from the old vector
-							//loop--;//decrease the loop so as not to skip a value
-					}
-							
-							//No matter what by this point tempVector should be totally empty
+						
+						searchMissingPackets = tempVector.begin();
+						while(searchMissingPackets != tempVector.end())
+						{
+							cout << "missingPacket: " << *searchMissingPackets << " Loop: " << *match << endl;
+							if(*searchMissingPackets == *match)
+							{
+								printf("Found missing packet\n");
+								searchMissingPackets = tempVector.erase(searchMissingPackets);
+								packetsMissed.erase(find( packetsMissed.begin(), packetsMissed.end(), *match) ); 						
+								break;
+							}
+							else
+							{
+								++searchMissingPackets;
+							}
+						}
+						
+					}		
+				}
+				if(tempVector.empty() == false)
+				{
+					
+						printf("******************************\n");	
+						printf("Nothing left to replace...adding to new vector\n");
+						printf("******************************\n");
+						brandNewPacket = tempVector; //add this to the new vector
+						printf("******************************\n");	
+						printf("Erasing values from old vector\n");
+						printf("******************************\n");
+						tempVector.clear(); //delete from the old vector
+					
+					
 				}
 												
 			}
