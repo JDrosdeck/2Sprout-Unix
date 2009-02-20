@@ -1,4 +1,19 @@
 /*
+Plan for date capturing in packet loss
+
+Have an entirly seperate vector for packets that don't match the date,
+
+
+*/
+
+
+
+
+
+
+
+
+/*
 THIS IS AN UNPUBLISHED WORK CONTAINING 2SPROUT INC CONFIDENTIAL AND PROPRIETARY INFORMATION. 
 DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTLY PROHIBITED.
 */
@@ -100,15 +115,11 @@ string connectionString;
 
 
 vector<int> packetsRecieved;
+vector<int> packetsRecievedDay2;
+
 vector<int> packetsMissed;
-int packetNumberCount = 0;
-
-
-
-
-
-
-
+vector<int> packetsMissedDay2;
+bool dateRecieved = false;
 
 
 
@@ -127,7 +138,7 @@ static MYSQL *conn;
 
 string secretKey = "what"; //The Initial secretKey should be gatherd by a call made to 2sprout and gotten from our page
 string currentDate = "";
-
+string nextDate = "";
 
 /*
 startFeed takes in one argument which is the string, the argument is not used right now.
@@ -305,23 +316,57 @@ void* checkPacketReliability(void *thread_arg)
 					{
 						printf("Secret Key just fine! PASSED\n");
 						
-						if(currentDate == "") //this must be our first packet
-							currentDate == section[2];
-						else
-							if(currentDate != section[2])
-							{
-								//the dates have changed so we should be reading to start recieving packet numbers starting at 0
-								
-							}
-							
-				
 						
-							//push the packet to the vector of recieved packet numbers
+						
+						if(currentDate == "")
+						{
+							printf("Current Day initially set\n");
+							currentDate = section[2];
+						}
+						
+						if(section[2] != currentDate && nextDate == "")
+						{
+							printf("next Date initially set\n");
+							nextDate = section[2];
+						}
+						
+						if(section[2] == currentDate)
+						{
+							printf("CurrentDate has been matched Pushing...\n");
+							packetsRecieved.push_back(atoi(section[3].c_str()));	
+						}
+						
+						if(section[2] == nextDate)
+						{
+							printf("NextDate has been matched Pushing...\n");
+							packetsRecievedDay2.push_back(atoi(section[3].c_str()));	
+						}
+						
+						if(section[2] != currentDate && section[2] != nextDate && dateRecieved == false)
+						{
+							if(!packetsMissed.empty())
+								packetsMissed.clear();
+							if(!packetsRecieved.empty())
+								packetsRecieved.clear();
+							
+							printf("new date found, current date being overwritten\n");
+							currentDate = section[2];
 							packetsRecieved.push_back(atoi(section[3].c_str()));
-						    	
+							dateRecieved = true;	
+						}
+						else if(section[2] != currentDate && section[2] != nextDate && dateRecieved == true)
+						{
+							if(!packetsMissedDay2.empty())
+								packetsMissedDay2.clear();
+							if(!packetsRecievedDay2.empty())
+								packetsRecievedDay2.clear();
 							
-							
-					
+							printf("new date found next date being overwritten\n");	
+							currentDate = section[2];
+							packetsRecieved.push_back(atoi(section[3].c_str()));
+							dateRecieved = false;							
+						}
+										
 					//if this passes add the packet number to the array of recieved packet numbers
 			
 					//Add only the message to the sproutQueue
@@ -355,11 +400,198 @@ void* checkPacketReliability(void *thread_arg)
 
 
 
+void* checkLostPacketsDay2(void *thread_arg)
+{
+	vector<int> tempVector;
+	vector<int> brandNewPacket; //this stores packets #'s that we have not been searching for and need to check missing packets based on
+	
+	
+	while(1)
+	{
+			printf("******************************\n");	
+				
+			sleep(15);
+			if(!packetsRecievedDay2.empty())
+			{
+			printf("******************************\n");	
+			printf("Getting Ready to check packets\n");
+			printf("******************************\n");	
+			
+			//start of critical section
+			pthread_mutex_lock(&mylock);
+			tempVector = packetsRecievedDay2;
+			//end critial section
+			printf("******************************\n");	
+			printf("Clearing old Vector\n");
+			printf("******************************\n");	
+			packetsRecievedDay2.clear();		
+			pthread_mutex_unlock(&mylock);
+			
+			//sort the tempVector
+			printf("******************************\n");	
+			printf("Sorting the Vector\n");
+			printf("******************************\n");
+			sort(tempVector.begin(),tempVector.end());
+			
+			
+			
+			int sizeOfVector = (int) packetsMissedDay2.size();
+					
+			//Check the recieved packets against what was missing
+					
+			if(!packetsMissedDay2.empty()) //there have been missed packets
+			{
+				printf("******************************\n");	
+				printf("There have been missing packets\n");
+				printf("******************************\n");
+				//search for missed packets for anything new that may have come in
+			    vector<int>::iterator searchMissingPackets;
+						
+			   	int loop;
+			
+				for(loop = 0; loop < sizeOfVector; loop++)
+				{
+					int match[] = {packetsMissedDay2[loop]};
+					
+					cout << "looking for match: " << match[0] << endl;
+					
+	
+					printf("Searching for missing packet in newley recived packets\n");
+					cout << "before Search " << tempVector.size() << endl;
+					
+	
+					if(tempVector.empty() == false)
+					{
+						
+						searchMissingPackets = tempVector.begin();
+						while(searchMissingPackets != tempVector.end())
+						{
+							cout << "missingPacket: " << *searchMissingPackets << " Loop: " << *match << endl;
+							if(*searchMissingPackets == *match)
+							{
+								printf("Found missing packet\n");
+								searchMissingPackets = tempVector.erase(searchMissingPackets);
+								packetsMissed.erase(find( packetsMissedDay2.begin(), packetsMissedDay2.end(), *match) ); 						
+								break;
+							}
+							else
+							{
+								++searchMissingPackets;
+							}
+						}
+						
+					}		
+				}
+				if(tempVector.empty() == false)
+				{
+					
+						printf("******************************\n");	
+						printf("Nothing left to replace...adding to new vector\n");
+						printf("******************************\n");
+						brandNewPacket = tempVector; //add this to the new vector
+						printf("******************************\n");	
+						printf("Erasing values from old vector\n");
+						printf("******************************\n");
+						tempVector.clear(); //delete from the old vector
+					
+					
+				}
+												
+			}
+			else
+			{
+				
+					printf("******************************\n");	
+					printf("Not replacing lost packet...adding to new vector\n");
+					printf("******************************\n");
+					brandNewPacket = tempVector; //add this to the new vector
+					printf("******************************\n");	
+					printf("Erasing value from old vector\n");
+					printf("******************************\n");
+					tempVector.clear(); //delete from the old vector
+			}
+					
+					
+	
+			//Figure out which are the missing packets
+			int sizeOfNewPackets = (int) brandNewPacket.size();
+					
+			int i;
+			printf("******************************\n");	
+			printf("Calculating lost packets\n");
+			printf("******************************\n");
+			
+			cout << "size of new packets: " << sizeOfNewPackets << endl;
+			int remainder;
+			for (i = 0; i < sizeOfNewPackets-1; i++)
+			{
+				cout << "packets: " <<  brandNewPacket[i+1] << " " << brandNewPacket[i] << endl;
+				remainder = brandNewPacket[i+1] - brandNewPacket[i];
+		
+				
+				if(( remainder != 1)) //if they are not sequential
+				{
+					printf("******************************\n");	
+					printf("There are missing packets\n");
+					printf("******************************\n");
+					
+					cout << "remainder: " << remainder << endl;
+					int j;
+					for(j = 1; j < remainder; j ++)
+					{
+						//add these values to the missing packet vector
+						cout << "pushing packet " << brandNewPacket[i] + j <<endl;
+					 	packetsMissedDay2.push_back(brandNewPacket[i] + j);
+					
+					}
+							
+				}
+				cout << i << endl;
+						
+			}
+			brandNewPacket.clear(); //empty this vector
+						
+		}
+		
+				printf("******************************\n");	
+				printf("No Missing packets WOOHOO\n");
+				printf("******************************\n");
+			//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
+		
+			/*
+			int sizeOfLostPackets = (int)packetsMissed.size();	
+			curl = curl_easy_init(); //initialize curl
+			int lostPacket;
+			int l;
+			for(l = 0; l < sizeOfLostPackets; l++)
+			{
+				lostPacket = packetsMissed[l];
+				if(curl) 
+				{	
+    				url = "http://2sprout.com/lostPacket/?port="; //access this webpage to be added to the database
+    				url += lostPacket;
+   					curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    				// Perform the request, res will get the return code/
+    				res = curl_easy_perform(curl);
+    				if(usleep(100000) == -1)
+					{
+						printf("Sleeping Error");
+					}	
+    			}
+    			curl_easy_cleanup(curl);
+			}
+			*/	
+		
+						
+	}
+	
+}
+
+
+
 
 /*
-TODO: ADD IN DATE DETECTION AND SHIT
 Number will come in looking like month/day/year/packetNumber
-
 */
 
 void* checkLostPackets(void *thread_arg)
@@ -383,13 +615,13 @@ void* checkLostPackets(void *thread_arg)
 			//start of critical section
 			pthread_mutex_lock(&mylock);
 			tempVector = packetsRecieved;
-			pthread_mutex_unlock(&mylock);
 			//end critial section
 			printf("******************************\n");	
 			printf("Clearing old Vector\n");
 			printf("******************************\n");	
 			packetsRecieved.clear();		
-					
+			pthread_mutex_unlock(&mylock);
+			
 			//sort the tempVector
 			printf("******************************\n");	
 			printf("Sorting the Vector\n");
@@ -1062,7 +1294,7 @@ int main(int argc, char *argv[])
 		MYPORT = atoi(argv[1]); //set the port
 		announce(); //announce to the server that we're ready to recieve
     	int rc, i , status;
-		pthread_t threads[9];
+		pthread_t threads[10];
 		printf("Starting Threads...\n");
 		pthread_create(&threads[0], NULL, castListener, NULL);
 		printf("Socket Thread Started\n");
@@ -1078,13 +1310,17 @@ int main(int argc, char *argv[])
 		
 		printf("lost packets starting\n");
 		pthread_create(&threads[8], NULL, checkLostPackets, NULL);
+		printf("checking for packets on day2\n");
+		pthread_create(&threads[9], NULL, checkLostPacketsDay2, NULL);
+		
+		
 		
 		
 		printf("Checking Packets \n");
 		
 		
 
-		for(i =0; i < 9; i++)
+		for(i =0; i < 10; i++)
 		{
 			rc = pthread_join(threads[i], (void **) &status); 
 		}
