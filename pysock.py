@@ -7,31 +7,16 @@ host = socket.gethostbyname(hostname)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)	
 
 
-m = md5.new()
-tempMessage = "what^120509^" + str(21) + "^<sproutCast><title>dump on your face</title></sproutCast>"
-m.update(tempMessage);
-msg = str(m.hexdigest()) + "^" + tempMessage
-print msg
-time.sleep(.01)
-s.sendto(msg,(host,port))
+for x in xrange(5):
+	m = md5.new()
+	tempMessage = "what^120509^" + str(x) + "^<sproutCast><title>dump on your face</title></sproutCast>"
+	m.update(tempMessage);
+	msg = str(m.hexdigest()) + "^" + tempMessage
+	print msg
+	time.sleep(.01)
+	s.sendto(msg,(host,port))
 
 
-m = md5.new()
-tempMessage = "what^120509^" + str(15) + "^<sproutCast><title>dump on your face</title></sproutCast>"
-m.update(tempMessage);
-msg = str(m.hexdigest()) + "^" + tempMessage
-print msg
-time.sleep(.01)
-s.sendto(msg,(host,port))
-
-
-m = md5.new()
-tempMessage = "what^120609^" + str(13) + "^<sproutCast><title>dump on your face</title></sproutCast>"
-m.update(tempMessage);
-msg = str(m.hexdigest()) + "^" + tempMessage
-print msg
-time.sleep(.01)
-s.sendto(msg,(host,port))
 
 
 

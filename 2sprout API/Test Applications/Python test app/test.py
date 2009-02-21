@@ -1,5 +1,5 @@
 import threading
-import sprout
+import sprout, time
 
 
 class get2sproutFeed(threading.Thread):
@@ -17,6 +17,6 @@ sprout.startFeed()
 get2sproutFeed().start()
 get2sproutItem().start()
 
-sleep(1)
+time.sleep(1)
 get2sproutFeed().join()
 get2sproutItem().join()

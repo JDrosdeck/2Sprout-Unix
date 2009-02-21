@@ -1154,8 +1154,8 @@ Information is passed through the api via named pipes
 		}			
 		
 		
-		if(apiReadyToRecieve == true)
-		{
+//		if(apiReadyToRecieve == true)
+//		{
 			pthread_mutex_lock(&mylock);
 			if(!sproutFeed.empty())
 			{
@@ -1176,7 +1176,7 @@ Information is passed through the api via named pipes
 				pthread_mutex_unlock(&mylock);
 				
 			}
-		}
+//		}
 		
 	}
 }
@@ -1251,8 +1251,10 @@ Information is passed through the api via named pipes
 	
 			if(command[0] == "getFeed")
 			{
-				apiReadyToRecieve = true;
-				printf("done\n");
+				int rc, i , status;
+				pthread_t threads[1];
+				pthread_create(&threads[0], NULL, getFeed, NULL);
+				printf("()()()()()()()()()()()()()()()()()()()()()()()()()Started getFeedThread\n");
 			}
 
 		}
@@ -1338,20 +1340,20 @@ int main(int argc, char *argv[])
 		MYPORT = atoi(argv[1]); //set the port value
 		announce(); //announce to the server that we're ready to recieve
 		int rc, i , status;
-		pthread_t threads[8];
+		pthread_t threads[8];		
 		printf("Starting Threads...\n");
 		pthread_create(&threads[0], NULL, castListener, NULL);
 		pthread_create(&threads[1], NULL, createAndReadPipe, NULL);
-		pthread_create(&threads[2], NULL, getFeed, NULL);
-		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
-		pthread_create(&threads[4], NULL, checkPacketReliability, NULL);		
+	//	pthread_create(&threads[2], NULL, getFeed, NULL);
+		pthread_create(&threads[2], NULL, checkPacketReliability, NULL);	
+		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);		
+		pthread_create(&threads[4], NULL, checkPacketReliability, NULL);
 		pthread_create(&threads[5], NULL, checkPacketReliability, NULL);
 		pthread_create(&threads[6], NULL, checkPacketReliability, NULL);
-		pthread_create(&threads[7], NULL, checkPacketReliability, NULL);
 		
 		printf("Checking Packets \n");
 		
-		pthread_create(&threads[8], NULL, checkPacketReliability, NULL);
+		pthread_create(&threads[7], NULL, checkPacketReliability, NULL);
 		for(i =0; i < 8; i++)
 		{
 			rc = pthread_join(threads[i], (void **) &status); 
