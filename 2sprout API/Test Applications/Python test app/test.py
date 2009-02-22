@@ -13,7 +13,6 @@ class get2sproutItem(threading.Thread):
 		print data
 		
 
-sprout.startFeed()
 get2sproutFeed().start()
 get2sproutItem().start()
 

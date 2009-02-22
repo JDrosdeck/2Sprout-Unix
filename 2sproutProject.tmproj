@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Standard UDP/Client/SproutClient.cpp</string>
+	<string>2sprout API/Test Applications/Python test app/test.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -37,9 +37,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-02-21T22:28:06Z</date>
-					<key>selected</key>
-					<true/>
+					<date>2009-02-22T01:57:04Z</date>
 				</dict>
 			</array>
 			<key>expanded</key>
@@ -116,7 +114,7 @@
 									<key>filename</key>
 									<string>2sprout API/Test Applications/Python test app/test.py</string>
 									<key>lastUsed</key>
-									<date>2009-02-21T22:28:06Z</date>
+									<date>2009-02-22T01:57:04Z</date>
 								</dict>
 							</array>
 							<key>name</key>
@@ -397,6 +395,20 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>2sprout API/Test Applications/Python test app/test.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>15</integer>
+				<key>line</key>
+				<integer>10</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>Python Global Queue/globalQueue.py</key>
 		<dict>
 			<key>caret</key>
@@ -430,14 +442,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>17</integer>
+				<integer>28</integer>
 				<key>line</key>
-				<integer>1356</integer>
+				<integer>160</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1226</integer>
+			<integer>118</integer>
 		</dict>
 		<key>Standard UDP/Client/webCast.cpp</key>
 		<dict>
@@ -457,10 +469,11 @@
 	<key>openDocuments</key>
 	<array>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
+		<string>2sprout API/Test Applications/Python test app/test.py</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{349, 55}, {986, 816}}</string>
+	<string>{{256, 62}, {986, 816}}</string>
 </dict>
 </plist>
