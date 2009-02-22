@@ -38,7 +38,6 @@ using namespace std;
 
 int main()
 {
-startFeed();
 
 int rc, i , status;
 pthread_t threads[2];
