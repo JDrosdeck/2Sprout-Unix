@@ -433,7 +433,19 @@ void* checkLostPacketsDay2(void *thread_arg)
 			printf("******************************\n");
 			sort(tempVector.begin(),tempVector.end());
 			
-			
+			int sizeOfTempVector = (int) tempVector.size();
+
+
+			/*
+				The Next two lines are for in in between recieving one section of packets
+				and recieving the next section some packets may be lost
+				say you recieved packets..1,2,3,4,7 and the missing packets were calculated
+				and then the next set came in as 9,10,11. This will catch the missing packets
+				between 7 and 9. I'm so awesome.
+			*/
+
+			int lastPacket = tempVector[sizeOfTempVector-1];
+			packetsRecievedDay2.push_back(lastPacket);
 			
 			int sizeOfVector = (int) packetsMissedDay2.size();
 					
@@ -606,7 +618,11 @@ void* checkLostPackets(void *thread_arg)
 			printf("******************************\n");	
 				
 			sleep(15);
-			if(!packetsRecieved.empty())
+			int sizeOfRecieved = (int) packetsRecieved.size();
+			
+			//if(!packetsRecieved.empty())
+			
+			if(sizeOfRecieved > 1)
 			{
 			printf("******************************\n");	
 			printf("Getting Ready to check packets\n");
@@ -628,6 +644,20 @@ void* checkLostPackets(void *thread_arg)
 			printf("******************************\n");
 			sort(tempVector.begin(),tempVector.end());
 			
+			
+			int sizeOfTempVector = (int) tempVector.size();
+			
+			
+			/*
+				The Next two lines are for in in between recieving one section of packets
+				and recieving the next section some packets may be lost
+				say you recieved packets..1,2,3,4,7 and the missing packets were calculated
+				and then the next set came in as 9,10,11. This will catch the missing packets
+				between 7 and 9. I'm so awesome.
+			*/
+		
+			int lastPacket = tempVector[sizeOfTempVector-1];
+			packetsRecieved.push_back(lastPacket);
 			
 			
 			int sizeOfVector = (int) packetsMissed.size();
@@ -745,7 +775,9 @@ void* checkLostPackets(void *thread_arg)
 				cout << i << endl;
 						
 			}
+									
 			brandNewPacket.clear(); //empty this vector
+	
 						
 		}
 		
@@ -1296,24 +1328,22 @@ int main(int argc, char *argv[])
 		MYPORT = atoi(argv[1]); //set the port
 		announce(); //announce to the server that we're ready to recieve
     	int rc, i , status;
-		pthread_t threads[10];
+		pthread_t threads[9];
 		printf("Starting Threads...\n");
 		pthread_create(&threads[0], NULL, castListener, NULL);
 		printf("Socket Thread Started\n");
 		pthread_create(&threads[1], NULL, insertToDb, NULL);		
 		printf("InsertDB Thread Started\n");
-		pthread_create(&threads[2], NULL, createAndReadPipe, NULL);
-		printf("pipethread started \n");		
+		pthread_create(&threads[2], NULL, checkPacketReliability, NULL);
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);
-		pthread_create(&threads[4], NULL, checkPacketReliability, NULL);
+		pthread_create(&threads[4], NULL, checkPacketReliability, NULL);	
 		pthread_create(&threads[5], NULL, checkPacketReliability, NULL);	
-		pthread_create(&threads[6], NULL, checkPacketReliability, NULL);	
-		pthread_create(&threads[7], NULL, checkPacketReliability, NULL);
+		pthread_create(&threads[6], NULL, checkPacketReliability, NULL);
 		
 		printf("lost packets starting\n");
-		pthread_create(&threads[8], NULL, checkLostPackets, NULL);
+		pthread_create(&threads[7], NULL, checkLostPackets, NULL);
 		printf("checking for packets on day2\n");
-		pthread_create(&threads[9], NULL, checkLostPacketsDay2, NULL);
+		pthread_create(&threads[8], NULL, checkLostPacketsDay2, NULL);
 		
 		
 		
@@ -1322,7 +1352,7 @@ int main(int argc, char *argv[])
 		
 		
 
-		for(i =0; i < 10; i++)
+		for(i =0; i < 9; i++)
 		{
 			rc = pthread_join(threads[i], (void **) &status); 
 		}

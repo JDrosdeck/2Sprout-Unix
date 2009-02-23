@@ -37,7 +37,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-02-22T02:08:03Z</date>
+					<date>2009-02-23T00:06:12Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -446,12 +446,12 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>1346</integer>
+				<integer>821</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1260</integer>
+			<integer>396</integer>
 		</dict>
 		<key>Standard UDP/Client/webCast.cpp</key>
 		<dict>
@@ -476,6 +476,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{256, 62}, {986, 816}}</string>
+	<string>{{1628, -77}, {986, 962}}</string>
 </dict>
 </plist>
