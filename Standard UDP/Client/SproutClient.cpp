@@ -411,7 +411,11 @@ void* checkLostPacketsDay2(void *thread_arg)
 			printf("******************************\n");	
 				
 			sleep(15);
-			if(!packetsRecievedDay2.empty())
+			int sizeOfRecievedDay2 = (int) packetsRecievedDay2.size();
+
+					//if(!packetsRecieved.empty())
+
+			if(sizeOfRecievedDay2 > 1)
 			{
 			printf("******************************\n");	
 			printf("Getting Ready to check packets\n");
