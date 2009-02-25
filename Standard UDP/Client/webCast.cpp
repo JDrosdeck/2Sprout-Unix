@@ -50,7 +50,7 @@ void* getData(void *thread_arg)
 { 	     
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) 
     {
-        perror("socket");
+        perror("socket\n");
         exit(1);
     }
 
@@ -62,7 +62,7 @@ void* getData(void *thread_arg)
 
     if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof my_addr) == -1) 
     {
-        perror("bind");
+        perror("bind\n");
         exit(1);
     }
 
@@ -77,7 +77,7 @@ void* getData(void *thread_arg)
    
     	if ((numbytes = recvfrom(sockfd, buf, MAXBUFLEN-1 , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
     	{
-        perror("recvfrom");
+        perror("recvfrom\n");
         exit(1);
    		}
 	
@@ -115,14 +115,14 @@ void* writeToClient(void *thread_arg)
 	printf("Waiting to transmit Packets\n");
 	int fd, ret_val, count, numread;
 
-	printf("creating pipe for data transmission");
+	printf("creating pipe for data transmission\n");
 
 	
 	ret_val = mkfifo(transferPipe, 0777); //create the pipe that will be used for transfering data back to user made app
 	
 	if (( ret_val == -1) && (errno != EEXIST)) 
 	{
-		perror("Error creating named pipe");
+		perror("Error creating named pipe\n");
 		exit(1);
 	}
 	
@@ -133,14 +133,14 @@ void* writeToClient(void *thread_arg)
 
 			if(usleep(100000) == -1)
 			{
-				printf("Sleeping Error");
+				printf("Sleeping Error\n");
 			}			
 		
 			
 		if(!sproutData.empty())
 		{
 			printf("NOT EMPTY 67576576 \n");
-			cout << "size" << sproutData.size() << endl;
+			cout << "size " << sproutData.size() << endl;
 			//start of critcal section
 			string s = sproutData.front() + "\n";
 			//check the packet here

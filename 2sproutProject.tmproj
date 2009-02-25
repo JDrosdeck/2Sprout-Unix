@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>currentDocument</key>
-	<string>Standard UDP/Client/SproutClient.cpp</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -31,13 +29,13 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/webCast.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-02-14T14:53:38Z</date>
+					<date>2009-02-25T03:46:46Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-02-25T02:37:03Z</date>
+					<date>2009-02-25T03:46:48Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -213,11 +211,13 @@
 					<key>filename</key>
 					<string>2Sprout link crawler/src/auto-feed-sim-exec.py</string>
 					<key>lastUsed</key>
-					<date>2009-01-24T04:00:33Z</date>
+					<date>2009-02-25T02:52:07Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>2Sprout link crawler/src/sites.txt</string>
+					<key>lastUsed</key>
+					<date>2009-02-25T02:52:32Z</date>
 				</dict>
 			</array>
 			<key>name</key>
@@ -249,9 +249,11 @@
 					<key>filename</key>
 					<string>compile command line</string>
 					<key>lastUsed</key>
-					<date>2009-02-16T12:07:53Z</date>
+					<date>2009-02-25T03:46:45Z</date>
 				</dict>
 			</array>
+			<key>expanded</key>
+			<true/>
 			<key>name</key>
 			<string>Compile Commands</string>
 		</dict>
@@ -262,7 +264,7 @@
 					<key>filename</key>
 					<string>Python Global Queue/globalQueue.py</string>
 					<key>lastUsed</key>
-					<date>2009-02-18T22:52:39Z</date>
+					<date>2009-02-25T02:52:12Z</date>
 				</dict>
 			</array>
 			<key>name</key>
@@ -278,7 +280,17 @@
 			<key>filename</key>
 			<string>Python Miner/miner.py</string>
 			<key>lastUsed</key>
-			<date>2009-02-18T22:52:49Z</date>
+			<date>2009-02-25T02:52:26Z</date>
+		</dict>
+		<dict>
+			<key>expanded</key>
+			<true/>
+			<key>name</key>
+			<string>Reg Dev Api</string>
+			<key>regexFolderFilter</key>
+			<string>!.*/(\.[^/]*|CVS|_darcs|_MTN|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle))$</string>
+			<key>sourceDirectory</key>
+			<string>Reg Dev Api</string>
 		</dict>
 	</array>
 	<key>fileHierarchyDrawerWidth</key>
@@ -411,71 +423,10 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>Python Global Queue/globalQueue.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>25</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>4</integer>
-		</dict>
-		<key>Python Miner/miner.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>1</integer>
-				<key>line</key>
-				<integer>23</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>Standard UDP/Client/SproutClient.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>3</integer>
-				<key>line</key>
-				<integer>413</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>Standard UDP/Client/webCast.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>21</integer>
-				<key>line</key>
-				<integer>142</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>116</integer>
-		</dict>
 	</dict>
-	<key>openDocuments</key>
-	<array>
-		<string>Standard UDP/Client/SproutClient.cpp</string>
-		<string>2sprout API/Test Applications/Python test app/test.py</string>
-	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{1628, -77}, {986, 962}}</string>
+	<string>{{1649, -100}, {986, 962}}</string>
 </dict>
 </plist>

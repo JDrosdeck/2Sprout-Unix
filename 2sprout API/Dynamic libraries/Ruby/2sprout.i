@@ -2,14 +2,14 @@
 
 
 %{
-extern int startFeed(int portNumber);
-extern int stopFeed(int portNumber);
+extern int startFeed();
+extern int stopFeed();
 extern int getFeed();
 extern char* getNextItem();
 %}
 
-extern int startFeed(int portNumber);
-extern int stopFeed(int portNumber);
+extern int startFeed();
+extern int stopFeed();
 extern char* getNextItem();
 extern int getFeed();
 

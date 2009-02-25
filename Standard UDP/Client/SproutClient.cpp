@@ -198,34 +198,39 @@ void* castListener(void *thread_arg)
 	sprintf(buffer, "%i", MYPORT);
 	
 	string command = "./cast ";
-	command += buffer;
-	command += " &";
+	//command += buffer;
+	//command += " &";
 	
 	printf("Command is %s\n", command.c_str());
-	i = system(command.c_str());
+	//i = system(command.c_str());
 	
-	
-	
-	//Once the command has been started We can listen on a pipe to recieve data that has been recieved
-	
-	int fd1, numread;
-	char bufpipe[MAXDATASIZE];
-	
-	while(1)
+	pid_t pID = fork();
+	if(pID == 0)
 	{
-		fd1 = open(transferPipe, O_RDONLY);
-		numread = read(fd1,bufpipe, MAXDATASIZE);
-		if(numread > 1)
+		
+		execl("cast","cast", buffer);
+		
+	}
+	else if(pID > 0)
+	{
+
+		//Once the command has been started We can listen on a pipe to recieve data that has been recieved
+		int fd1, numread;
+		char bufpipe[MAXDATASIZE];
+	
+		while(1)
 		{
-		bufpipe[numread] = '\0';
-		printf("Recieved %s from Feed Pipe\n", bufpipe);
-		
-		//find the actual size 
-		
-		
-		unprocessedData.push(bufpipe);
-		memset(bufpipe,'\0',MAXDATASIZE +1);
-		close(fd1);
+			fd1 = open(transferPipe, O_RDONLY);
+			numread = read(fd1,bufpipe, MAXDATASIZE);
+			if(numread > 1)
+			{
+				bufpipe[numread] = '\0';
+				printf("Recieved %s from Feed Pipe\n", bufpipe);
+				//find the actual size 
+				unprocessedData.push(bufpipe);
+				memset(bufpipe,'\0',MAXDATASIZE +1);
+				close(fd1);
+			}
 		}
 	}
 
