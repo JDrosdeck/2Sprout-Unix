@@ -1299,6 +1299,23 @@ Information is passed through the api via named pipes
 }
  
  
+
+void catch_int(int sig_num)
+{
+    /* re-set the signal handler again to catch_int, for next time */
+    signal(SIGINT, catch_int);
+    /* and print the message */
+	unlink(feedPipe);
+	unlink(sproutPipe);
+	unlink(transferPipe); 
+	
+	printf("Files deleted");
+    fflush(stdout);
+	exit(0);
+}
+
+
+
   
 /*
 
@@ -1309,6 +1326,8 @@ database
 */
 int main(int argc, char *argv[])
 {
+	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
+	
 	apiReadyToRecieve = false;
 	if(argc < 2)
 	{

@@ -37,7 +37,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-02-23T00:41:47Z</date>
+					<date>2009-02-25T02:37:03Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -451,7 +451,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>395</integer>
+			<integer>0</integer>
 		</dict>
 		<key>Standard UDP/Client/webCast.cpp</key>
 		<dict>

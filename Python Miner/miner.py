@@ -21,7 +21,7 @@ matchword = "<b class=\"txtlg\"[^>]*><b>" + "([^<]+)" +"</b>"
 p = re.compile(matchword)
 m = p.findall(page_html)
 
-#<b class="txtlg"><b>$2.54</b>
+#d<b class="txtlg"><b>$2.54</b>
 
 
 
