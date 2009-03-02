@@ -139,6 +139,9 @@ void* writeToClient(void *thread_arg)
 			
 		if(!sproutData.empty())
 		{
+			
+			//Need to check for the size of the string, and make sure its not larger then our max string length
+			
 			printf("NOT EMPTY 67576576 \n");
 			cout << "size " << sproutData.size() << endl;
 			//start of critcal section

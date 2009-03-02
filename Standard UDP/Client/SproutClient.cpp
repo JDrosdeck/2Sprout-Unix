@@ -42,7 +42,7 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <fstream>
 #include <sstream>
 #include <signal.h>
-
+#include <stdexcept>
 
 
 #include "md5.h"
@@ -307,7 +307,19 @@ void* checkPacketReliability(void *thread_arg)
 			
 				//check the md5 sum
 				
+				try
+				{
 				CastMinusMD5.erase(CastMinusMD5.find('\n'));
+				}
+				catch(out_of_range& e)
+				{
+					cout << "out of range " << e.what() << "\n";
+				}
+				catch(exception& e)
+				{
+					cout << "some of exception: " << e.what() << "\n";
+				}
+				
 				
 				string checkMd5 = MD5String(CastMinusMD5); //get the value of the MD5 string
 				printf("MD5 SUM IS: %s", checkMd5.c_str());
@@ -1016,143 +1028,67 @@ void* insertToDb(void *thread_arg)
 ReadConfig function, Goes through the 2sprout.conf file and reads in all the appropriate information 
 used to create a connection with a database.
 */
- int readConfig()
- {
-    int i;
-    int command = 0; //used to keep track of what command has been read it
- 	string line;
- 	int found =0;
- 	ifstream sproutConfig("2sprout.conf");
- 	if(sproutConfig.is_open())
- 	{
- 		while(!sproutConfig.eof())
- 		{
- 			getline(sproutConfig,line);
- 			if(!line.empty())
- 			{
- 		 	found = 0;
 
- 			for(i = 0; i< line.length(); i++)
- 			{
- 				if(found == 0)
- 				{
- 					if(line.at(i) != ' ')
- 					{
- 						if(line.at(i) == '#')
- 						{
- 							break;
- 						}
- 						else
- 						{
- 						if(command == 0)
- 						{
- 							database = line;
- 							found = 1;
- 						}
- 						if(database == "postgres")
- 						{
- 							if(command == 1)
- 							{
- 								host = line;
- 								found = 1;
- 							}
- 							if(command == 2)
- 							{
- 								port = line;
- 								found = 1;
- 							}
- 							if(command == 3)
- 							{
- 								dbname = line;
- 								found = 1;
- 							}
- 							if(command == 4)
- 							{
- 								user = line;
- 								found = 1;
- 							}
- 							if(command == 5)
- 							{
- 								pass = line;
- 								found = 1;
- 							}
- 							if(command == 6)
- 							{
- 								table = line;
- 								found = 1;
- 							}
- 							if(command == 7)
- 							{
- 								col = line;
- 								found = 1;
- 							}
- 						}
- 					else if(database == "mysql")
- 					{
- 						if(command == 1)
- 							{
- 								host = line;
- 								found = 1;
- 							}
- 							if(command == 2)
- 							{
- 								port = line;
- 								found = 1;
- 							}
- 							if(command == 3)
- 							{
- 								dbname = line;
- 								found = 1;
- 							}
- 							if(command == 4)
- 							{
- 								user = line;
- 								found = 1;
- 							}
- 							if(command == 5)
- 							{
- 								pass = line;
- 								found = 1;
- 							}
- 							if(command == 6)
- 							{
- 								table = line;
- 								found = 1;
- 							}
- 							if(command == 7)
- 							{
- 								col = line;
- 								found = 1;
- 							}
- 					}
- 					
- 					else if(database == "none")
- 					{
- 						useDatabase = false;
- 					
- 					}
- 					
- 					command ++;
-  					break;
-  					}		
- 				}
- 				}
- 			}
- 			}
- 			
- 		}
- 		sproutConfig.close();
- 	}
- 
- return 1;
- 
- }
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+int readConfig()
+{
+	string line;
+	ifstream sproutConfig("2sprout.conf");
+	size_t found;
+	int foundPos;
+	string firstSub, secoundSub;
+	if(sproutConfig.is_open())
+	{
+		while(!sproutConfig.eof())
+		{
+			getline(sproutConfig,line);
+			if(!line.empty())
+			{
+				//find the first occurance of an '=' sign
+				found = line.find("=");
+				if(found!=string::npos)
+				{
+					foundPos = (int)found;
+					firstSub = line.substr(0,found);
+					secoundSub = line.substr(foundPos+1);				
+					
+						if(firstSub == "usedb" && secoundSub == "false")
+						{
+							useDatabase = false;	
+							break;
+						}
+						
+						if(firstSub == "dbtype")
+							database = secoundSub;
+						if(firstSub == "dbhost") 
+							host = secoundSub;
+						if(firstSub == "dbport") 
+							port = secoundSub;
+						if(firstSub == "dbname") 
+							dbname = secoundSub;
+						if(firstSub == "dbuser") 
+							user = secoundSub;
+						if(firstSub == "dbpassword") 
+							pass = secoundSub;
+						if(firstSub == "dbtable") 
+							table = secoundSub;
+						if(firstSub == "dbcol") 
+							col = secoundSub;	
+				}	
+			}	
+		}
+	}
+}
+
+
+
+
+
  
  
 /*
@@ -1350,12 +1286,14 @@ int main(int argc, char *argv[])
 	
 	
 	readConfig(); 	//read the configuration file for database access.
-	
+
     if(useDatabase == true)
     {
+	
 		MYPORT = atoi(argv[1]); //set the port
-		announce(); //announce to the server that we're ready to recieve
-    	int rc, i , status;
+	
+		//announce(); //announce to the server that we're ready to recieve
+		int rc, i , status;
 		pthread_t threads[9];
 		printf("Starting Threads...\n");
 		pthread_create(&threads[0], NULL, castListener, NULL);
@@ -1386,8 +1324,9 @@ int main(int argc, char *argv[])
 		}
 		
 		return 0;
-	}
 	
+	}
+
 	/*
 	If useDatabase is set to false Then the user is going to be using the sdk to interact with the feed
 	Instead of announcing, and capturing data, just set up the pipe to allow api access
@@ -1396,7 +1335,11 @@ int main(int argc, char *argv[])
 	{
 		printf("Not using Database\n");
 		MYPORT = atoi(argv[1]); //set the port value
-		announce(); //announce to the server that we're ready to recieve
+		
+		// create the base folder	
+	
+	
+	//	announce(); //announce to the server that we're ready to recieve
 		int rc, i , status;
 		pthread_t threads[10];		
 		printf("Starting Threads...\n");

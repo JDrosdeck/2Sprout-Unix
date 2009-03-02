@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>currentDocument</key>
+	<string>Standard UDP/Client/SproutClient.cpp</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -29,13 +31,13 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/webCast.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-02-25T03:46:46Z</date>
+					<date>2009-03-01T16:54:23Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-02-25T03:46:48Z</date>
+					<date>2009-03-02T18:16:40Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -423,10 +425,43 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>Standard UDP/Client/SproutClient.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>1086</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>850</integer>
+		</dict>
+		<key>Standard UDP/Client/webCast.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>6</integer>
+				<key>line</key>
+				<integer>129</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>116</integer>
+		</dict>
 	</dict>
+	<key>openDocuments</key>
+	<array>
+		<string>Standard UDP/Client/SproutClient.cpp</string>
+		<string>Standard UDP/Client/webCast.cpp</string>
+	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{1649, -100}, {986, 962}}</string>
+	<string>{{322, 0}, {986, 878}}</string>
 </dict>
 </plist>

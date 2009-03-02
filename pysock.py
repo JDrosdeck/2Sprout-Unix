@@ -6,13 +6,14 @@ port = 4950
 host = socket.gethostbyname(hostname)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)	
 
-m = md5.new()
-tempMessage = "what^120510^" + str(15) + "^<sproutCast><title>dump on your face</title></sproutCast>"
-m.update(tempMessage);
-msg = str(m.hexdigest()) + "^" + tempMessage
-print msg
-time.sleep(.01)
-s.sendto(msg,(host,port))
+for x in xrange(50):
+	m = md5.new()
+	tempMessage = "what^120510^" + str(x) + "^<sproutCast><title> on your facedump oyouryouryouyouryyouryouryouryoyouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryoururyouryouryouryouryouryouryouryouryouryouryouryouryourouryouryoyouryouryouryouryouryouryouryouryouryoururyouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryourn your facedump on your facedump on your facedump on your facedump on your facedump on your facedump on your facen your facedump on your faceyouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryouryour</title></sproutCast>"
+	m.update(tempMessage);
+	msg = str(m.hexdigest()) + "^" + tempMessage
+	print msg
+	time.sleep(.01)
+	s.sendto(msg,(host,port))
 
 
 
