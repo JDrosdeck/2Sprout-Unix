@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Standard UDP/Client/SproutClient.cpp</string>
+	<string>Python Global Queue/globalQueue.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -37,13 +37,9 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-03-02T18:16:40Z</date>
-					<key>selected</key>
-					<true/>
+					<date>2009-03-07T18:22:52Z</date>
 				</dict>
 			</array>
-			<key>expanded</key>
-			<true/>
 			<key>name</key>
 			<string>2sprout Client</string>
 		</dict>
@@ -254,8 +250,6 @@
 					<date>2009-02-25T03:46:45Z</date>
 				</dict>
 			</array>
-			<key>expanded</key>
-			<true/>
 			<key>name</key>
 			<string>Compile Commands</string>
 		</dict>
@@ -266,9 +260,13 @@
 					<key>filename</key>
 					<string>Python Global Queue/globalQueue.py</string>
 					<key>lastUsed</key>
-					<date>2009-02-25T02:52:12Z</date>
+					<date>2009-03-08T05:19:12Z</date>
+					<key>selected</key>
+					<true/>
 				</dict>
 			</array>
+			<key>expanded</key>
+			<true/>
 			<key>name</key>
 			<string>Python Global Queue</string>
 		</dict>
@@ -425,19 +423,33 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>Python Global Queue/globalQueue.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>28</integer>
+				<key>line</key>
+				<integer>70</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>43</integer>
+		</dict>
 		<key>Standard UDP/Client/SproutClient.cpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>1086</integer>
+				<integer>1251</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>850</integer>
+			<integer>1231</integer>
 		</dict>
 		<key>Standard UDP/Client/webCast.cpp</key>
 		<dict>
@@ -457,11 +469,12 @@
 	<key>openDocuments</key>
 	<array>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
+		<string>Python Global Queue/globalQueue.py</string>
 		<string>Standard UDP/Client/webCast.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{322, 0}, {986, 878}}</string>
+	<string>{{231, 0}, {827, 878}}</string>
 </dict>
 </plist>
