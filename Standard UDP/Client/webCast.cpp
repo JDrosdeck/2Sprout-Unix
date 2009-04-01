@@ -25,10 +25,8 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <sstream>
 #include <signal.h>
 
-#define MAXDATASIZE 1000
-#define MAXBUFLEN 10000
-#define MAX_BUF_SIZE 5000
-#define transferPipe "transPipe"	
+#define MAXBUFLEN 50000
+#define transferPipe "/tmp/transPipe"	
 int MYPORT;		//port which the client is bound to 
 
 
@@ -86,7 +84,7 @@ void* getData(void *thread_arg)
       //  printf("%s\n",ipAdd);
          
 	 //   printf("got packet from %s\n",inet_ntoa(their_addr.sin_addr));
-    //	printf("packet is %d bytes long\n",numbytes);
+    	printf("packet is %d bytes long\n",numbytes);
     	buf[numbytes] = '\0';
     //	printf("packet contains \"%s\"\n",buf);	
     
@@ -97,9 +95,12 @@ void* getData(void *thread_arg)
     */
     
     //Put information into queue
+
+		if(numbytes < 5000 && sproutData.size() < 10000)
+		{
    	    string input = buf;
 		sproutData.push(input); //pused the data into the temparary queue
-     
+ 		}
    }
        close(sockfd);
 
@@ -135,7 +136,6 @@ void* writeToClient(void *thread_arg)
 			{
 				printf("Sleeping Error\n");
 			}			
-		
 			
 		if(!sproutData.empty())
 		{
@@ -146,6 +146,7 @@ void* writeToClient(void *thread_arg)
 			cout << "size " << sproutData.size() << endl;
 			//start of critcal section
 			string s = sproutData.front() + "\n";
+			printf("Size of queue: %i", sproutData.size());
 			//check the packet here
 			sproutData.pop();
 			//end of critical section
@@ -153,10 +154,7 @@ void* writeToClient(void *thread_arg)
 			write(fd,s.c_str(),strlen(s.c_str())); 	//write the string to the pipe
 			close(fd); //close the connection to the pipe
 		}
-	}
-	
-	
-	
+	}	
 }
 
 

@@ -69,15 +69,11 @@ Includes for mysql C library
 
 using namespace std;
 
-#define feedPipe "feedPipe"		//pipe that feeds data back through the api to the user made application
-#define sproutPipe "2sprout"	//pipe that takes in api calls from the user made application
-#define transferPipe "transPipe" //pipe used to transfer data from the cast app into the client
+#define feedPipe "/tmp/feedPipe"		//pipe that feeds data back through the api to the user made application
+#define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
+#define transferPipe "/tmp/transPipe" //pipe used to transfer data from the cast app into the client
 
-#define maxPipe		255			
-
-#define MAXDATASIZE 1000
-#define MAXBUFLEN 10000
-#define MAX_BUF_SIZE 5000
+#define maxPipe		50000			
 
 //Used for md5 sum
 #define MD5_CTX MD5_CTX
@@ -104,7 +100,7 @@ struct sockaddr_in my_addr;    // my address information
 struct sockaddr_in their_addr; // connector's address information
 socklen_t addr_len;
 int numbytes;
-char buf[MAXBUFLEN];
+char buf[maxPipe];
 
 void getData();
 queue<string> sproutFeed; //this is the queue where the approved data is located
@@ -216,19 +212,19 @@ void* castListener(void *thread_arg)
 
 		//Once the command has been started We can listen on a pipe to recieve data that has been recieved
 		int fd1, numread;
-		char bufpipe[MAXDATASIZE];
+		char bufpipe[maxPipe];
 	
 		while(1)
 		{
 			fd1 = open(transferPipe, O_RDONLY);
-			numread = read(fd1,bufpipe, MAXDATASIZE);
+			numread = read(fd1,bufpipe, maxPipe);
 			if(numread > 1)
 			{
 				bufpipe[numread] = '\0';
-				printf("Recieved %s from Feed Pipe\n", bufpipe);
+				//printf("Recieved %s from Feed Pipe\n", bufpipe);
 				//find the actual size 
 				unprocessedData.push(bufpipe);
-				memset(bufpipe,'\0',MAXDATASIZE +1);
+				memset(bufpipe,'\0',maxPipe +1);
 				close(fd1);
 			}
 		}
@@ -326,12 +322,12 @@ void* checkPacketReliability(void *thread_arg)
 				if(checkMd5 == section[0]) //The MD5 Sum is the same so data integrety is OK
 				{
 				
-					printf("MD5 Just Fine! PASSED\n");
+					//printf("MD5 Just Fine! PASSED\n");
 		  		
 					//check the secret key
 					if(section[1] == secretKey)
 					{
-						printf("Secret Key just fine! PASSED\n");
+						//printf("Secret Key just fine! PASSED\n");
 						
 						
 						
