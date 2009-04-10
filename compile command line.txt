@@ -1,0 +1,106 @@
+g++ -L/usr/local/pgsql/lib -lpq -lpqxx -o client Sprout.cpp
+
+g++ -L/usr/local/pgsql/lib -lpq -lpqxx -o server sproutServer.cpp
+
+
+-lcurl -lssl -lcrypto -lz
+
+g++  -lcurl -lssl -lcrypto -lz -o client Sprout.cpp
+
+
+
+Old Client: postgres c++ api
+g++ -L/usr/local/pgsql/lib -L/usr/local/lib/mysql -I/usr/local/include/mysql -lmysqlclient -lpq -lpqxx -lcurl -lssl -lcrypto -lz -lm -o client SproutClient.cpp
+
+
+
+
+
+New Client
+g++ -I/opt/local/include/postgresql83 -L/usr/local/pgsql/lib -L/usr/local/lib/mysql -I/usr/local/include/mysql -lmysqlclient -lm -lcurl -lssl -lcrypto -lz -lpq -o client SproutClient.cpp
+
+
+SWIG
+
+Python
+
+swig -c++ -python 2sprout.i
+g++ -c 2sprout.cpp 2sprout_wrap.cxx -I/usr/include/python2.5 -I/usr/lib/python2.5
+g++ -bundle -flat_namespace -undefined suppress -arch i386  -o _sprout.so 2sprout.o 2sprout_wrap.o 
+
+Ruby
+
+swig -c++ -ruby sprout.i
+g++ -c sprout.cpp sprout.h 
+g++ -fPiC -I/Developer/SKDs/MacOSX10.5.sdk/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin9.0 -c sprout_wrap.cxx
+g++ -bundle -flat_namespace -undefined suppress -arch i386 -lz sprout.o sprout_wrap.o -o sprout.bundle 
+
+
+C#
+swig -c++ -csharp sprout.i
+g++ -c -FPIC sprout.cpp sprout_wrap.cxx
+g++ -bundle -flat_namespace -undefined suppress -arch i386 sprout.o sprout_wrap.o -o libsprout.so
+mcs test.cs sprout.cs sproutPINVOKE.cs (This will compile it under mono)
+mono test.exe (this will execute it under mono)
+
+
+
+
+
+
+global Queue swig
+
+swig -c++ -python sproutQueue.i
+g++ -c 2sproutQueue.cpp sproutQueue_wrap.cxx -I/usr/include/python2.5 -I/usr/lib/python2.5
+g++ -bundle -flat_namespace -undefined suppress -arch i386  -o _sproutQueue.so sproutQueue.o sproutQueue_wrap.o
+
+
+
+
+-I/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin9.0
+
+
+
+
+Compile server using command line Unix
+
+g++ -I/usr/include/postgresql -I/usr/local/pgsql/lib -lpqxx -o sproutServer sproutServer.cpp
+
+
+
+Compile server with swig command line unix
+
+swig -c++ -python sproutServer.i
+
+g++ -I/usr/include/python2.5 -I/usr/include/postgresql-lpqxx -c sproutServer.cpp sproutServer_wrap.cxx
+
+g++ -shared -I/usr/include/postgresql -I/usr/local/pgsql/lib -lpq -lpqxx sproutServer.o sproutServer_wrap.o -o _sproutServer.so
+
+
+
+
+
+
+
+
+
+
+
+
+compile Test API
+
+g++ -L/usr/local/2sprout/lib -l2sprout -o api test.cpp 
+
+create Library
+
+ar cq lib2sprout.a *.o
+
+
+
+
+
+transfer files ssh
+scp filename twosprout@2sprout.com:
+
+
+

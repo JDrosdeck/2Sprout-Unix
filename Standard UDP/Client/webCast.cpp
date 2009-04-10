@@ -24,6 +24,7 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <fstream>
 #include <sstream>
 #include <signal.h>
+#include <sys/file.h>
 
 #define MAXBUFLEN 50000
 #define transferPipe "/tmp/transPipe"	
@@ -126,7 +127,15 @@ void* writeToClient(void *thread_arg)
 		perror("Error creating named pipe\n");
 		exit(1);
 	}
+
+ 	if(flock(fd,LOCK_EX) == -1) {
+
+	fprintf(stderr, "flock(fd,LOCK_EX): %s (%i)\n", strerror(errno), errno);
+	exit(0);
+
+	} 
 	
+	printf("Succeeded!\n");
 	
 	while(1)
 	{	
@@ -155,6 +164,14 @@ void* writeToClient(void *thread_arg)
 			close(fd); //close the connection to the pipe
 		}
 	}	
+	
+	if (flock(fd,LOCK_UN)==-1) 
+	{
+	fprintf(stderr, "flock(fd,LOCK_UN): %s (%i)\n", strerror(errno), errno);
+
+	exit(0);
+
+	}
 }
 
 

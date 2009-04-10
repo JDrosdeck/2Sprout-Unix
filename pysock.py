@@ -6,11 +6,11 @@ port = 4950
 host = socket.gethostbyname(hostname)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)	
 
-for x in xrange(500):
+for x in xrange(20):
 	m = md5.new()
 	tempMessage = "what^120510^" + str(x) + "^fsa</body></sproutcast><sproutcast><url>http://www.google.com</url><body>Plastic piecies of"
 	m.update(tempMessage)
 	msg = str(m.hexdigest()) + "^" + tempMessage
 	print msg
-	time.sleep(.02)
+	time.sleep(.09)
 	s.sendto(msg,(host,port))

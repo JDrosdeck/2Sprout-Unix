@@ -1108,6 +1108,12 @@ Information is passed through the api via named pipes
 		perror("Error creating named pipe");
 		exit(1);
 	}
+	if(flock(fd,LOCK_EX) == -1) {
+
+	fprintf(stderr, "flock(fd,LOCK_EX): %s (%i)\n", strerror(errno), errno);
+	exit(0);
+
+	}
 	
 	while(1)
 	{	
@@ -1126,9 +1132,6 @@ Information is passed through the api via named pipes
 			pthread_mutex_unlock(&mylock);
 		}			
 		
-		
-//		if(apiReadyToRecieve == true)
-//		{
 			pthread_mutex_lock(&mylock);
 			if(!sproutFeed.empty())
 			{
@@ -1149,8 +1152,14 @@ Information is passed through the api via named pipes
 				pthread_mutex_unlock(&mylock);
 				
 			}
-//		}
 		
+	}
+	if (flock(fd,LOCK_UN)==-1) 
+	{
+	fprintf(stderr, "flock(fd,LOCK_UN): %s (%i)\n", strerror(errno), errno);
+
+	exit(0);
+
 	}
 }
  
@@ -1176,6 +1185,13 @@ Information is passed through the api via named pipes
 	{
 		perror("Error creating named pipe");
 		exit(1);
+	}
+	
+	if(flock(fd,LOCK_EX) == -1) 
+	{
+		fprintf(stderr, "flock(fd,LOCK_EX): %s (%i)\n", strerror(errno), errno);
+		exit(0);
+
 	}
 	
 //	fd = open(sproutPipe, O_RDONLY); //open the pipe for reading
@@ -1231,6 +1247,12 @@ Information is passed through the api via named pipes
 			}
 
 		}
+
+	}
+	if (flock(fd,LOCK_UN)==-1) 
+	{
+		fprintf(stderr, "flock(fd,LOCK_UN): %s (%i)\n", strerror(errno), errno);
+		exit(0);
 
 	}
 }
