@@ -318,7 +318,7 @@ void* checkPacketReliability(void *thread_arg)
 				
 				
 				string checkMd5 = MD5String(CastMinusMD5); //get the value of the MD5 string
-				printf("MD5 SUM IS: %s", checkMd5.c_str());
+				//printf("MD5 SUM IS: %s", checkMd5.c_str());
 				if(checkMd5 == section[0]) //The MD5 Sum is the same so data integrety is OK
 				{
 				
@@ -345,13 +345,13 @@ void* checkPacketReliability(void *thread_arg)
 						
 						if(section[2] == currentDate)
 						{
-							printf("CurrentDate has been matched Pushing...\n");
+							//printf("CurrentDate has been matched Pushing...\n");
 							packetsRecieved.push_back(atoi(section[3].c_str()));	
 						}
 						
 						if(section[2] == nextDate)
 						{
-							printf("NextDate has been matched Pushing...\n");
+							//printf("NextDate has been matched Pushing...\n");
 							packetsRecievedDay2.push_back(atoi(section[3].c_str()));	
 						}
 						
@@ -798,9 +798,7 @@ void* checkLostPackets(void *thread_arg)
 						
 		}
 		
-				printf("******************************\n");	
-				printf("No Missing packets WOOHOO\n");
-				printf("******************************\n");
+		
 			//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
 		
 			/*
@@ -891,8 +889,8 @@ void* insertToDb(void *thread_arg)
 			{
 				//start of critical section
 				string s = sproutFeed.front();
-				printf("read in: %s\n", s.c_str());
-				printf("Putting into Database\n");
+				//printf("read in: %s\n", s.c_str());
+				//printf("Putting into Database\n");
 				pthread_mutex_unlock(&mylock);
 				//end of critical section
 				string escapedString;
@@ -916,7 +914,7 @@ void* insertToDb(void *thread_arg)
 				  
 					
 					PQclear(result);
-					printf("CLEAR!!!!!!!!!!!!!!!!!");
+					//printf("CLEAR!!!!!!!!!!!!!!!!!");
 					sproutFeed.pop();
 					
 	
@@ -1038,6 +1036,7 @@ int readConfig()
 	size_t found;
 	int foundPos;
 	string firstSub, secoundSub;
+	int numOfArgsFound = 0;
 	if(sproutConfig.is_open())
 	{
 		while(!sproutConfig.eof())
@@ -1058,25 +1057,62 @@ int readConfig()
 							useDatabase = false;	
 							break;
 						}
+						else if(firstSub == "usedb" && secoundSub == "true")
+						{
+							numOfArgsFound++;
+						}
 						
-						if(firstSub == "dbtype")
+						if(firstSub == "dbtype" && secoundSub != "")
+						{
 							database = secoundSub;
-						if(firstSub == "dbhost") 
+							numOfArgsFound++;
+						}
+						if(firstSub == "dbhost" && secoundSub != "") 
+						{
 							host = secoundSub;
-						if(firstSub == "dbport") 
+							numOfArgsFound++;
+						}
+						if(firstSub == "dbport" && secoundSub != "") 
+						{
 							port = secoundSub;
-						if(firstSub == "dbname") 
+							numOfArgsFound++;
+						}
+						if(firstSub == "dbname" && secoundSub != "") 
+						{
 							dbname = secoundSub;
-						if(firstSub == "dbuser") 
+							numOfArgsFound++;
+						}
+						if(firstSub == "dbuser" && secoundSub != "") 
+						{
 							user = secoundSub;
-						if(firstSub == "dbpassword") 
+							numOfArgsFound++;
+						}
+						if(firstSub == "dbpassword" && secoundSub != "") 
+						{
 							pass = secoundSub;
-						if(firstSub == "dbtable") 
+							numOfArgsFound++;
+						}
+						if(firstSub == "dbtable" && secoundSub != "") 
+						{
 							table = secoundSub;
-						if(firstSub == "dbcol") 
+							numOfArgsFound++;
+						
+						}
+						if(firstSub == "dbcol" && secoundSub != "") 
+						{
 							col = secoundSub;	
+							numOfArgsFound++;
+						}
 				}	
 			}	
+		}
+		
+		cout << numOfArgsFound << endl;
+		if(numOfArgsFound != 9)
+		{
+			printf("Configuration File is not Formatted Correctly...Exiting\n");
+			exit(0);
+			
 		}
 	}
 }

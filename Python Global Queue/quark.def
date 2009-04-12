@@ -1,5 +1,0 @@
-[%price%]
-{
-<h3 class="zmp"><##DATA##></h3>
-}
-[%/price%]

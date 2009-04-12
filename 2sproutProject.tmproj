@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Standard UDP/Client/SproutClient.cpp</string>
+	<string>Standard UDP/Client/webCast.cpp</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -31,15 +31,15 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/webCast.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-04-08T23:57:58Z</date>
+					<date>2009-04-12T21:49:43Z</date>
+					<key>selected</key>
+					<true/>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-04-09T00:00:13Z</date>
-					<key>selected</key>
-					<true/>
+					<date>2009-04-12T21:49:43Z</date>
 				</dict>
 			</array>
 			<key>expanded</key>
@@ -444,44 +444,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>2</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>1192</integer>
+				<integer>416</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>173</integer>
+			<integer>699</integer>
 		</dict>
 		<key>Standard UDP/Client/webCast.cpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>48</integer>
 				<key>line</key>
-				<integer>167</integer>
+				<integer>99</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>142</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>2</integer>
-				<key>line</key>
-				<integer>173</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>167</integer>
-			</dict>
+			<integer>66</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
@@ -493,6 +477,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{1639, 22}, {827, 878}}</string>
+	<string>{{1651, -12}, {827, 878}}</string>
 </dict>
 </plist>

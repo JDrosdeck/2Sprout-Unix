@@ -32,7 +32,7 @@ Ruby
 
 swig -c++ -ruby sprout.i
 g++ -c sprout.cpp sprout.h 
-g++ -fPiC -I/Developer/SKDs/MacOSX10.5.sdk/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin9.0 -c sprout_wrap.cxx
+g++ -FPIC -c sprout_wrap.cxx -I/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin9.0 
 g++ -bundle -flat_namespace -undefined suppress -arch i386 -lz sprout.o sprout_wrap.o -o sprout.bundle 
 
 
