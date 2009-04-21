@@ -97,7 +97,7 @@ void* getData(void *thread_arg)
     
     //Put information into queue
 
-		if(numbytes < 5000 && sproutData.size() < 10000)
+		if(numbytes < 5000 && sproutData.size() < 50000)
 		{
    	    string input = buf;
 		sproutData.push(input); //pused the data into the temparary queue

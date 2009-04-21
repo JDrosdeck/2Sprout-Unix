@@ -6,11 +6,36 @@ port = 4950
 host = socket.gethostbyname(hostname)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)	
 
-for x in xrange(100000):
-	m = md5.new()
-	tempMessage = "what^120510^" + str(x) + "^fsa</body></sproutcast><sproutcast><url>http://www.google.com</url><body>Plastic piecies of"
-	m.update(tempMessage)
-	msg = str(m.hexdigest()) + "^" + tempMessage
-	print msg
-	time.sleep(.05)
-	s.sendto(msg,(host,port))
+
+m = md5.new()
+tempMessage = "what^120511^7^1^fsa</body></sproutcast><sproutcast><url>http://www.google.com</url><body>Plastic piecies of"
+m.update(tempMessage)
+msg = str(m.hexdigest()) + "^" + tempMessage
+print msg
+time.sleep(.05)
+s.sendto(msg,(host,port))
+
+m = md5.new()
+tempMessage = "what^120511^5^1^fsa</body></sproutcast><sproutcast><url>http://www.google.com</url><body>Plastic piecies of"
+m.update(tempMessage)
+msg = str(m.hexdigest()) + "^" + tempMessage
+print msg
+time.sleep(.05)
+s.sendto(msg,(host,port))
+
+
+m = md5.new()
+tempMessage = "what^120512^2^1^fsa</body></sproutcast><sproutcast><url>http://www.google.com</url><body>Plastic piecies of"
+m.update(tempMessage)
+msg = str(m.hexdigest()) + "^" + tempMessage
+print msg
+time.sleep(.05)
+s.sendto(msg,(host,port))
+
+m = md5.new()
+tempMessage = "what^120512^8^1^fsa</body></sproutcast><sproutcast><url>http://www.google.com</url><body>Plastic piecies of"
+m.update(tempMessage)
+msg = str(m.hexdigest()) + "^" + tempMessage
+print msg
+time.sleep(.05)
+s.sendto(msg,(host,port))
