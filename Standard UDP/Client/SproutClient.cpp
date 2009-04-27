@@ -607,12 +607,40 @@ void* replaceLostPacketsDay2(void *thread_arg)
 					
 				}		
 			}
+			reSentMissedPacketsDay2.clear();
 		
 		}
-		reSentMissedPacketsDay2.clear();
 		
 		pthread_mutex_unlock(&mylock);
-	
+		if(!packetsMissedDay2.empty())
+		{
+				//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
+
+				/*
+				int sizeOfLostPackets = (int)packetsMissedDay2.size();	
+				curl = curl_easy_init(); //initialize curl
+				int lostPacket;
+				int l;
+				for(l = 0; l < sizeOfLostPackets; l++)
+				{
+					lostPacket = packetsMissedDay2[l];
+					if(curl) 
+					{	
+	    				url = "http://2sprout.com/lostPacket/?port="; //access this webpage to be added to the database
+	    				url += lostPacket;
+	   					curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+	    				// Perform the request, res will get the return code/
+	    				res = curl_easy_perform(curl);
+	    				if(usleep(100000) == -1)
+						{
+							printf("Sleeping Error");
+						}	
+	    			}
+	    			curl_easy_cleanup(curl);
+				}
+				*/
+			
+		}
 }
 }
 
@@ -733,31 +761,7 @@ void* checkLostPackets(void *thread_arg)
 			}
 
 
-				//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
-
-				/*
-				int sizeOfLostPackets = (int)packetsMissed.size();	
-				curl = curl_easy_init(); //initialize curl
-				int lostPacket;
-				int l;
-				for(l = 0; l < sizeOfLostPackets; l++)
-				{
-					lostPacket = packetsMissed[l];
-					if(curl) 
-					{	
-	    				url = "http://2sprout.com/lostPacket/?port="; //access this webpage to be added to the database
-	    				url += lostPacket;
-	   					curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-	    				// Perform the request, res will get the return code/
-	    				res = curl_easy_perform(curl);
-	    				if(usleep(100000) == -1)
-						{
-							printf("Sleeping Error");
-						}	
-	    			}
-	    			curl_easy_cleanup(curl);
-				}
-				*/	
+			
 
 
 		}
@@ -821,10 +825,41 @@ void* replaceLostPackets(void *thread_arg)
 					
 				}		
 			}
+			reSentMissedPackets.clear();
 		
 		}
-		reSentMissedPackets.clear();
 		pthread_mutex_unlock(&mylock);
+		if(!packetsMissed.empty())
+		{
+			
+			printf("NOTIFYING SERVER OF MISSED PACKETS\n");
+				//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
+
+				/*
+				int sizeOfLostPackets = (int)packetsMissed.size();	
+				curl = curl_easy_init(); //initialize curl
+				int lostPacket;
+				int l;
+				for(l = 0; l < sizeOfLostPackets; l++)
+				{
+					lostPacket = packetsMissed[l];
+					if(curl) 
+					{	
+	    				url = "http://2sprout.com/lostPacket/?port="; //access this webpage to be added to the database
+	    				url += lostPacket;
+	   					curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+	    				// Perform the request, res will get the return code/
+	    				res = curl_easy_perform(curl);
+	    				if(usleep(100000) == -1)
+						{
+							printf("Sleeping Error");
+						}	
+	    			}
+	    			curl_easy_cleanup(curl);
+				}
+				*/
+			
+		}
 	}
 }
 
@@ -1054,7 +1089,7 @@ int readConfig()
 						if(firstSub == "usedb" && secoundSub == "false")
 						{
 							useDatabase = false;	
-							break;
+							return 0;
 						}
 						else if(firstSub == "usedb" && secoundSub == "true")
 						{
@@ -1397,7 +1432,7 @@ int main(int argc, char *argv[])
 	
 	//	announce(); //announce to the server that we're ready to recieve
 		int rc, i , status;
-		pthread_t threads[10];		
+		pthread_t threads[11];		
 		printf("Starting Threads...\n");
 		pthread_create(&threads[0], NULL, castListener, NULL);
 		pthread_create(&threads[1], NULL, createAndReadPipe, NULL);
@@ -1414,9 +1449,12 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[8], NULL, checkLostPackets, NULL);
 		printf("checking for packets on day2\n");
 		pthread_create(&threads[9], NULL, checkLostPacketsDay2, NULL);
+		pthread_create(&threads[10], NULL, replaceLostPackets, NULL);
+		
+		pthread_create(&threads[11], NULL, replaceLostPacketsDay2, NULL);
 		
 		
-		for(i =0; i < 10; i++)
+		for(i =0; i < 11; i++)
 		{
 			rc = pthread_join(threads[i], (void **) &status); 
 		}
