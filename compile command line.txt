@@ -43,7 +43,12 @@ g++ -bundle -flat_namespace -undefined suppress -arch i386 sprout.o sprout_wrap.
 mcs test.cs sprout.cs sproutPINVOKE.cs (This will compile it under mono)
 mono test.exe (this will execute it under mono)
 
+Java
 
+swig -c++ -java sprout.i
+g++ -c -FPIC sprout.cpp
+g++ -c -FPIC sprout_wrap.cxx -I/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Headers 
+g++ -bundle -flat_namespace -undefined suppress -arch i386  -o sprout.so sprout.o sprout_wrap.o 
 
 
 
