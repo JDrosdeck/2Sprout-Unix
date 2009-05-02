@@ -15,6 +15,7 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <iostream>
+#include <string>
 #include <curl/curl.h>
 #include <ctype.h>
 #include <sys/stat.h>
@@ -25,9 +26,15 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <sstream>
 #include <signal.h>
 #include <sys/file.h>
+#include <iostream>
 
 #define MAXBUFLEN 50000
-#define transferPipe "/tmp/transPipe"	
+#define transferPipe "/tmp/transPipe"
+#define passPipe "/tmp/pass"
+
+using namespace std;
+
+	
 int MYPORT;		//port which the client is bound to 
 
 
@@ -40,7 +47,9 @@ socklen_t addr_len;
 int numbytes;
 char buf[MAXBUFLEN];
 
-using namespace std;
+string secretKey;
+
+
 
 queue<string> sproutData;
 
@@ -99,14 +108,43 @@ void* getData(void *thread_arg)
 
 		if(numbytes < 5000 && sproutData.size() < 50000)
 		{
-   	    string input = buf;
-		sproutData.push(input); //pused the data into the temparary queue
- 		}
+   	    	string input = buf;
+			cout << input.substr(0,8) << endl;
+			if(input.substr(0,8) == secretKey)
+			{
+				sproutData.push(input.substr(8,input.length())); //pused the data into the temparary queue
+				printf("PUSHED\n");
+			} 		
+		}
    }
-       close(sockfd);
-
-   
+close(sockfd);   
 }
+
+
+void* getSecretKey(void *thread_arg)
+{
+	int fd, ret_val, count, numread;
+	char bufpipe[5000];
+
+	while(1)
+	{
+			fd = open(passPipe, O_RDONLY); //open the pipe for reading
+
+			numread = read(fd,bufpipe, 5000);
+			if(numread > 1)
+			{
+				bufpipe[numread] = '\0';
+				printf("%s\n", bufpipe);
+				secretKey = bufpipe;
+				cout << "The Secret Key is " << secretKey<< endl;
+				memset(bufpipe,'\0',5000 +1);
+				
+			}
+	}
+	
+	
+}
+
 
 
 
@@ -128,13 +166,7 @@ void* writeToClient(void *thread_arg)
 		exit(1);
 	}
 
- 	if(flock(fd,LOCK_EX) == -1) {
 
-	fprintf(stderr, "flock(fd,LOCK_EX): %s (%i)\n", strerror(errno), errno);
-	exit(0);
-
-	} 
-	
 	printf("Succeeded!\n");
 	
 	while(1)
@@ -160,18 +192,14 @@ void* writeToClient(void *thread_arg)
 			sproutData.pop();
 			//end of critical section
 			fd = open(transferPipe, O_WRONLY); //open the pipe for writing
+
+		 	
 			write(fd,s.c_str(),strlen(s.c_str())); 	//write the string to the pipe
 			close(fd); //close the connection to the pipe
 		}
 	}	
 	
-	if (flock(fd,LOCK_UN)==-1) 
-	{
-	fprintf(stderr, "flock(fd,LOCK_UN): %s (%i)\n", strerror(errno), errno);
 
-	exit(0);
-
-	}
 }
 
 
@@ -200,14 +228,14 @@ int main(int argc, char *argv[])
 		
 		MYPORT = atoi(argv[1]);
 		int rc, i , status;
-		pthread_t threads[2];
+		pthread_t threads[3];
 		printf("Starting Threads...\n");
 		pthread_create(&threads[0], NULL, getData, NULL);
 		pthread_create(&threads[1], NULL, writeToClient, NULL);
+		pthread_create(&threads[2], NULL, getSecretKey, NULL);
 		
 		
-		
-		for(i =0; i < 2; i++)
+		for(i =0; i < 3; i++)
 		{
 			rc = pthread_join(threads[i], (void **) &status); 
 		}

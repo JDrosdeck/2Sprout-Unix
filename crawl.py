@@ -7,20 +7,12 @@ crawled = set([])
 keywordregex = re.compile('<meta\sname=["\']keywords["\']\scontent=["\'](.*?)["\']\s/>')
 linkregex = re.compile('<a\s*href=[\'|"](.*?)[\'"].*?>')
 
-
-
-if os.access('/tmp/GlobalQueue', os.F_OK) == False: #check to see if the named pipe exists already (os.F_OK) is used to check file existance
-	os.mkfifo('/tmp/GlobalQueue') #file does not exists so make the quee
-
-
+f = open('buy.txt', 'a')
 
 while 1:
 	try:
 		crawling = tocrawl.pop()
-		fd = open('/tmp/GlobalQueue', 'w')
-		fd.write(crawling)
-		fd.close()
-		print "writing", crawling
+		print crawling
 	except KeyError:
 		raise StopIteration
 	url = urlparse.urlparse(crawling)
@@ -50,4 +42,6 @@ while 1:
 		elif not link.startswith('http'):
 			link = 'http://' + url[1] + '/' + link
 		if link not in crawled:
+			if "http://www.buy.com/prod/" in link == True:
+				f.write(link+"\n")
 			tocrawl.add(link)

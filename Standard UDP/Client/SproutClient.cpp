@@ -72,6 +72,7 @@ using namespace std;
 #define feedPipe "/tmp/feedPipe"		//pipe that feeds data back through the api to the user made application
 #define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
 #define transferPipe "/tmp/transPipe" //pipe used to transfer data from the cast app into the client
+#define passPipe "/tmp/pass"
 
 #define maxPipe		50000			
 
@@ -139,29 +140,139 @@ string secretKey = "what"; //The Initial secretKey should be gatherd by a call m
 string currentDate = "";
 string nextDate = "";
 
+
+//
+//  libcurl variables for error strings and returned data
+
+
+static char errorBuffer[CURL_ERROR_SIZE];
+static std::string buffer;
+//
+//  libcurl write callback function
+//
+static int writer(char *data, size_t size, size_t nmemb,
+                  std::string *writerData)
+{
+  if (writerData == NULL)
+    return 0;
+
+  writerData->append(data, size*nmemb);
+
+  return size * nmemb;
+}
+
+
+
 /*
 startFeed takes in one argument which is the string, the argument is not used right now.
 The libcurl library is used to contact 2sprout.com over http using tcp protocol, for reliability.
 By being directed to the webpage the ipaddress is added to the database, and feeds are then sent
 to that particular client
 */
-int announce()
+void* announce(void *thread_arg)
 {
+	char Portbuffer[10];
+	sprintf(Portbuffer, "%i", MYPORT);
+	
+	string url = "www.2sprout.com/onClient/?port=";
+	url += Portbuffer;
+	cout << url << endl;
+	curl = curl_easy_init();
+    if (curl == NULL)
+    {
+    	fprintf(stderr, "Failed to create CURL connection\n");
+    	exit(EXIT_FAILURE);
+  	}
 
-  curl = curl_easy_init(); //initialize curl
-  if(curl) 
+  res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
+  if (res != CURLE_OK)
   {
-  	url = "http://2sprout.com/onClient/?port="; //access this webpage to be added to the database
-    url +=MYPORT;
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-
-    /* Perform the request, res will get the return code */
-    res = curl_easy_perform(curl);
-    curl_easy_cleanup(curl);
+    fprintf(stderr, "Failed to set error buffer [%d]\n", res);
+    return false;
   }
 
-	printf("\n"); //A messages from the server will be recieved if the client is already active
-    return 1;
+  res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  if (res != CURLE_OK)
+  {
+    fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
+    return false;
+  }
+
+ res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+  if (res != CURLE_OK)
+  {
+    fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
+
+    return false;
+  }
+
+  res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
+  if (res != CURLE_OK)
+  {
+    fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
+
+    return false;
+  }
+
+  res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+  if (res != CURLE_OK)
+  {
+    fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
+    return false;
+  }
+
+
+  res = curl_easy_perform(curl);
+  curl_easy_cleanup(curl);
+  cout << buffer << endl;
+
+//parse the buffer Password^sleepTime
+
+string token;
+string section[2]; //a standard sproutcast should be made up of only 6 distince sections	
+istringstream iss(buffer);
+int count1 = 0;
+
+
+while(getline(iss,token,'^'))
+{
+	section[count1] = token;
+	cout << token << endl;
+	count1++;
+}
+
+
+if(section[0] != "" && section[1] != "")
+{
+	string updatedPassword = section[0];
+	int fd, ret_val, count, numread;
+	ret_val = mkfifo(passPipe, 0777); //create the pipe that will be used for transfering data back to user made app
+
+	if (( ret_val == -1) && (errno != EEXIST)) 
+	{
+		perror("Error creating named pipe\n");
+		exit(1);
+	}
+
+
+
+	char buffer[20];
+	int n = sprintf(buffer, section[0].c_str());
+
+	fd = open(passPipe, O_WRONLY);
+	
+
+	
+	write(fd, buffer, strlen(buffer));
+	close(fd);
+
+	cout << "sleeping for:" << section[1] << endl;
+	sleep(atoi(section[1].c_str()));
+	
+	
+}
+
+
 }
 
 
@@ -1178,12 +1289,7 @@ Information is passed through the api via named pipes
 		perror("Error creating named pipe");
 		exit(1);
 	}
-	if(flock(fd,LOCK_EX) == -1) {
 
-	fprintf(stderr, "flock(fd,LOCK_EX): %s (%i)\n", strerror(errno), errno);
-	exit(0);
-
-	}
 	
 	while(1)
 	{	
@@ -1224,13 +1330,7 @@ Information is passed through the api via named pipes
 			}
 		
 	}
-	if (flock(fd,LOCK_UN)==-1) 
-	{
-	fprintf(stderr, "flock(fd,LOCK_UN): %s (%i)\n", strerror(errno), errno);
 
-	exit(0);
-
-	}
 }
  
  
@@ -1269,7 +1369,7 @@ Information is passed through the api via named pipes
 	while(1)
 	{
 		fd = open(sproutPipe, O_RDONLY); //open the pipe for reading
-		
+
 		numread = read(fd,bufpipe, maxPipe);
 		if(numread > 1)
 		{
@@ -1305,7 +1405,7 @@ Information is passed through the api via named pipes
 	
 			if(command[0] == "startFeed")
 			{
-				announce();
+				//announce();
 			}
 	
 			if(command[0] == "getFeed")
@@ -1380,27 +1480,25 @@ int main(int argc, char *argv[])
 	
 		MYPORT = atoi(argv[1]); //set the port
 	
-		//announce(); //announce to the server that we're ready to recieve
 		int rc, i , status;
-		pthread_t threads[11];
+		pthread_t threads[8];
 		printf("Starting Threads...\n");
-		pthread_create(&threads[0], NULL, castListener, NULL);
+		pthread_create(&threads[0], NULL, announce, NULL);
+		
+		pthread_create(&threads[1], NULL, castListener, NULL);
 		printf("Socket Thread Started\n");
-		pthread_create(&threads[1], NULL, insertToDb, NULL);		
+		pthread_create(&threads[2], NULL, insertToDb, NULL);		
 		printf("InsertDB Thread Started\n");
-		pthread_create(&threads[2], NULL, checkPacketReliability, NULL);
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);
-		pthread_create(&threads[4], NULL, checkPacketReliability, NULL);	
-		pthread_create(&threads[5], NULL, checkPacketReliability, NULL);	
-		pthread_create(&threads[6], NULL, checkPacketReliability, NULL);
+
 		
 		printf("lost packets starting\n");
-		pthread_create(&threads[7], NULL, checkLostPackets, NULL);
+		pthread_create(&threads[4], NULL, checkLostPackets, NULL);
 		printf("checking for packets on day2\n");
-		pthread_create(&threads[8], NULL, checkLostPacketsDay2, NULL);
-		pthread_create(&threads[9], NULL, replaceLostPackets, NULL);
+		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
+		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);
 		
-		pthread_create(&threads[10], NULL, replaceLostPacketsDay2, NULL);
+		pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);
 		
 		
 		
@@ -1409,7 +1507,7 @@ int main(int argc, char *argv[])
 		
 		
 
-		for(i =0; i < 11; i++)
+		for(i =0; i < 8; i++)
 		{
 			rc = pthread_join(threads[i], (void **) &status); 
 		}

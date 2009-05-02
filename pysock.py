@@ -11,7 +11,8 @@ for x in xrange(100000):
 	m = md5.new()
 	tempMessage = "what^120511^"+ str(x) + "^0^fsa</body></sproutcast><sproutcast><url>http://www.google.com</url><body>Plastic piecies of"
 	m.update(tempMessage)
-	msg = str(m.hexdigest()) + "^" + tempMessage
+	msg1 = str(m.hexdigest()) + "^" + tempMessage
+	msg = "0sip4a6N" + msg1
 	print msg
 	time.sleep(.05)
 	s.sendto(msg,(host,port))
