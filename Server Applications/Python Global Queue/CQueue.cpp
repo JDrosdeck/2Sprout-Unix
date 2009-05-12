@@ -102,7 +102,7 @@ void* sendOutgoingURLS(void *thread_arg)
 	{	
 	
 
-		if(usleep(100000) == -1)
+		if(usleep(1000) == -1)
 		{
 			printf("Sleeping Error\n");
 		}			

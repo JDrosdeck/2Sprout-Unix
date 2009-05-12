@@ -46,7 +46,7 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 
 
 #include "md5.h"
-
+#include "base64.h"
 
 
 
@@ -85,8 +85,10 @@ using namespace std;
 
 //startFeed Vars
 
-CURL *curl;
-CURLcode res;
+
+
+
+
 string url;
 int MYPORT;		//port which the client is bound to 
 
@@ -140,7 +142,7 @@ string secretKey = "what"; //The Initial secretKey should be gatherd by a call m
 string currentDate = "";
 string nextDate = "";
 
-
+string cipher; //used to decode the message
 //
 //  libcurl variables for error strings and returned data
 
@@ -157,12 +159,27 @@ static int writer(char *data, size_t size, size_t nmemb,
     return 0;
 
   writerData->append(data, size*nmemb);
-
   return size * nmemb;
 }
 
 
+string XOR(string value,string key)
+{
+    string retval(value);
 
+    short unsigned int klen=key.length();
+    short unsigned int vlen=value.length();
+    short unsigned int k=0;
+    short unsigned int v=0;
+    
+    for(v;v<vlen;v++)
+    {
+        retval[v]=value[v]^key[k];
+        k=(++k < klen ? k : 0);
+    }
+    
+    return retval;
+}
 /*
 startFeed takes in one argument which is the string, the argument is not used right now.
 The libcurl library is used to contact 2sprout.com over http using tcp protocol, for reliability.
@@ -170,109 +187,115 @@ By being directed to the webpage the ipaddress is added to the database, and fee
 to that particular client
 */
 void* announce(void *thread_arg)
-{
-	char Portbuffer[10];
-	sprintf(Portbuffer, "%i", MYPORT);
+{	
+		
+		CURL *curl;
+		CURLcode res;
+		char Portbuffer[10];
+		sprintf(Portbuffer, "%i", MYPORT);
 	
-	string url = "www.2sprout.com/onClient/?port=";
-	url += Portbuffer;
-	cout << url << endl;
-	curl = curl_easy_init();
-    if (curl == NULL)
-    {
-    	fprintf(stderr, "Failed to create CURL connection\n");
-    	exit(EXIT_FAILURE);
-  	}
+		string url = "www.2sprout.com/onClient/?port=";
+		url += Portbuffer;
+		cout << url << endl;
+		while(1)
+		{
+		curl = curl_easy_init();
+    	if (curl == NULL)
+    	{
+    		fprintf(stderr, "Failed to create CURL connection\n");
+    		exit(EXIT_FAILURE);
+  		}
 
-  res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-  if (res != CURLE_OK)
-  {
-    fprintf(stderr, "Failed to set error buffer [%d]\n", res);
-    return false;
-  }
+  		res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
+  		if (res != CURLE_OK)
+  		{
+    		fprintf(stderr, "Failed to set error buffer [%d]\n", res);
+    		return false;
+  		}
 
-  res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-  if (res != CURLE_OK)
-  {
-    fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
-    return false;
-  }
+  		res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  		if (res != CURLE_OK)
+  		{
+    		fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
+    		return false;
+  		}
 
- res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-  if (res != CURLE_OK)
-  {
-    fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
+ 		res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+  		if (res != CURLE_OK)
+  		{
+    		fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
+    		return false;
+  		}
 
-    return false;
-  }
+  		res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
+  		if (res != CURLE_OK)
+  		{
+    		fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
+    		return false;
+  		}
 
-  res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
-  if (res != CURLE_OK)
-  {
-    fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
+  		res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+  		if (res != CURLE_OK)
+  		{
+    		fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
+    		return false;
+  		}
 
-    return false;
-  }
+  		res = curl_easy_perform(curl);
+  		curl_easy_cleanup(curl);
+  		cout << buffer << endl;
 
-  res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
-  if (res != CURLE_OK)
-  {
-    fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
-    return false;
-  }
+		//Convert the buffer from base64
+  
+  		string decoded = base64_decode(buffer);
+  		cout << "Decoded: " <<  decoded << endl;
+  		//XOR with the secret cypher
+		string value(decoded);
+		string key("23qwefwl;dg24t");
+		value = XOR(decoded,key);
+		cout << "Decrypted: " << value << endl;
 
+		//parse the buffer Password^sleepTime
 
-  res = curl_easy_perform(curl);
-  curl_easy_cleanup(curl);
-  cout << buffer << endl;
+		string token;
+		string section[3];	
+		istringstream iss(value);
+		int count1 = 0;
 
-//parse the buffer Password^sleepTime
+		while(getline(iss,token,'^'))
+		{
+			section[count1] = token;
+			cout << token << endl;
+			count1++;
+		}
 
-string token;
-string section[2]; //a standard sproutcast should be made up of only 6 distince sections	
-istringstream iss(buffer);
-int count1 = 0;
+		if(section[0] != "" && section[1] != "" && section[2] != "")
+		{
+			cipher = section[2];
+			string updatedPassword = section[0];
+			int fd, ret_val, count, numread;
+			ret_val = mkfifo(passPipe, 0777); //create the pipe that will be used for transfering data back to user made app
 
+			if (( ret_val == -1) && (errno != EEXIST)) 
+			{
+				perror("Error creating named pipe\n");
+				exit(1);
+			}
+	
+			char buffer1[50];
+			string messageToPass = section[0] + " " + section[2];
+			int n = sprintf(buffer1, messageToPass.c_str());
 
-while(getline(iss,token,'^'))
-{
-	section[count1] = token;
-	cout << token << endl;
-	count1++;
-}
+			fd = open(passPipe, O_WRONLY);
 
+			write(fd, buffer1, strlen(buffer1));
+			close(fd);
 
-if(section[0] != "" && section[1] != "")
-{
-	string updatedPassword = section[0];
-	int fd, ret_val, count, numread;
-	ret_val = mkfifo(passPipe, 0777); //create the pipe that will be used for transfering data back to user made app
-
-	if (( ret_val == -1) && (errno != EEXIST)) 
-	{
-		perror("Error creating named pipe\n");
-		exit(1);
+			cout << "sleeping for:" << section[1] << endl;
+			buffer.clear();
+			sleep(atoi(section[1].c_str()));
 	}
-
-
-
-	char buffer[20];
-	int n = sprintf(buffer, section[0].c_str());
-
-	fd = open(passPipe, O_WRONLY);
-	
-
-	
-	write(fd, buffer, strlen(buffer));
-	close(fd);
-
-	cout << "sleeping for:" << section[1] << endl;
-	sleep(atoi(section[1].c_str()));
-	
-	
 }
-
-
 }
 
 
@@ -284,6 +307,8 @@ it will then delete the proper value from the database based on the ip address i
 */
 int closeAnnounce()
 {
+	CURL *curl;
+	CURLcode res;
 	curl = curl_easy_init();
 	if(curl)
 	{
@@ -1293,42 +1318,29 @@ Information is passed through the api via named pipes
 	
 	while(1)
 	{	
-		pthread_mutex_lock(&mylock);
 		if(sproutFeed.empty())
 		{
-			pthread_mutex_unlock(&mylock);
 			
 			if(usleep(100000) == -1)
 			{
 				printf("Sleeping Error");
 			}
 		}
-		else
+				
+		
+		if(!sproutFeed.empty())
 		{
-			pthread_mutex_unlock(&mylock);
-		}			
-		
-			pthread_mutex_lock(&mylock);
-			if(!sproutFeed.empty())
-			{
 				
-				printf("NOT EMPTY \n");
-				//start of critcal section
-				string s = sproutFeed.front() + "\n";
-				//check the packet here
-				sproutFeed.pop();
-				pthread_mutex_unlock(&mylock);
-				//end of critical section
-				fd = open(feedPipe, O_WRONLY); //open the pipe for writing
-				write(fd,s.c_str(),strlen(s.c_str())); 	//write the string to the pipe
-				close(fd); //close the connection to the pipe
-			}
-			else
-			{
-				pthread_mutex_unlock(&mylock);
-				
-			}
-		
+			printf("NOT EMPTY \n");
+			//start of critcal section
+			string s = sproutFeed.front() + "\n";
+			//check the packet here
+			sproutFeed.pop();
+			//end of critical section
+			fd = open(feedPipe, O_WRONLY); //open the pipe for writing
+			write(fd,s.c_str(),strlen(s.c_str())); 	//write the string to the pipe
+			close(fd); //close the connection to the pipe
+		}		
 	}
 
 }
@@ -1364,7 +1376,6 @@ Information is passed through the api via named pipes
 
 	}
 	
-//	fd = open(sproutPipe, O_RDONLY); //open the pipe for reading
 	
 	while(1)
 	{
@@ -1437,7 +1448,7 @@ void catch_int(int sig_num)
 	unlink(feedPipe);
 	unlink(sproutPipe);
 	unlink(transferPipe); 
-	
+	unlink(passPipe);
 	printf("Files deleted");
     fflush(stdout);
 	exit(0);
@@ -1483,8 +1494,11 @@ int main(int argc, char *argv[])
 		int rc, i , status;
 		pthread_t threads[8];
 		printf("Starting Threads...\n");
-		pthread_create(&threads[0], NULL, announce, NULL);
 		
+	
+		
+		pthread_create(&threads[0], NULL, announce, NULL);
+	
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		printf("Socket Thread Started\n");
 		pthread_create(&threads[2], NULL, insertToDb, NULL);		
@@ -1499,11 +1513,11 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);
 		
 		pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);
+			
+
 		
 		
 		
-		
-		printf("Checking Packets \n");
 		
 		
 

@@ -27,6 +27,8 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <signal.h>
 #include <sys/file.h>
 #include <iostream>
+#include "base64.h"
+
 
 #define MAXBUFLEN 50000
 #define transferPipe "/tmp/transPipe"
@@ -48,10 +50,33 @@ int numbytes;
 char buf[MAXBUFLEN];
 
 string secretKey;
+string cipher;
 
+string rawPacket;
 
 
 queue<string> sproutData;
+
+/*
+The XOR function will decrypt/Encrypt a packet..For this case it is decrypting
+*/
+string XOR(string value,string key)
+{
+    string retval(value);
+
+    short unsigned int klen=key.length();
+    short unsigned int vlen=value.length();
+    short unsigned int k=0;
+    short unsigned int v=0;
+    
+    for(v;v<vlen;v++)
+    {
+        retval[v]=value[v]^key[k];
+        k=(++k < klen ? k : 0);
+    }
+    
+    return retval;
+}
 
 
 void* getData(void *thread_arg)
@@ -80,52 +105,60 @@ void* getData(void *thread_arg)
  	while(1)
  	{
  
-    	addr_len = sizeof their_addr;
-	//	printf("Recieving\n");
-   
-    	if ((numbytes = recvfrom(sockfd, buf, MAXBUFLEN-1 , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
+    	addr_len = sizeof their_addr;   		
+    	if ((numbytes = recvfrom(sockfd, (void *) rawPacket.c_str(), MAXBUFLEN-1 , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
     	{
         perror("recvfrom\n");
         exit(1);
    		}
 	
-	  //  printf("server: got connection from %s\n",inet_ntoa(their_addr.sin_addr));
         ipAdd = inet_ntoa(their_addr.sin_addr);
-      //  printf("%s\n",ipAdd);
          
-	 //   printf("got packet from %s\n",inet_ntoa(their_addr.sin_addr));
     	printf("packet is %d bytes long\n",numbytes);
     	buf[numbytes] = '\0';
-    //	printf("packet contains \"%s\"\n",buf);	
+    	printf("packet contains \"%s\"\n",rawPacket.c_str());	
     
     
     /*
-    Before putting the item in the queue read the packet number and place it in the packet Array
-    Check for the md5 hashsum before stripping the packet number from the message.
+		Before putting the packet recieved into the queue, decode from base64, then decrpyt with the cipher
+		. Check that the secret keys match, then push into the queue.
     */
     
-    //Put information into queue
 
 		if(numbytes < 5000 && sproutData.size() < 50000)
 		{
-   	    	string input = buf;
+   	    	string input = rawPacket.c_str();
+
+			string decoded = base64_decode(input);
+				
+			printf("Starting Encrpytion...\n");
+			string value(decoded);
+			string key(cipher);
+			value = XOR(decoded,key);
+			cout << "Decrypted " << value << endl;
 			cout << input.substr(0,8) << endl;
 			if(input.substr(0,8) == secretKey)
 			{
-				sproutData.push(input.substr(8,input.length())); //pused the data into the temparary queue
+				sproutData.push(input.substr(8,input.length())); //pushed the data into the temparary queue
 				printf("PUSHED\n");
+
 			} 		
+
 		}
    }
 close(sockfd);   
 }
 
 
+
+/*
+	This function will grab the secret key and the cipher from the client application
+*/
 void* getSecretKey(void *thread_arg)
 {
 	int fd, ret_val, count, numread;
 	char bufpipe[5000];
-
+	string tempMessage;
 	while(1)
 	{
 			fd = open(passPipe, O_RDONLY); //open the pipe for reading
@@ -135,9 +168,38 @@ void* getSecretKey(void *thread_arg)
 			{
 				bufpipe[numread] = '\0';
 				printf("%s\n", bufpipe);
-				secretKey = bufpipe;
-				cout << "The Secret Key is " << secretKey<< endl;
+				tempMessage = bufpipe;
 				memset(bufpipe,'\0',5000 +1);
+				
+				//The message will come looking like secretKey Cipher (Space in between)
+				
+				string token;
+				string command[2];	//messages passed through can have a maximum of 10 arguments. (should never be more then that)
+				istringstream iss(tempMessage);
+				int count1 = 0;
+
+
+				/*
+				This will tokenize the string and figure out what commands and arguments have been passed through from the API
+				It will then call the specified functions with their arguments
+				*/
+
+				while(getline(iss,token,' '))
+				{
+					command[count1] = token;
+					cout << token << endl;
+					count1++;
+				}
+				
+				if(command[0] != "" && command[1] != "")
+				{
+					secretKey = command[0];
+					cipher = command[1];
+					cout << "SECRET KEY " << secretKey << endl;
+					cout << "CIPHER     " << cipher << endl;
+				}
+
+			
 				
 			}
 	}
@@ -173,7 +235,7 @@ void* writeToClient(void *thread_arg)
 	{	
 	
 
-			if(usleep(100000) == -1)
+			if(usleep(1000) == -1)
 			{
 				printf("Sleeping Error\n");
 			}			
