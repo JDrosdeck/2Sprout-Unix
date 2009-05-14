@@ -145,7 +145,7 @@ string nextDate = "";
 string cipher; //used to decode the message
 //
 //  libcurl variables for error strings and returned data
-
+bool getFeedBool = false;
 
 static char errorBuffer[CURL_ERROR_SIZE];
 static std::string buffer;
@@ -360,7 +360,7 @@ void* castListener(void *thread_arg)
 			if(numread > 1)
 			{
 				bufpipe[numread] = '\0';
-				//printf("Recieved %s from Feed Pipe\n", bufpipe);
+				printf("Recieved %s from Feed Pipe\n", bufpipe);
 				//find the actual size 
 				unprocessedData.push(bufpipe);
 				memset(bufpipe,'\0',maxPipe +1);
@@ -1290,6 +1290,11 @@ int readConfig()
 
 
 
+void catch_sigpipe(int sig_num)
+{
+	printf("pipe is BROKEN\n");
+	
+}
 
  
  
@@ -1321,25 +1326,37 @@ Information is passed through the api via named pipes
 		if(sproutFeed.empty())
 		{
 			
-			if(usleep(100000) == -1)
+			if(usleep(1000) == -1)
 			{
 				printf("Sleeping Error");
 			}
 		}
 				
 		
-		if(!sproutFeed.empty())
+		if(!sproutFeed.empty() && getFeedBool == true)
 		{
-				
+				signal(SIGPIPE, catch_sigpipe);
 			printf("NOT EMPTY \n");
 			//start of critcal section
+			pthread_mutex_lock(&mylock);
 			string s = sproutFeed.front() + "\n";
 			//check the packet here
 			sproutFeed.pop();
 			//end of critical section
+			pthread_mutex_unlock(&mylock);
+			try{
+				
+			
 			fd = open(feedPipe, O_WRONLY); //open the pipe for writing
 			write(fd,s.c_str(),strlen(s.c_str())); 	//write the string to the pipe
+			s.clear();
 			close(fd); //close the connection to the pipe
+			}
+		catch(char * str)
+		{
+	      cout << "Exception raised: " << str << '\n';
+			
+		}
 		}		
 	}
 
@@ -1369,12 +1386,6 @@ Information is passed through the api via named pipes
 		exit(1);
 	}
 	
-	if(flock(fd,LOCK_EX) == -1) 
-	{
-		fprintf(stderr, "flock(fd,LOCK_EX): %s (%i)\n", strerror(errno), errno);
-		exit(0);
-
-	}
 	
 	
 	while(1)
@@ -1421,24 +1432,31 @@ Information is passed through the api via named pipes
 	
 			if(command[0] == "getFeed")
 			{
-				int rc, i , status;
-				pthread_t threads[1];
-				pthread_create(&threads[0], NULL, getFeed, NULL);
+				/*
+				This will error out if the api starts a connection. Disconnects. Then restarts
+				Possible fix, have the thread start in the Main. Then use a boolean to detect weither it's
+				listening or not
+				*/
+				
+				getFeedBool = true;
+				
+				//int rc, i , status;
+				//pthread_t threads[1];
+				//pthread_create(&threads[0], NULL, getFeed, NULL);
 				printf("()()()()()()()()()()()()()()()()()()()()()()()()()Started getFeedThread\n");
 			}
 
 		}
 
 	}
-	if (flock(fd,LOCK_UN)==-1) 
-	{
-		fprintf(stderr, "flock(fd,LOCK_UN): %s (%i)\n", strerror(errno), errno);
-		exit(0);
 
-	}
 }
  
+
+//CATCH SIGPIPE
  
+
+
 
 void catch_int(int sig_num)
 {
@@ -1544,29 +1562,24 @@ int main(int argc, char *argv[])
 	
 	//	announce(); //announce to the server that we're ready to recieve
 		int rc, i , status;
-		pthread_t threads[11];		
+		pthread_t threads[9];		
 		printf("Starting Threads...\n");
-		pthread_create(&threads[0], NULL, castListener, NULL);
-		pthread_create(&threads[1], NULL, createAndReadPipe, NULL);
-		pthread_create(&threads[2], NULL, checkPacketReliability, NULL);	
-		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);		
-		pthread_create(&threads[4], NULL, checkPacketReliability, NULL);
-		pthread_create(&threads[5], NULL, checkPacketReliability, NULL);
-		pthread_create(&threads[6], NULL, checkPacketReliability, NULL);
-		
-		printf("Checking Packets \n");
-		
-		pthread_create(&threads[7], NULL, checkPacketReliability, NULL);
+		pthread_create(&threads[0], NULL, announce, NULL);
+		pthread_create(&threads[1], NULL, castListener, NULL);
+		pthread_create(&threads[2], NULL, createAndReadPipe, NULL);
+		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
+
+	
 		printf("lost packets starting\n");
-		pthread_create(&threads[8], NULL, checkLostPackets, NULL);
+		pthread_create(&threads[4], NULL, checkLostPackets, NULL);
 		printf("checking for packets on day2\n");
-		pthread_create(&threads[9], NULL, checkLostPacketsDay2, NULL);
-		pthread_create(&threads[10], NULL, replaceLostPackets, NULL);
+		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
+		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);
 		
-		pthread_create(&threads[11], NULL, replaceLostPacketsDay2, NULL);
+		pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);
+		pthread_create(&threads[8], NULL, getFeed, NULL);
 		
-		
-		for(i =0; i < 11; i++)
+		for(i =0; i < 9; i++)
 		{
 			rc = pthread_join(threads[i], (void **) &status); 
 		}

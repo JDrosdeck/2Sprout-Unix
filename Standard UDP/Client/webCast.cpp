@@ -136,10 +136,10 @@ void* getData(void *thread_arg)
 			string key(cipher);
 			value = XOR(decoded,key);
 			cout << "Decrypted " << value << endl;
-			cout << input.substr(0,8) << endl;
-			if(input.substr(0,8) == secretKey)
+			cout << value.substr(0,8) << endl;
+			if(value.substr(0,8) == secretKey)
 			{
-				sproutData.push(input.substr(8,input.length())); //pushed the data into the temparary queue
+				sproutData.push(value.substr(8,value.length())); //pushed the data into the temparary queue
 				printf("PUSHED\n");
 
 			} 		
@@ -235,10 +235,10 @@ void* writeToClient(void *thread_arg)
 	{	
 	
 
-			if(usleep(1000) == -1)
-			{
-				printf("Sleeping Error\n");
-			}			
+		if(usleep(1000) == -1)
+		{
+			printf("Sleeping Error\n");
+		}			
 			
 		if(!sproutData.empty())
 		{
