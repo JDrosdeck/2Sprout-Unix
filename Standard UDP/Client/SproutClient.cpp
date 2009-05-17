@@ -1352,10 +1352,6 @@ Information is passed through the api via named pipes
 			int written = write(fd,actualString.c_str(),strlen(actualString.c_str())); 	//write the string to the pipe
 			printf("WROTE: %i\n", written);
 			close(fd); //close the connection to the pipe
-			
-			
-			
-			
 			sproutFeed.pop();
 			pthread_mutex_unlock(&mylock);
 			

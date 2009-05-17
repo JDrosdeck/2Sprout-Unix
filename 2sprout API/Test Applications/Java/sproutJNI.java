@@ -10,6 +10,6 @@
 class sproutJNI {
   public final static native int startFeed();
   public final static native int stopFeed();
-  public final static native String getNextItem();
   public final static native int getFeed();
+  public final static native String getSproutItem();
 }

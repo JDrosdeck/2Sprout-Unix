@@ -192,7 +192,7 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 extern int startFeed();
 extern int stopFeed();
 extern int getFeed();
-extern char* getNextItem();
+extern char* getSproutItem();
 
 
 #ifdef __cplusplus
@@ -223,18 +223,6 @@ SWIGEXPORT jint JNICALL Java_sproutJNI_stopFeed(JNIEnv *jenv, jclass jcls) {
 }
 
 
-SWIGEXPORT jstring JNICALL Java_sproutJNI_getNextItem(JNIEnv *jenv, jclass jcls) {
-  jstring jresult = 0 ;
-  char *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  result = (char *)getNextItem();
-  if(result) jresult = jenv->NewStringUTF((const char *)result);
-  return jresult;
-}
-
-
 SWIGEXPORT jint JNICALL Java_sproutJNI_getFeed(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   int result;
@@ -243,6 +231,18 @@ SWIGEXPORT jint JNICALL Java_sproutJNI_getFeed(JNIEnv *jenv, jclass jcls) {
   (void)jcls;
   result = (int)getFeed();
   jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jstring JNICALL Java_sproutJNI_getSproutItem(JNIEnv *jenv, jclass jcls) {
+  jstring jresult = 0 ;
+  char *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (char *)getSproutItem();
+  if(result) jresult = jenv->NewStringUTF((const char *)result);
   return jresult;
 }
 

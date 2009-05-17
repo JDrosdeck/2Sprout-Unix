@@ -24,9 +24,9 @@ SWIG
 
 Python
 
-swig -c++ -python 2sprout.i
-g++ -c 2sprout.cpp 2sprout_wrap.cxx -I/usr/include/python2.5 -I/usr/lib/python2.5
-g++ -bundle -flat_namespace -undefined suppress -arch i386  -o _sprout.so 2sprout.o 2sprout_wrap.o 
+swig -c++ -python sprout.i
+g++ -c sprout.cpp sprout_wrap.cxx -I/usr/include/python2.5 -I/usr/lib/python2.5
+g++ -bundle -flat_namespace -undefined suppress -arch i386  -o _sprout.so sprout.o sprout_wrap.o 
 
 Ruby
 
@@ -94,11 +94,11 @@ g++ -shared -I/usr/include/postgresql -I/usr/local/pgsql/lib -lpq -lpqxx sproutS
 
 compile Test API
 
-g++ -L/usr/local/2sprout/lib -l2sprout -o api test.cpp 
+g++ -L/usr/local/2sprout/lib -lsprout -o api test.cpp 
 
 create Library
 
-ar cq lib2sprout.a *.o
+ar cq libsprout.a *.o
 
 
 

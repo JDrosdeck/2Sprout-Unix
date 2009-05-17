@@ -21,13 +21,13 @@ public class sprout {
     return ret;
   }
 
-  public static string getNextItem() {
-    string ret = sproutPINVOKE.getNextItem();
+  public static int getFeed() {
+    int ret = sproutPINVOKE.getFeed();
     return ret;
   }
 
-  public static int getFeed() {
-    int ret = sproutPINVOKE.getFeed();
+  public static string getSproutItem() {
+    string ret = sproutPINVOKE.getSproutItem();
     return ret;
   }
 

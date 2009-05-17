@@ -190,9 +190,9 @@ class sproutPINVOKE {
   [DllImport("sprout", EntryPoint="CSharp_stopFeed")]
   public static extern int stopFeed();
 
-  [DllImport("sprout", EntryPoint="CSharp_getNextItem")]
-  public static extern string getNextItem();
-
   [DllImport("sprout", EntryPoint="CSharp_getFeed")]
   public static extern int getFeed();
+
+  [DllImport("sprout", EntryPoint="CSharp_getSproutItem")]
+  public static extern string getSproutItem();
 }

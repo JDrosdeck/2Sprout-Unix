@@ -2,11 +2,15 @@ public class test implements Runnable
 {
 	public void run()
 	{
-		System.out.println("HERE");
 		sprout.getFeed();
-		String xmlString = sprout.getNextItem();
-		System.out.println("WHAT");
-		System.out.println(xmlString);
+		int x = 0;
+		for(;;)
+		{
+			x = x + 1;
+			String xmlString = sprout.getSproutItem();
+			System.out.println(xmlString);
+			System.out.println(x);
+		}
 		
 	}
 	

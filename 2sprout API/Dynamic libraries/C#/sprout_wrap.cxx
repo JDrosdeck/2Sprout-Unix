@@ -262,7 +262,7 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterStringCallback_sprout(SWIG_CSharpStringH
 extern int startFeed();
 extern int stopFeed();
 extern int getFeed();
-extern char* getNextItem();
+extern char* getSproutItem();
 
 
 #ifdef __cplusplus
@@ -289,22 +289,22 @@ SWIGEXPORT int SWIGSTDCALL CSharp_stopFeed() {
 }
 
 
-SWIGEXPORT char * SWIGSTDCALL CSharp_getNextItem() {
-  char * jresult ;
-  char *result = 0 ;
-  
-  result = (char *)getNextItem();
-  jresult = SWIG_csharp_string_callback((const char *)result); 
-  return jresult;
-}
-
-
 SWIGEXPORT int SWIGSTDCALL CSharp_getFeed() {
   int jresult ;
   int result;
   
   result = (int)getFeed();
   jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT char * SWIGSTDCALL CSharp_getSproutItem() {
+  char * jresult ;
+  char *result = 0 ;
+  
+  result = (char *)getSproutItem();
+  jresult = SWIG_csharp_string_callback((const char *)result); 
   return jresult;
 }
 

@@ -5,25 +5,25 @@ using System.Threading;
 public class test{
 	
 	
-	static void startAPI()
+	static void start2sprout()
 	{
 		sprout.getFeed();
-	}
-	
-	static void getData()
-	{
-	string x = sprout.getNextItem();
-	Console.WriteLine(x);
-	
+		int x = 0;
+		
+		for(;;)
+		{
+			x = x+ 1;
+			string data = sprout.getSproutItem();
+			Console.WriteLine(data);
+			Console.WriteLine(x);
+		}
 	}
 	
 	
 	static void Main(string[] args)
 	{	
-		Thread thread1 = new Thread(new ThreadStart(startAPI));
-		Thread thread2 = new Thread(new ThreadStart(getData));
+		Thread thread1 = new Thread(new ThreadStart(start2sprout));
 		thread1.Start();
-		thread2.Start();
 	}
 
 

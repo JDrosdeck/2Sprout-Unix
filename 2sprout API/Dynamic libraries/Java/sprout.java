@@ -16,12 +16,12 @@ public class sprout {
     return sproutJNI.stopFeed();
   }
 
-  public static String getNextItem() {
-    return sproutJNI.getNextItem();
-  }
-
   public static int getFeed() {
     return sproutJNI.getFeed();
+  }
+
+  public static String getSproutItem() {
+    return sproutJNI.getSproutItem();
   }
 
 }

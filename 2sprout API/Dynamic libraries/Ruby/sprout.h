@@ -12,5 +12,7 @@
 #include <unistd.h>
 #include <queue>
 
+int startFeed();
+int stopFeed();
 int getFeed();
-char* getNextItem();
+char * getSproutItem();

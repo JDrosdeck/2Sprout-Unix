@@ -1565,8 +1565,32 @@ static VALUE mSprout;
 #include <stdexcept>
 
 
+extern int startFeed();
+extern int stopFeed();
 extern int getFeed();
-extern char* getNextItem();
+extern char* getSproutItem();
+
+
+#include <limits.h>
+#ifndef LLONG_MIN
+# define LLONG_MIN	LONG_LONG_MIN
+#endif
+#ifndef LLONG_MAX
+# define LLONG_MAX	LONG_LONG_MAX
+#endif
+#ifndef ULLONG_MAX
+# define ULLONG_MAX	ULONG_LONG_MAX
+#endif
+
+
+  #define SWIG_From_long   LONG2NUM 
+
+
+SWIGINTERNINLINE VALUE
+SWIG_From_int  (int value)
+{    
+  return SWIG_From_long  (value);
+}
 
 
 SWIGINTERN swig_type_info*
@@ -1605,38 +1629,32 @@ SWIG_FromCharPtr(const char *cptr)
   return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
 }
 
-
-#include <limits.h>
-#ifndef LLONG_MIN
-# define LLONG_MIN	LONG_LONG_MIN
-#endif
-#ifndef LLONG_MAX
-# define LLONG_MAX	LONG_LONG_MAX
-#endif
-#ifndef ULLONG_MAX
-# define ULLONG_MAX	ULONG_LONG_MAX
-#endif
-
-
-  #define SWIG_From_long   LONG2NUM 
-
-
-SWIGINTERNINLINE VALUE
-SWIG_From_int  (int value)
-{    
-  return SWIG_From_long  (value);
-}
-
 SWIGINTERN VALUE
-_wrap_getNextItem(int argc, VALUE *argv, VALUE self) {
-  char *result = 0 ;
+_wrap_startFeed(int argc, VALUE *argv, VALUE self) {
+  int result;
   VALUE vresult = Qnil;
   
   if ((argc < 0) || (argc > 0)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
-  result = (char *)getNextItem();
-  vresult = SWIG_FromCharPtr((const char *)result);
+  result = (int)startFeed();
+  vresult = SWIG_From_int(static_cast< int >(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_stopFeed(int argc, VALUE *argv, VALUE self) {
+  int result;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (int)stopFeed();
+  vresult = SWIG_From_int(static_cast< int >(result));
   return vresult;
 fail:
   return Qnil;
@@ -1653,6 +1671,22 @@ _wrap_getFeed(int argc, VALUE *argv, VALUE self) {
   }
   result = (int)getFeed();
   vresult = SWIG_From_int(static_cast< int >(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_getSproutItem(int argc, VALUE *argv, VALUE self) {
+  char *result = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (char *)getSproutItem();
+  vresult = SWIG_FromCharPtr((const char *)result);
   return vresult;
 fail:
   return Qnil;
@@ -1921,7 +1955,9 @@ SWIGEXPORT void Init_sprout(void) {
   }
   
   SWIG_RubyInitializeTrackings();
-  rb_define_module_function(mSprout, "getNextItem", VALUEFUNC(_wrap_getNextItem), -1);
+  rb_define_module_function(mSprout, "startFeed", VALUEFUNC(_wrap_startFeed), -1);
+  rb_define_module_function(mSprout, "stopFeed", VALUEFUNC(_wrap_stopFeed), -1);
   rb_define_module_function(mSprout, "getFeed", VALUEFUNC(_wrap_getFeed), -1);
+  rb_define_module_function(mSprout, "getSproutItem", VALUEFUNC(_wrap_getSproutItem), -1);
 }
 
