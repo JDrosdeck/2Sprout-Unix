@@ -1312,10 +1312,6 @@ Information is passed through the api via named pipes
 	while(1)
 	{	
 		pthread_mutex_lock(&mylock);
-		if(!sproutFeed.empty())
-		{
-			printf("SIZE OF SPROUTFEED: %i\n", sproutFeed.size());
-		}
 		
 		if(!sproutFeed.empty() && getFeedBool == true)
 		{

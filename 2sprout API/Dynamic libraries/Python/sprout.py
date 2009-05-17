@@ -51,6 +51,6 @@ del types
 startFeed = _sprout.startFeed
 stopFeed = _sprout.stopFeed
 getFeed = _sprout.getFeed
-getNextItem = _sprout.getNextItem
+getSproutItem = _sprout.getSproutItem
 
 

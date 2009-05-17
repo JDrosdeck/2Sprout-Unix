@@ -2560,7 +2560,7 @@ namespace swig {
 extern int startFeed();
 extern int stopFeed();
 extern int getFeed();
-extern char* getNextItem();
+extern char* getSproutItem();
 
 
   #define SWIG_From_long   PyInt_FromLong 
@@ -2651,12 +2651,12 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_getNextItem(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_getSproutItem(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   char *result = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)":getNextItem")) SWIG_fail;
-  result = (char *)getNextItem();
+  if (!PyArg_ParseTuple(args,(char *)":getSproutItem")) SWIG_fail;
+  result = (char *)getSproutItem();
   resultobj = SWIG_FromCharPtr((const char *)result);
   return resultobj;
 fail:
@@ -2668,7 +2668,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"startFeed", _wrap_startFeed, METH_VARARGS, NULL},
 	 { (char *)"stopFeed", _wrap_stopFeed, METH_VARARGS, NULL},
 	 { (char *)"getFeed", _wrap_getFeed, METH_VARARGS, NULL},
-	 { (char *)"getNextItem", _wrap_getNextItem, METH_VARARGS, NULL},
+	 { (char *)"getSproutItem", _wrap_getSproutItem, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 

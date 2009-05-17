@@ -37,13 +37,13 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-05-17T00:06:51Z</date>
+					<date>2009-05-17T02:18:48Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>pysock.py</string>
 					<key>lastUsed</key>
-					<date>2009-05-17T00:07:12Z</date>
+					<date>2009-05-17T02:18:48Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -125,7 +125,7 @@
 					<key>filename</key>
 					<string>compile command line.txt</string>
 					<key>lastUsed</key>
-					<date>2009-05-17T00:06:56Z</date>
+					<date>2009-05-17T02:12:42Z</date>
 				</dict>
 			</array>
 			<key>expanded</key>
@@ -160,6 +160,20 @@
 	<integer>215</integer>
 	<key>metaData</key>
 	<dict>
+		<key>2sprout API/2sprout.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>99</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>66</integer>
+		</dict>
 		<key>2sprout API/2sprout.h</key>
 		<dict>
 			<key>caret</key>
@@ -235,14 +249,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>47</integer>
+				<integer>26</integer>
 				<key>line</key>
-				<integer>45</integer>
+				<integer>21</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>16</integer>
+			<integer>7</integer>
 		</dict>
 		<key>2sprout API/Test Applications/Python test app/2sprout.conf</key>
 		<dict>
@@ -319,14 +333,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>45</integer>
+				<integer>30</integer>
 				<key>line</key>
-				<integer>1353</integer>
+				<integer>1313</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1325</integer>
+			<integer>1305</integer>
 		</dict>
 		<key>Standard UDP/Client/webCast.cpp</key>
 		<dict>
@@ -347,29 +361,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>7</integer>
+				<integer>11</integer>
 				<key>line</key>
-				<integer>96</integer>
+				<integer>100</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>64</integer>
+			<integer>68</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>96</integer>
+				<integer>100</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>97</integer>
+				<integer>101</integer>
 			</dict>
 		</dict>
 		<key>pysock.py</key>
@@ -377,9 +391,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>18</integer>
+				<integer>36</integer>
 				<key>line</key>
-				<integer>16</integer>
+				<integer>18</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -390,6 +404,7 @@
 	<key>openDocuments</key>
 	<array>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
+		<string>2sprout API/2sprout.cpp</string>
 		<string>2sprout API/Test Applications/C++ test app/test.cpp</string>
 		<string>pysock.py</string>
 		<string>Standard UDP/Client/webCast.cpp</string>
@@ -398,6 +413,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{355, 12}, {1092, 795}}</string>
+	<string>{{400, 28}, {957, 827}}</string>
 </dict>
 </plist>

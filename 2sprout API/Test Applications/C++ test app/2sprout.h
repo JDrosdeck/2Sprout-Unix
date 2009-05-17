@@ -16,4 +16,4 @@
 int startFeed();
 int stopFeed();
 int getFeed();
-std::string getNextItem();
+char * getSproutItem();
