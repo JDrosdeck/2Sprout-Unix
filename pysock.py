@@ -14,15 +14,16 @@ port = 4950
 host = socket.gethostbyname(hostname)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)	
 
-for x in xrange(300):
+for x in xrange(200):
 	m = md5.new()
-	tempMessage = "what^120511^"+ str(x) + "^0^<sproutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>"
+	tempMessage = "what^120511^"+ str(x) + "^0^<sproutcast><url>hlglhgjhgjkhgjkhgkjhgjkhgkjhgjkhgjkhgkjhgkjhgkjhgkjhgkjhgjwww.amazon.com/prod1d=43453</url><title>goldwatch</title></sproutcast><price>125.99</price><sproutcast><url>www.amazon.com/prod1d=43453</url><title>goldwatch</title></sproutcast><price>125.99</price><sproutcast><url>www.amazon.com/prod1d=43453</url><title>goldwatch</title></sproutcast><price>125.99</price><sproutcast><url>www.amazon.com/prod1d=43453</url><title>goldwatch</title></sproutcast><price>125.99</price><sproutcast><url>www.amazon.com/prod1d=43453</url><title>goldwatch</title></sproutcast><price>125.99</price><sproutcast><url>www.amazon.com/prod1d=43453</url><title>goldwatch</title></sproutcast><price>125.99</price><sproutcast><url>www.amazon.com/prod1d=43453</url><title>goldwatch</title></sproutcast><price>125.99</price><sproutcast><url>www.amazon.com/prod1d=43453</url><title>goldwatch</title></sproutcast><price>125.99</price><sproutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>"
 	m.update(tempMessage)
 	msg1 = str(m.hexdigest()) + "^" + tempMessage
-	msg = "O6PwCUht" + msg1
-	msg = XOR(msg,'2XPeUbujD3')
+	print msg1
+	msg = "nx9SgFkC" + msg1
+	msg = XOR(msg,'9u57iitNJY')
 	msg = base64.b64encode(msg)
-	time.sleep(.05)
+	time.sleep(.10)
 	s.sendto(msg,(host,port))
 
 

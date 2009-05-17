@@ -2638,19 +2638,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_getNextItem(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)":getNextItem")) SWIG_fail;
-  result = (char *)getNextItem();
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_getFeed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   int result;
@@ -2664,11 +2651,24 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_getNextItem(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  char *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":getNextItem")) SWIG_fail;
+  result = (char *)getNextItem();
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"startFeed", _wrap_startFeed, METH_VARARGS, NULL},
 	 { (char *)"stopFeed", _wrap_stopFeed, METH_VARARGS, NULL},
-	 { (char *)"getNextItem", _wrap_getNextItem, METH_VARARGS, NULL},
 	 { (char *)"getFeed", _wrap_getFeed, METH_VARARGS, NULL},
+	 { (char *)"getNextItem", _wrap_getNextItem, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 

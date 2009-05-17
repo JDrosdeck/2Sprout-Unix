@@ -1,17 +1,3 @@
-/*
-Plan for date capturing in packet loss
-
-Have an entirly seperate vector for packets that don't match the date,
-
-
-*/
-
-
-
-
-
-
-
 
 /*
 THIS IS AN UNPUBLISHED WORK CONTAINING 2SPROUT INC CONFIDENTIAL AND PROPRIETARY INFORMATION. 
@@ -33,21 +19,16 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <ctype.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
 #include <queue>
 #include <vector>
 #include <algorithm>
-
 #include <pthread.h>
 #include <fstream>
 #include <sstream>
 #include <signal.h>
 #include <stdexcept>
-
-
 #include "md5.h"
 #include "base64.h"
-
 
 
 /*
@@ -69,7 +50,7 @@ Includes for mysql C library
 
 using namespace std;
 
-#define feedPipe "/tmp/feedPipe"		//pipe that feeds data back through the api to the user made application
+#define feedPipe "/tmp/2sproutAPI"		//pipe that feeds data back through the api to the user made application
 #define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
 #define transferPipe "/tmp/transPipe" //pipe used to transfer data from the cast app into the client
 #define passPipe "/tmp/pass"
@@ -83,12 +64,6 @@ using namespace std;
 #define MDFinal MD5Final
 
 
-//startFeed Vars
-
-
-
-
-
 string url;
 int MYPORT;		//port which the client is bound to 
 
@@ -97,6 +72,9 @@ int MYPORT;		//port which the client is bound to
 bool useDatabase = true;
 bool apiReadyToRecieve;
 
+/*
+Declarations for networking code
+*/
 char *ipAdd;
 int sockfd;
 struct sockaddr_in my_addr;    // my address information
@@ -105,7 +83,9 @@ socklen_t addr_len;
 int numbytes;
 char buf[maxPipe];
 
+
 void getData();
+
 queue<string> sproutFeed; //this is the queue where the approved data is located
 queue<string> unprocessedData; //this is the queue for data that has yet been tested
 
@@ -122,7 +102,6 @@ vector<int> packetsMissedDay2;
 vector<int> reSentMissedPackets;	//Stores the packet numbers of packets that have been sent to replace missed packets
 vector<int> reSentMissedPacketsDay2;
 bool dateRecieved = false;
-
 
 
 //Used to hold database information
@@ -360,9 +339,12 @@ void* castListener(void *thread_arg)
 			if(numread > 1)
 			{
 				bufpipe[numread] = '\0';
-				printf("Recieved %s from Feed Pipe\n", bufpipe);
+		//		printf("Recieved %s from Feed Pipe\n", bufpipe);
 				//find the actual size 
+				pthread_mutex_lock(&mylock);
 				unprocessedData.push(bufpipe);
+				pthread_mutex_unlock(&mylock);
+				
 				memset(bufpipe,'\0',maxPipe +1);
 				close(fd1);
 			}
@@ -393,6 +375,8 @@ If it passes then push it into the sproutQueue to put into the database
 */
 void* checkPacketReliability(void *thread_arg)
 {
+	int x = 0;
+	int y=0;
 	while(1)
 	{
 		pthread_mutex_lock(&mylock);
@@ -412,6 +396,8 @@ void* checkPacketReliability(void *thread_arg)
 		pthread_mutex_lock(&mylock);
 		if(!unprocessedData.empty()) //while the queue has items
 		{
+			x++;
+			printf("X: %i\n", x);
 			//start of critical section
 			string s = unprocessedData.front();
 			unprocessedData.pop();
@@ -535,6 +521,8 @@ void* checkPacketReliability(void *thread_arg)
 					//Add only the message to the sproutQueue
 					printf("Packet OK!!!!!!!!\n");
 					pthread_mutex_lock(&mylock);
+							y++;
+							printf("Y: %i\n", y);
 		 			sproutFeed.push(section[5]);
 					pthread_mutex_unlock(&mylock);	
 					}
@@ -917,9 +905,9 @@ void* replaceLostPackets(void *thread_arg)
 	
 		if(!packetsMissed.empty() && !reSentMissedPackets.empty()) //there have been missed packets
 		{
-			printf("******************************\n");	
-			printf("There have been missing packets\n");
-			printf("******************************\n");
+	//		printf("******************************\n");	
+	//		printf("There have been missing packets\n");
+	//		printf("******************************\n");
 			//search for missed packets for anything new that may have come in
 		    vector<int>::iterator searchMissingPackets;
 			int sizeOfVector = (int) packetsMissed.size();
@@ -930,11 +918,11 @@ void* replaceLostPackets(void *thread_arg)
 			{
 				int match[] = {packetsMissed[loop]};
 				
-				cout << "looking for match: " << match[0] << endl;
+	//			cout << "looking for match: " << match[0] << endl;
 				
 
-				printf("Searching for missing packet in newley recived packets\n");
-				cout << "Size of reSent Packets before Search " << reSentMissedPackets.size() << endl;
+	//			printf("Searching for missing packet in newley recived packets\n");
+	//			cout << "Size of reSent Packets before Search " << reSentMissedPackets.size() << endl;
 				
 
 				if(reSentMissedPackets.empty() == false)
@@ -943,7 +931,7 @@ void* replaceLostPackets(void *thread_arg)
 					searchMissingPackets = reSentMissedPackets.begin();
 					while(searchMissingPackets != reSentMissedPackets.end())
 					{
-						cout << "Packet To Replace: " << *searchMissingPackets << " Replacing: " << *match << endl;
+	//					cout << "Packet To Replace: " << *searchMissingPackets << " Replacing: " << *match << endl;
 						if(*searchMissingPackets == *match)
 						{
 							printf("Found missing packet\n");
@@ -968,7 +956,7 @@ void* replaceLostPackets(void *thread_arg)
 		if(!packetsMissed.empty())
 		{
 			
-			printf("NOTIFYING SERVER OF MISSED PACKETS\n");
+	//		printf("NOTIFYING SERVER OF MISSED PACKETS\n");
 				//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
 
 				/*
@@ -1320,43 +1308,70 @@ Information is passed through the api via named pipes
 		exit(1);
 	}
 
-	
+	int x = 0;
 	while(1)
 	{	
-		if(sproutFeed.empty())
+		pthread_mutex_lock(&mylock);
+		if(!sproutFeed.empty())
+		{
+			printf("SIZE OF SPROUTFEED: %i\n", sproutFeed.size());
+		}
+		
+		if(!sproutFeed.empty() && getFeedBool == true)
 		{
 			
+			signal(SIGPIPE, catch_sigpipe);
+			printf("NOT EMPTY \n");
+			//start of critcal section
+			string s;
+			s.clear();
+			s = sproutFeed.front();
+			//check the packet here
+			//end of critical section
+			fd = open(feedPipe, O_WRONLY); //open the pipe for writing
+			
+			int sizeOfString = strlen(s.c_str());
+			char sizeofStringBuffer[10];
+			
+			sprintf(sizeofStringBuffer, "%i", sizeOfString);
+			string actualString = sizeofStringBuffer;
+			int tempSize = strlen(sizeofStringBuffer);
+			
+			int remainder = 4 - tempSize;
+			int x;
+			for(x =0; x < remainder; x++)
+			{
+				actualString = actualString + "^";
+			}
+			
+			
+			//string SendString = sizeofStringBuffer;
+			string SendString = actualString;
+			
+			//SendString = SendString + s;
+			actualString = actualString + s;
+				
+			cout << "************************" << actualString << endl;
+			
+			int written = write(fd,actualString.c_str(),strlen(actualString.c_str())); 	//write the string to the pipe
+			printf("WROTE: %i\n", written);
+			close(fd); //close the connection to the pipe
+			
+			
+			
+			
+			sproutFeed.pop();
+			pthread_mutex_unlock(&mylock);
+			
+			
+		}
+		else
+		{
+			pthread_mutex_unlock(&mylock);
 			if(usleep(1000) == -1)
 			{
 				printf("Sleeping Error");
 			}
-		}
-				
-		
-		if(!sproutFeed.empty() && getFeedBool == true)
-		{
-				signal(SIGPIPE, catch_sigpipe);
-			printf("NOT EMPTY \n");
-			//start of critcal section
-			pthread_mutex_lock(&mylock);
-			string s = sproutFeed.front() + "\n";
-			//check the packet here
-			sproutFeed.pop();
-			//end of critical section
-			pthread_mutex_unlock(&mylock);
-			try{
-				
-			
-			fd = open(feedPipe, O_WRONLY); //open the pipe for writing
-			write(fd,s.c_str(),strlen(s.c_str())); 	//write the string to the pipe
-			s.clear();
-			close(fd); //close the connection to the pipe
-			}
-		catch(char * str)
-		{
-	      cout << "Exception raised: " << str << '\n';
-			
-		}
 		}		
 	}
 
@@ -1396,7 +1411,7 @@ Information is passed through the api via named pipes
 		if(numread > 1)
 		{
 			bufpipe[numread] = '\0';
-			printf("%s\n", bufpipe);
+		//	printf("%s\n", bufpipe);
 			word = bufpipe; 
 			memset(bufpipe,'\0',maxPipe +1);
 			close(fd);
@@ -1453,16 +1468,12 @@ Information is passed through the api via named pipes
 }
  
 
-//CATCH SIGPIPE
  
-
-
 
 void catch_int(int sig_num)
 {
     /* re-set the signal handler again to catch_int, for next time */
     signal(SIGINT, catch_int);
-    /* and print the message */
 	unlink(feedPipe);
 	unlink(sproutPipe);
 	unlink(transferPipe); 

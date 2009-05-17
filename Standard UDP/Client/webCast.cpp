@@ -114,9 +114,9 @@ void* getData(void *thread_arg)
 	
         ipAdd = inet_ntoa(their_addr.sin_addr);
          
-    	printf("packet is %d bytes long\n",numbytes);
+    //	printf("packet is %d bytes long\n",numbytes);
     	buf[numbytes] = '\0';
-    	printf("packet contains \"%s\"\n",rawPacket.c_str());	
+    //	printf("packet contains \"%s\"\n",rawPacket.c_str());	
     
     
     /*
@@ -135,8 +135,8 @@ void* getData(void *thread_arg)
 			string value(decoded);
 			string key(cipher);
 			value = XOR(decoded,key);
-			cout << "Decrypted " << value << endl;
-			cout << value.substr(0,8) << endl;
+	//		cout << "Decrypted " << value << endl;
+	//		cout << value.substr(0,8) << endl;
 			if(value.substr(0,8) == secretKey)
 			{
 				sproutData.push(value.substr(8,value.length())); //pushed the data into the temparary queue

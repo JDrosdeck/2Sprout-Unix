@@ -15,4 +15,4 @@
 int startFeed();
 int stopFeed());
 int getFeed();
-char* getNextItem();
+char * getNextItem();

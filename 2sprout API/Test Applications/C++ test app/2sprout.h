@@ -16,4 +16,4 @@
 int startFeed();
 int stopFeed();
 int getFeed();
-char* getNextItem();
+std::string getNextItem();
