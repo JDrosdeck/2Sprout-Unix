@@ -85,6 +85,8 @@ char buf[maxPipe];
 
 
 void getData();
+void catch_sigpipe(int sig_num);
+
 
 queue<string> sproutFeed; //this is the queue where the approved data is located
 queue<string> unprocessedData; //this is the queue for data that has yet been tested
@@ -1278,13 +1280,8 @@ int readConfig()
 
 
 
-void catch_sigpipe(int sig_num)
-{
-	printf("pipe is BROKEN\n");
-	
-}
 
- 
+
  
 /*
 getFeed is an API function It allows users to not relay information directly into a database
@@ -1316,16 +1313,18 @@ Information is passed through the api via named pipes
 		if(!sproutFeed.empty() && getFeedBool == true)
 		{
 			
-			signal(SIGPIPE, catch_sigpipe);
+		//	signal(SIGPIPE, catch_sigpipe);
 			printf("NOT EMPTY \n");
 			//start of critcal section
 			string s;
 			s.clear();
 			s = sproutFeed.front();
+			sproutFeed.pop();
+			pthread_mutex_unlock(&mylock);
 			//check the packet here
 			//end of critical section
-			fd = open(feedPipe, O_WRONLY); //open the pipe for writing
 			
+			fd = open(feedPipe, O_WRONLY); //open the pipe for writing			
 			int sizeOfString = strlen(s.c_str());
 			char sizeofStringBuffer[10];
 			
@@ -1349,13 +1348,14 @@ Information is passed through the api via named pipes
 				
 			cout << "************************" << actualString << endl;
 			
+		
 			int written = write(fd,actualString.c_str(),strlen(actualString.c_str())); 	//write the string to the pipe
+			if(errno==EPIPE) //if the api closes the pipe mid write it will send a SIGPIPE signal. Which will kill the client
+			{
+			 	signal(SIGPIPE,SIG_IGN); //Ignore the SIGPIPE signal
+			}
 			printf("WROTE: %i\n", written);
-			close(fd); //close the connection to the pipe
-			sproutFeed.pop();
-			pthread_mutex_unlock(&mylock);
-			
-			
+			close(fd); //close the connection to the pipe	
 		}
 		else
 		{
@@ -1366,7 +1366,6 @@ Information is passed through the api via named pipes
 			}
 		}		
 	}
-
 }
  
  
@@ -1398,8 +1397,8 @@ Information is passed through the api via named pipes
 	while(1)
 	{
 		fd = open(sproutPipe, O_RDONLY); //open the pipe for reading
-
 		numread = read(fd,bufpipe, maxPipe);
+		
 		if(numread > 1)
 		{
 			bufpipe[numread] = '\0';
@@ -1477,7 +1476,10 @@ void catch_int(int sig_num)
 
 
 
-  
+
+ 
+
+
 /*
 
 sproutClient takes 1 argument, which is the port number, This will be upated for username/password.
@@ -1487,7 +1489,10 @@ database
 */
 int main(int argc, char *argv[])
 {
+	
+	
 	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
+  	signal(SIGPIPE,SIG_IGN);
 	
 	apiReadyToRecieve = false;
 	if(argc < 2)

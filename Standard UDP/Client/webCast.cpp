@@ -257,6 +257,10 @@ void* writeToClient(void *thread_arg)
 
 		 	
 			write(fd,s.c_str(),strlen(s.c_str())); 	//write the string to the pipe
+			if(errno==EPIPE) //if the api closes the pipe mid write it will send a SIGPIPE signal. Which will kill the client
+			{
+			 	signal(SIGPIPE,SIG_IGN); //Ignore the SIGPIPE signal
+			}
 			close(fd); //close the connection to the pipe
 		}
 	}	
@@ -273,6 +277,8 @@ void* writeToClient(void *thread_arg)
 
 int main(int argc, char *argv[])
 {
+	signal(SIGPIPE,SIG_IGN);
+  	
 	if(argc < 2)
 	{
 		char port1[] = "4950";
