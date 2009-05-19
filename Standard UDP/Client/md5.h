@@ -1,98 +1,86 @@
-/////////////////////////////////////////////////////////////////////////
-// This C++ Class implementation of the original RSA Data Security, Inc.
-// MD5 Message-Digest Algorithm is copyright (c) 2002, Gary McNickle.
-// All rights reserved.  This software is a derivative of the "RSA Data
-//  Security, Inc. MD5 Message-Digest Algorithm"
-//
-// You may use this software free of any charge, but without any
-// warranty or implied warranty, provided that you follow the terms
-// of the original RSA copyright, listed below.
-//
-// I would appreciate a quick note if you use this source in your
-// application.  You may send such notices to 'gary<at>mcnickle.org'
-//
-// Original RSA Data Security, Inc. Copyright notice
-/////////////////////////////////////////////////////////////////////////
-//
-// Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
-// rights reserved.
-//
-// License to copy and use this software is granted provided that it
-// is identified as the "RSA Data Security, Inc. MD5 Message-Digest
-// Algorithm" in all material mentioning or referencing this software
-// or this function.
-// License is also granted to make and use derivative works provided
-// that such works are identified as "derived from the RSA Data
-// Security, Inc. MD5 Message-Digest Algorithm" in all material
-// mentioning or referencing the derived work.
-// RSA Data Security, Inc. makes no representations concerning either
-// the merchantability of this software or the suitability of this
-// software for any particular purpose. It is provided "as is"
-// without express or implied warranty of any kind.
-// These notices must be retained in any copies of any part of this
-// documentation and/or software.
-/////////////////////////////////////////////////////////////////////////
+/*
+ *	This is the C++ implementation of the MD5 Message-Digest
+ *	Algorithm desrcipted in RFC 1321.
+ *	I translated the C code from this RFC to C++.
+ *	There is no warranty.
+ *
+ *	Feb. 12. 2005
+ *	Benjamin Grüdelbach
+ */
 
-typedef unsigned       int uint4;
-typedef unsigned short int uint2;
-typedef unsigned      char uchar;
+/*
+ * Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
+ * rights reserved.
+ * 
+ * License to copy and use this software is granted provided that it
+ * is identified as the "RSA Data Security, Inc. MD5 Message-Digest
+ * Algorithm" in all material mentioning or referencing this software
+ * or this function.
+ * 
+ * License is also granted to make and use derivative works provided
+ * that such works are identified as "derived from the RSA Data
+ * Security, Inc. MD5 Message-Digest Algorithm" in all material
+ * mentioning or referencing the derived work.
+ * 
+ * RSA Data Security, Inc. makes no representations concerning either
+ * the merchantability of this software or the suitability of this
+ * software for any particular purpose. It is provided "as is"
+ * without express or implied warranty of any kind.
+ * 
+ * These notices must be retained in any copies of any part of this
+ * documentation and/or software.
+ */
 
+//---------------------------------------------------------------------- 
+//include protection
+#ifndef MD5_H
+#define MD5_H
+
+//---------------------------------------------------------------------- 
+//STL includes
 #include <string>
 
-std::string PrintMD5(uchar md5Digest[16]);
-std::string MD5String(std::string& str);
-std::string MD5File(std::string& filename);
+//---------------------------------------------------------------------- 
+//typedefs
+typedef unsigned char *POINTER;
 
-class md5
+/*
+ * MD5 context.
+ */
+typedef struct 
 {
-// Methods
-public:
-	md5() { Init(); }
-	void	Init();
-	void	Update(uchar* chInput, uint4 nInputLen);
-	void	Finalize();
-	uchar*	Digest() { return m_Digest; }
+	unsigned long int state[4];   	      /* state (ABCD) */
+	unsigned long int count[2]; 	      /* number of bits, modulo 2^64 (lsb first) */
+	unsigned char buffer[64];	      /* input buffer */
+} MD5_CTX;
 
-private:
+/*
+ * MD5 class
+ */
+class MD5
+{
 
-	void	Transform(uchar* block);
-	void	Encode(uchar* dest, uint4* src, uint4 nLength);
-	void	Decode(uint4* dest, uchar* src, uint4 nLength);
+	private:
 
+		void MD5Transform (unsigned long int state[4], unsigned char block[64]);
+		void Encode (unsigned char*, unsigned long int*, unsigned int);
+		void Decode (unsigned long int*, unsigned char*, unsigned int);
+		void MD5_memcpy (POINTER, POINTER, unsigned int);
+		void MD5_memset (POINTER, int, unsigned int);
 
-	inline	uint4	rotate_left(uint4 x, uint4 n)
-	                 { return ((x << n) | (x >> (32-n))); }
+	public:
+	
+		void MD5Init (MD5_CTX*);
+		void MD5Update (MD5_CTX*, unsigned char*, unsigned int);
+		void MD5Final (unsigned char [16], MD5_CTX*);
 
-	inline	uint4	F(uint4 x, uint4 y, uint4 z)
-	                 { return ((x & y) | (~x & z)); }
-
-	inline  uint4	G(uint4 x, uint4 y, uint4 z)
-	                 { return ((x & z) | (y & ~z)); }
-
-	inline  uint4	H(uint4 x, uint4 y, uint4 z)
-	                 { return (x ^ y ^ z); }
-
-	inline  uint4	I(uint4 x, uint4 y, uint4 z)
-	                 { return (y ^ (x | ~z)); }
-
-	inline	void	FF(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac)
-	                 { a += F(b, c, d) + x + ac; a = rotate_left(a, s); a += b; }
-
-	inline	void	GG(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac)
-                     { a += G(b, c, d) + x + ac; a = rotate_left(a, s); a += b; }
-
-	inline	void	HH(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac)
-                     { a += H(b, c, d) + x + ac; a = rotate_left(a, s); a += b; }
-
-	inline	void	II(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac)
-                     { a += I(b, c, d) + x + ac; a = rotate_left(a, s); a += b; }
-
-// Data
-private:
-	uint4		m_State[4];
-	uint4		m_Count[2];
-	uchar		m_Buffer[64];
-	uchar		m_Digest[16];
-	uchar		m_Finalized;
-
+	MD5(){};
 };
+
+//---------------------------------------------------------------------- 
+//End of include protection
+#endif
+
+/*
+ * EOF
+ */

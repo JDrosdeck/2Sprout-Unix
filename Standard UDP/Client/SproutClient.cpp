@@ -27,7 +27,8 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <sstream>
 #include <signal.h>
 #include <stdexcept>
-#include "md5.h"
+//#include "md5.h"
+#include "md5wrapper.h"
 #include "base64.h"
 
 
@@ -58,11 +59,12 @@ using namespace std;
 #define maxPipe		50000			
 
 //Used for md5 sum
+/*
 #define MD5_CTX MD5_CTX
 #define MDInit MD5Init
 #define MDUpdate MD5Update
 #define MDFinal MD5Final
-
+*/
 
 string url;
 int MYPORT;		//port which the client is bound to 
@@ -332,23 +334,37 @@ void* castListener(void *thread_arg)
 
 		//Once the command has been started We can listen on a pipe to recieve data that has been recieved
 		int fd1, numread;
-		char bufpipe[maxPipe];
+		char bufpipe[4];
 	
 		while(1)
 		{
 			fd1 = open(transferPipe, O_RDONLY);
-			numread = read(fd1,bufpipe, maxPipe);
+			numread = read(fd1,bufpipe, 4);
 			if(numread > 1)
 			{
 				bufpipe[numread] = '\0';
-		//		printf("Recieved %s from Feed Pipe\n", bufpipe);
-				//find the actual size 
-				pthread_mutex_lock(&mylock);
-				unprocessedData.push(bufpipe);
-				pthread_mutex_unlock(&mylock);
+				string temp = bufpipe;
+				int pos = temp.find("^");
+				if(pos != string::npos)
+				{
+					temp = temp.substr(0, pos);
+				}
+				int sizeOfString = atoi(temp.c_str());
+				char feedWord[sizeOfString];
 				
-				memset(bufpipe,'\0',maxPipe +1);
+				int numRead1 = read(fd1, feedWord, sizeOfString);
+				string sproutItem;
+				if(numRead1 > 1)
+				{					
+					feedWord[sizeOfString] = '\0';
+					sproutItem = feedWord;
+				}
+				memset(bufpipe, '\0',4);
 				close(fd1);
+				
+				pthread_mutex_lock(&mylock);
+				unprocessedData.push(sproutItem);
+				pthread_mutex_unlock(&mylock);
 			}
 		}
 	}
@@ -386,7 +402,7 @@ void* checkPacketReliability(void *thread_arg)
  		{
 			pthread_mutex_unlock(&mylock);
 		
- 				if(usleep(100000) == -1)
+ 				if(usleep(100) == -1)
 				{
 					printf("Sleeping Error");
 				}
@@ -410,7 +426,7 @@ void* checkPacketReliability(void *thread_arg)
 			//Tokenize the string
 			
 			string token;
-			string section[6]; //a standard sproutcast should be made up of only 6 distince sections	
+			string section[50]; //a standard sproutcast should be made up of only 6 distince sections	
 			istringstream iss(s);
 			int count1 = 0;
 
@@ -444,8 +460,12 @@ void* checkPacketReliability(void *thread_arg)
 				}
 				
 				
-				string checkMd5 = MD5String(CastMinusMD5); //get the value of the MD5 string
+				//string checkMd5 = MD5String(CastMinusMD5); //get the value of the MD5 string
 				//printf("MD5 SUM IS: %s", checkMd5.c_str());
+			
+				md5wrapper md5;
+				string checkMd5 = md5.getHashFromString(CastMinusMD5); 
+				
 				if(checkMd5 == section[0]) //The MD5 Sum is the same so data integrety is OK
 				{
 				
@@ -1057,6 +1077,7 @@ void* insertToDb(void *thread_arg)
 				int *error;
 		 		unsigned long g = PQescapeStringConn(Conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()),error);  
 				cout << "Escaped String " << escapedString.c_str() << endl;
+			
 	   			try
 	    		{
 	  				// (Queries)
@@ -1071,9 +1092,12 @@ void* insertToDb(void *thread_arg)
 				             fprintf(stderr,"BEGIN command failed");
 				             PQclear(result);
 				    }
+					else
+					{
 				  
 					
 					PQclear(result);
+					}
 					//printf("CLEAR!!!!!!!!!!!!!!!!!");
 					sproutFeed.pop();
 					
@@ -1083,6 +1107,7 @@ void* insertToDb(void *thread_arg)
 	    		{
 	    			//i failed...um fuck it
 	    		}
+				
 	    
 
 			}
@@ -1304,7 +1329,6 @@ Information is passed through the api via named pipes
 		perror("Error creating named pipe");
 		exit(1);
 	}
-
 	int x = 0;
 	while(1)
 	{	
@@ -1341,7 +1365,7 @@ Information is passed through the api via named pipes
 			
 			
 			//string SendString = sizeofStringBuffer;
-			string SendString = actualString;
+			//string SendString = actualString;
 			
 			//SendString = SendString + s;
 			actualString = actualString + s;
@@ -1354,6 +1378,7 @@ Information is passed through the api via named pipes
 			{
 			 	signal(SIGPIPE,SIG_IGN); //Ignore the SIGPIPE signal
 			}
+		
 			printf("WROTE: %i\n", written);
 			close(fd); //close the connection to the pipe	
 		}
@@ -1397,6 +1422,11 @@ Information is passed through the api via named pipes
 	while(1)
 	{
 		fd = open(sproutPipe, O_RDONLY); //open the pipe for reading
+		//Get an exclusive Lock
+
+		
+		
+		
 		numread = read(fd,bufpipe, maxPipe);
 		
 		if(numread > 1)
@@ -1538,7 +1568,7 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
 		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);
 		
-		pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);
+	 	pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);
 			
 
 		
@@ -1565,9 +1595,6 @@ int main(int argc, char *argv[])
 		printf("Not using Database\n");
 		MYPORT = atoi(argv[1]); //set the port value
 		
-		// create the base folder	
-	
-	
 	//	announce(); //announce to the server that we're ready to recieve
 		int rc, i , status;
 		pthread_t threads[9];		

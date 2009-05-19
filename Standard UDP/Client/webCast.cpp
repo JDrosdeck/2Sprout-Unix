@@ -253,10 +253,33 @@ void* writeToClient(void *thread_arg)
 			//check the packet here
 			sproutData.pop();
 			//end of critical section
+			int sizeOfString = strlen(s.c_str());
+			char sizeofStringBuffer[10];
+			
+			sprintf(sizeofStringBuffer, "%i", sizeOfString);
+			string actualString = sizeofStringBuffer;
+			int tempSize = strlen(sizeofStringBuffer);
+			
+			int remainder = 4 - tempSize;
+			int x;
+			for(x =0; x < remainder; x++)
+			{
+				actualString = actualString + "^";
+			}
+			
+			
+			//string SendString = sizeofStringBuffer;
+			//string SendString = actualString;
+			
+			//SendString = SendString + s;
+			actualString = actualString + s;
+				
+			cout << "************************" << actualString << endl;
+			
 			fd = open(transferPipe, O_WRONLY); //open the pipe for writing
 
 		 	
-			write(fd,s.c_str(),strlen(s.c_str())); 	//write the string to the pipe
+			write(fd,actualString.c_str(),strlen(actualString.c_str())); 	//write the string to the pipe
 			if(errno==EPIPE) //if the api closes the pipe mid write it will send a SIGPIPE signal. Which will kill the client
 			{
 			 	signal(SIGPIPE,SIG_IGN); //Ignore the SIGPIPE signal
