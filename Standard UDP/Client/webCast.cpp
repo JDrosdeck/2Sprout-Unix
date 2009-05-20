@@ -57,6 +57,8 @@ string rawPacket;
 
 queue<string> sproutData;
 
+pthread_mutex_t mylock = PTHREAD_MUTEX_INITIALIZER;
+
 /*
 The XOR function will decrypt/Encrypt a packet..For this case it is decrypting
 */
@@ -137,12 +139,14 @@ void* getData(void *thread_arg)
 			value = XOR(decoded,key);
 	//		cout << "Decrypted " << value << endl;
 	//		cout << value.substr(0,8) << endl;
+			decoded.clear();
+				input.clear();
 			if(value.substr(0,8) == secretKey)
 			{
 				sproutData.push(value.substr(8,value.length())); //pushed the data into the temparary queue
 				printf("PUSHED\n");
-
 			} 		
+			value.clear();
 
 		}
    }
@@ -228,17 +232,12 @@ void* writeToClient(void *thread_arg)
 		exit(1);
 	}
 
-
-	printf("Succeeded!\n");
 	
 	while(1)
 	{	
 	
 
-		if(usleep(1000) == -1)
-		{
-			printf("Sleeping Error\n");
-		}			
+			
 			
 		if(!sproutData.empty())
 		{
@@ -246,13 +245,19 @@ void* writeToClient(void *thread_arg)
 			//Need to check for the size of the string, and make sure its not larger then our max string length
 			
 			printf("NOT EMPTY 67576576 \n");
+			pthread_mutex_lock(&mylock);
+			
+			try
+			{
+				
+			
 			cout << "size " << sproutData.size() << endl;
 			//start of critcal section
 			string s = sproutData.front() + "\n";
-			printf("Size of queue: %i", sproutData.size());
+			
+			printf("Size of queue: %i\n", sproutData.size());
 			//check the packet here
 			sproutData.pop();
-			//end of critical section
 			int sizeOfString = strlen(s.c_str());
 			char sizeofStringBuffer[10];
 			
@@ -268,10 +273,6 @@ void* writeToClient(void *thread_arg)
 			}
 			
 			
-			//string SendString = sizeofStringBuffer;
-			//string SendString = actualString;
-			
-			//SendString = SendString + s;
 			actualString = actualString + s;
 				
 			cout << "************************" << actualString << endl;
@@ -279,22 +280,34 @@ void* writeToClient(void *thread_arg)
 			fd = open(transferPipe, O_WRONLY); //open the pipe for writing
 
 		 	
-			write(fd,actualString.c_str(),strlen(actualString.c_str())); 	//write the string to the pipe
+			int numwrote = write(fd,actualString.c_str(),strlen(actualString.c_str())); 	//write the string to the pipe
 			if(errno==EPIPE) //if the api closes the pipe mid write it will send a SIGPIPE signal. Which will kill the client
 			{
 			 	signal(SIGPIPE,SIG_IGN); //Ignore the SIGPIPE signal
 			}
+			else
+			{
+				cout << "Wrote " << numwrote << endl;
+			}
 			close(fd); //close the connection to the pipe
+			s.clear();
+			actualString.clear();
 		}
-	}	
-	
-
+		catch(char * str ) 
+		{
+		      cout << "Exception raised: " << str << '\n';
+		}
+			pthread_mutex_unlock(&mylock);
+		}
+		else
+		{
+			if(usleep(1000) == -1)
+			{
+				printf("Sleeping Error\n");
+			}
+		}
+	}		
 }
-
-
-
-
-
 
 
 

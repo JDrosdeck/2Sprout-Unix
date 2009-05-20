@@ -344,10 +344,12 @@ void* castListener(void *thread_arg)
 	
 		while(1)
 		{
+			cout << "EXCEL" << endl;
 			fd1 = open(transferPipe, O_RDONLY);
 			numread = read(fd1,bufpipe, 4);
 			if(numread > 1)
 			{
+				cout << "NUMREAD: " << numread << endl;
 				bufpipe[numread] = '\0';
 				string temp = bufpipe;
 				int pos = temp.find("^");
@@ -359,17 +361,18 @@ void* castListener(void *thread_arg)
 				char feedWord[sizeOfString];
 				
 				int numRead1 = read(fd1, feedWord, sizeOfString);
+				cout << "NUMREAD1: " << numRead1 << endl;
+				
 				string sproutItem;
 				if(numRead1 > 1)
 				{					
 					feedWord[sizeOfString] = '\0';
 					sproutItem = feedWord;
 				}
-				memset(bufpipe, '\0',4);
 				close(fd1);
-				
 				pthread_mutex_lock(&mylock);
 				unprocessedData.push(sproutItem);
+				printf("PUSHED\n");
 				pthread_mutex_unlock(&mylock);
 			}
 		}
@@ -398,10 +401,10 @@ void* checkPacketReliability(void *thread_arg)
 	int y=0;
 	while(1)
 	{
-		pthread_mutex_lock(&mylock);
+		//pthread_mutex_lock(&mylock);
 		if(unprocessedData.empty())
  		{
-			pthread_mutex_unlock(&mylock);
+			//pthread_mutex_unlock(&mylock);
 		
  				if(usleep(100) == -1)
 				{
@@ -410,9 +413,9 @@ void* checkPacketReliability(void *thread_arg)
 		}
 		else
 		{
-			pthread_mutex_unlock(&mylock);
+			//pthread_mutex_unlock(&mylock);
 		}
-		pthread_mutex_lock(&mylock);
+		//pthread_mutex_lock(&mylock);
 		if(!unprocessedData.empty()) //while the queue has items
 		{
 			x++;
@@ -420,7 +423,7 @@ void* checkPacketReliability(void *thread_arg)
 			//start of critical section
 			string s = unprocessedData.front();
 			unprocessedData.pop();
-			pthread_mutex_unlock(&mylock);	
+			//pthread_mutex_unlock(&mylock);	
 			
 			//end of critial section
 			
@@ -543,11 +546,11 @@ void* checkPacketReliability(void *thread_arg)
 			
 					//Add only the message to the sproutQueue
 					printf("Packet OK!!!!!!!!\n");
-					pthread_mutex_lock(&mylock);
+					//pthread_mutex_lock(&mylock);
 							y++;
 							printf("Y: %i\n", y);
 		 			sproutFeed.push(section[5]);
-					pthread_mutex_unlock(&mylock);	
+					//pthread_mutex_unlock(&mylock);	
 					}
 					else{
 					printf("Secret Key FAILED\n");}
@@ -561,7 +564,7 @@ void* checkPacketReliability(void *thread_arg)
 		}
 		else
 		{
-			pthread_mutex_unlock(&mylock);
+			//pthread_mutex_unlock(&mylock);
 		}		
 	}		
 }
@@ -705,7 +708,7 @@ void* replaceLostPacketsDay2(void *thread_arg)
 	while(1)
 	{
 		sleep(20);
-	pthread_mutex_lock(&mylock);
+	//pthread_mutex_lock(&mylock);
 	
 		if(!packetsMissedDay2.empty() && !reSentMissedPacketsDay2.empty()) //there have been missed packets
 		{
@@ -756,7 +759,7 @@ void* replaceLostPacketsDay2(void *thread_arg)
 		
 		}
 		
-		pthread_mutex_unlock(&mylock);
+		//pthread_mutex_unlock(&mylock);
 		if(!packetsMissedDay2.empty())
 		{
 				//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
@@ -847,12 +850,14 @@ void* checkLostPackets(void *thread_arg)
 					and recieving the next section some packets may be lost
 					say you recieved packets..1,2,3,4,7 and the missing packets were calculated
 					and then the next set came in as 9,10,11. This will catch the missing packets
-					between 7 and 9. I'm so awesome.
+					between 7 and 9.
 				*/
 
 				int lastPacket = tempVector[sizeOfTempVector-1];
+				pthread_mutex_lock(&mylock);
 				packetsRecieved.push_back(lastPacket);
-
+				pthread_mutex_unlock(&mylock);
+				
 
 				int sizeOfVector = (int) packetsMissed.size();
 
@@ -890,25 +895,17 @@ void* checkLostPackets(void *thread_arg)
 						{
 							//add these values to the missing packet vector
 							cout << "pushing packet " << tempVector[i] + j <<endl;
-
+							pthread_mutex_lock(&mylock);
 						 	packetsMissed.push_back(tempVector[i] + j);
-
+							pthread_mutex_unlock(&mylock);
+							
 						}
 
 					}
 					cout << i << endl;
-
 				}
-
-				tempVector.clear(); //empty this vector
-
-
+					tempVector.clear(); //empty this vector
 			}
-
-
-			
-
-
 		}
 	}
 
@@ -922,7 +919,7 @@ void* replaceLostPackets(void *thread_arg)
 	while(1)
 	{
 		sleep(20);
-		pthread_mutex_lock(&mylock);
+		//pthread_mutex_lock(&mylock);
 	
 		if(!packetsMissed.empty() && !reSentMissedPackets.empty()) //there have been missed packets
 		{
@@ -965,7 +962,7 @@ void* replaceLostPackets(void *thread_arg)
 			reSentMissedPackets.clear();
 		
 		}
-		pthread_mutex_unlock(&mylock);
+		//pthread_mutex_unlock(&mylock);
 		if(!packetsMissed.empty())
 		{
 			
@@ -1038,10 +1035,10 @@ void* insertToDb(void *thread_arg)
 
  		while(1)
  		{
-			pthread_mutex_lock(&mylock);
+			//pthread_mutex_lock(&mylock);
  			if(sproutFeed.empty())
 	 		{
-				pthread_mutex_unlock(&mylock);
+				//pthread_mutex_unlock(&mylock);
 		
 				if(usleep(1000) == -1)
 				{
@@ -1050,12 +1047,12 @@ void* insertToDb(void *thread_arg)
 			}
 			else
 			{
-				pthread_mutex_unlock(&mylock);
+				//pthread_mutex_unlock(&mylock);
 				
 			}
 			
 			
-			pthread_mutex_lock(&mylock);
+			//pthread_mutex_lock(&mylock);
 			if(!sproutFeed.empty()) //while the queue has items
 			{
 				//start of critical section
@@ -1064,7 +1061,7 @@ void* insertToDb(void *thread_arg)
 				
 				//printf("read in: %s\n", s.c_str());
 				//printf("Putting into Database\n");
-				pthread_mutex_unlock(&mylock);
+				//pthread_mutex_unlock(&mylock);
 				//end of critical section
 				string escapedString;
 				int *error;
@@ -1105,7 +1102,7 @@ void* insertToDb(void *thread_arg)
 			}
 			else
 			{
-				pthread_mutex_unlock(&mylock);
+				//pthread_mutex_unlock(&mylock);
 				
 			}
 		
@@ -1140,11 +1137,11 @@ void* insertToDb(void *thread_arg)
     
     	while(1)
  		{
-			pthread_mutex_lock(&mylock);
+			//pthread_mutex_lock(&mylock);
 		
  			if(sproutFeed.empty())
  			{
- 				pthread_mutex_unlock(&mylock);
+ 				//pthread_mutex_unlock(&mylock);
 				
 				if(usleep(1000) == -1)
 				{
@@ -1153,10 +1150,10 @@ void* insertToDb(void *thread_arg)
 			}
 			else
 			{
-				pthread_mutex_unlock(&mylock);
+				//pthread_mutex_unlock(&mylock);
 			}
 		
-			pthread_mutex_lock(&mylock);
+			//pthread_mutex_lock(&mylock);
 		
 			if(!sproutFeed.empty()) //while the queue has items
 			{
@@ -1164,7 +1161,7 @@ void* insertToDb(void *thread_arg)
 				string s = sproutFeed.front();
 				printf("read in: %s\n", s.c_str());
 				printf("Putting into Database\n");
-				pthread_mutex_unlock(&mylock);
+				//pthread_mutex_unlock(&mylock);
 				//end of critical section
 		 		string escapedString;    
     			string mysqlQuery;
@@ -1182,7 +1179,7 @@ void* insertToDb(void *thread_arg)
 			}
 			else
 			{
-				pthread_mutex_unlock(&mylock);		
+				//pthread_mutex_unlock(&mylock);		
 			}
     
 		}    
@@ -1325,7 +1322,7 @@ Information is passed through the api via named pipes
 	int x = 0;
 	while(1)
 	{	
-		pthread_mutex_lock(&mylock);
+		//pthread_mutex_lock(&mylock);
 		
 		if(!sproutFeed.empty() && getFeedBool == true)
 		{
@@ -1337,7 +1334,7 @@ Information is passed through the api via named pipes
 			s.clear();
 			s = sproutFeed.front();
 			sproutFeed.pop();
-			pthread_mutex_unlock(&mylock);
+			//pthread_mutex_unlock(&mylock);
 			//check the packet here
 			//end of critical section
 			
@@ -1377,7 +1374,7 @@ Information is passed through the api via named pipes
 		}
 		else
 		{
-			pthread_mutex_unlock(&mylock);
+			//pthread_mutex_unlock(&mylock);
 			if(usleep(1000) == -1)
 			{
 				printf("Sleeping Error");
@@ -1568,7 +1565,7 @@ int main(int argc, char *argv[])
 		printf("InsertDB Thread Started\n");
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
 		printf("lost packets starting\n");
-		pthread_create(&threads[4], NULL, checkLostPackets, NULL);
+	//	pthread_create(&threads[4], NULL, checkLostPackets, NULL);
 		printf("checking for packets on day2\n");
 		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
 		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);

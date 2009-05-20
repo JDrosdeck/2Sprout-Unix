@@ -19,12 +19,12 @@ for x in xrange(10000):
 	tempMessage = "what^120511^"+ str(x) + "^0^TESTESTES125.99</price><sproutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>"
 	m.update(tempMessage)
 	msg1 = str(m.hexdigest()) + "^" + tempMessage
-	print msg1
-	msg = "yamNS5QT" + msg1
-	msg = XOR(msg,'ULympHS6bO')
+	#print msg1
+	msg = "HKPObXQu" + msg1
+	msg = XOR(msg,'aQRddenVvD')
 	msg = base64.b64encode(msg)
 	#g = random.uniform(.0001, .09)
-	time.sleep(.02)
+	time.sleep(.00002)
 	#print g
 	s.sendto(msg,(host,port))
 
