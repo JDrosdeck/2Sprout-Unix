@@ -235,8 +235,25 @@ void* announce(void *thread_arg)
 
 		//parse the buffer Password^sleepTime
 
+		//find the number of "^"
+		int NumSpacesCount = 0;
+		int loop;
+		for(loop =0; loop < value.length(); loop++)
+		{
+			string::size_type loc = value.find('^', loop);
+			if(loc != string::npos)
+			{
+				NumSpacesCount +=1;
+			}	
+		}		
+		if(NumSpacesCount == 0)
+		{
+			NumSpacesCount = 1;
+		}
+
+		
 		string token;
-		string section[3];	
+		string section[NumSpacesCount];	
 		istringstream iss(value);
 		int count1 = 0;
 
@@ -259,16 +276,12 @@ void* announce(void *thread_arg)
 				perror("Error creating named pipe\n");
 				exit(1);
 			}
-	
 			char buffer1[50];
 			string messageToPass = section[0] + " " + section[2];
 			int n = sprintf(buffer1, messageToPass.c_str());
-
 			fd = open(passPipe, O_WRONLY);
-
 			write(fd, buffer1, strlen(buffer1));
 			close(fd);
-
 			cout << "sleeping for:" << section[1] << endl;
 			buffer.clear();
 			sleep(atoi(section[1].c_str()));
@@ -1435,8 +1448,6 @@ Information is passed through the api via named pipes
 			/*
 			Find the number of spaces in the command to figure out how large to set the command[] buffer
 			*/
-			
-		
 			int NumSpacesCount = 0;
 			int loop;
 			for(loop =0; loop < word.length(); loop++)
@@ -1445,25 +1456,17 @@ Information is passed through the api via named pipes
 				if(loc != string::npos)
 				{
 					NumSpacesCount +=1;
-				}
-				
-			}
-			
-		//	cout << "FOUND THIS MANY SPACES: " << NumSpacesCount << endl;
-			
+				}	
+			}		
 			string token;
-			
 			if(NumSpacesCount == 0)
 			{
 				NumSpacesCount = 1;
 			}
-			
 			string parsWord = word;
 			string command[NumSpacesCount];	//messages passed through can have a maximum of 10 arguments. (should never be more then that)	
 			istringstream iss(parsWord);
 			int count1 = 0;
-			
-			
 			
 			/*
 			This will tokenize the string and figure out what commands and arguments have been passed through from the API
@@ -1492,11 +1495,8 @@ Information is passed through the api via named pipes
 				getFeedBool = true;
 				printf("()()()()()()()()()()()()()()()()()()()()()()()()()Started getFeedThread\n");
 			}
-
 		}
-
 	}
-
 }
  
 
@@ -1533,7 +1533,7 @@ int main(int argc, char *argv[])
 	
 	
 	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
-  	signal(SIGPIPE,SIG_IGN);
+  	signal(SIGPIPE,SIG_IGN); //Ignore the signal for a broken pipe
 	
 	apiReadyToRecieve = false;
 	if(argc < 2)
@@ -1560,41 +1560,25 @@ int main(int argc, char *argv[])
 	
 		int rc, i , status;
 		pthread_t threads[8];
-		printf("Starting Threads...\n");
-		
-	
-		
+		printf("Starting Threads...\n");	
 		pthread_create(&threads[0], NULL, announce, NULL);
-	
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		printf("Socket Thread Started\n");
 		pthread_create(&threads[2], NULL, insertToDb, NULL);		
 		printf("InsertDB Thread Started\n");
-		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);
-
-		
+		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
 		printf("lost packets starting\n");
 		pthread_create(&threads[4], NULL, checkLostPackets, NULL);
 		printf("checking for packets on day2\n");
 		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
 		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);
-		
-	 	pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);
-			
-
-		
-		
-		
-		
-		
-
+	 	pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);	
+	
 		for(i =0; i < 8; i++)
 		{
 			rc = pthread_join(threads[i], (void **) &status); 
-		}
-		
+		}	
 		return 0;
-	
 	}
 
 	/*
@@ -1605,8 +1589,6 @@ int main(int argc, char *argv[])
 	{
 		printf("Not using Database\n");
 		MYPORT = atoi(argv[1]); //set the port value
-		
-	//	announce(); //announce to the server that we're ready to recieve
 		int rc, i , status;
 		pthread_t threads[9];		
 		printf("Starting Threads...\n");
@@ -1614,14 +1596,11 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		pthread_create(&threads[2], NULL, createAndReadPipe, NULL);
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
-
-	
 		printf("lost packets starting\n");
 		pthread_create(&threads[4], NULL, checkLostPackets, NULL);
 		printf("checking for packets on day2\n");
 		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
 		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);
-		
 		pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);
 		pthread_create(&threads[8], NULL, getFeed, NULL);
 		
