@@ -27,7 +27,10 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <sstream>
 #include <signal.h>
 #include <stdexcept>
-//#include "md5.h"
+
+/*
+Includes for md5 summing and base64
+*/
 #include "md5wrapper.h"
 #include "base64.h"
 
@@ -55,16 +58,8 @@ using namespace std;
 #define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
 #define transferPipe "/tmp/transPipe" //pipe used to transfer data from the cast app into the client
 #define passPipe "/tmp/pass"
-
 #define maxPipe		50000			
 
-//Used for md5 sum
-/*
-#define MD5_CTX MD5_CTX
-#define MDInit MD5Init
-#define MDUpdate MD5Update
-#define MDFinal MD5Final
-*/
 
 string url;
 int MYPORT;		//port which the client is bound to 
@@ -306,9 +301,7 @@ int closeAnnounce()
 	return 1;
 }
 
-/*
 
-*/
 void* castListener(void *thread_arg)
 { 	     
 	int i;
@@ -385,11 +378,6 @@ format is as follows:
 
 md5^secretKey^date^packetNumber^2sproutString
 
-
-Multiple threads will run going through the unprocessed queue
-Checking first the MD5 sum.
-Then the secret Key 
-If it passes then push it into the sproutQueue to put into the database
 */
 void* checkPacketReliability(void *thread_arg)
 {
@@ -448,7 +436,7 @@ void* checkPacketReliability(void *thread_arg)
 				
 				try
 				{
-				CastMinusMD5.erase(CastMinusMD5.find('\n'));
+					CastMinusMD5.erase(CastMinusMD5.find('\n'));
 				}
 				catch(out_of_range& e)
 				{
@@ -560,11 +548,9 @@ void* checkPacketReliability(void *thread_arg)
 		}
 		else
 		{
-		pthread_mutex_unlock(&mylock);
-		}
-				
-	}	
-	
+			pthread_mutex_unlock(&mylock);
+		}		
+	}		
 }
 
 
@@ -927,24 +913,16 @@ void* replaceLostPackets(void *thread_arg)
 	
 		if(!packetsMissed.empty() && !reSentMissedPackets.empty()) //there have been missed packets
 		{
-	//		printf("******************************\n");	
-	//		printf("There have been missing packets\n");
-	//		printf("******************************\n");
 			//search for missed packets for anything new that may have come in
 		    vector<int>::iterator searchMissingPackets;
 			int sizeOfVector = (int) packetsMissed.size();
-					
 		   	int loop;
-		
 			for(loop = 0; loop < sizeOfVector; loop++)
 			{
 				int match[] = {packetsMissed[loop]};
-				
-	//			cout << "looking for match: " << match[0] << endl;
-				
-
-	//			printf("Searching for missing packet in newley recived packets\n");
-	//			cout << "Size of reSent Packets before Search " << reSentMissedPackets.size() << endl;
+				//cout << "looking for match: " << match[0] << endl;
+				//printf("Searching for missing packet in newley recived packets\n");
+				//cout << "Size of reSent Packets before Search " << reSentMissedPackets.size() << endl;
 				
 
 				if(reSentMissedPackets.empty() == false)
@@ -953,7 +931,7 @@ void* replaceLostPackets(void *thread_arg)
 					searchMissingPackets = reSentMissedPackets.begin();
 					while(searchMissingPackets != reSentMissedPackets.end())
 					{
-	//					cout << "Packet To Replace: " << *searchMissingPackets << " Replacing: " << *match << endl;
+						//cout << "Packet To Replace: " << *searchMissingPackets << " Replacing: " << *match << endl;
 						if(*searchMissingPackets == *match)
 						{
 							printf("Found missing packet\n");
@@ -1052,7 +1030,7 @@ void* insertToDb(void *thread_arg)
 	 		{
 				pthread_mutex_unlock(&mylock);
 		
-				if(usleep(100000) == -1)
+				if(usleep(1000) == -1)
 				{
 					printf("Sleeping Error");
 				}	
@@ -1069,6 +1047,8 @@ void* insertToDb(void *thread_arg)
 			{
 				//start of critical section
 				string s = sproutFeed.front();
+				sproutFeed.pop();
+				
 				//printf("read in: %s\n", s.c_str());
 				//printf("Putting into Database\n");
 				pthread_mutex_unlock(&mylock);
@@ -1077,37 +1057,36 @@ void* insertToDb(void *thread_arg)
 				int *error;
 		 		unsigned long g = PQescapeStringConn(Conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()),error);  
 				cout << "Escaped String " << escapedString.c_str() << endl;
-			
-	   			try
-	    		{
-	  				// (Queries)
-	  				string Query = "INSERT INTO ";
-	  				Query = Query + "\""+ table + "\"" + " (" + col + ") " + "VALUES('";	
-	  				Query = Query + escapedString.c_str();
-	  				Query = Query +"');";
-	  				cout << Query << endl;
-	    			result = PQexec(Conn,Query.c_str());
-					if (PQresultStatus(result) != PGRES_COMMAND_OK) 
-					{
-				             fprintf(stderr,"BEGIN command failed");
-				             PQclear(result);
-				    }
-					else
-					{
-				  
-					
-					PQclear(result);
-					}
+				
+				if(strlen(escapedString.c_str()) > 1)
+				{
+	   				try
+	    			{
+	  					// (Queries)
+	  					string Query = "INSERT INTO ";
+	  					Query = Query + "\""+ table + "\"" + " (" + col + ") " + "VALUES('";	
+	  					Query = Query + escapedString.c_str();
+	  					Query = Query +"');";
+	  					cout << Query << endl;
+	    				result = PQexec(Conn,Query.c_str());
+						if (PQresultStatus(result) != PGRES_COMMAND_OK) 
+						{
+				    		fprintf(stderr,"BEGIN command failed");
+				        	PQclear(result);
+				    	}
+						else
+						{
+							PQclear(result);
+						}
 					//printf("CLEAR!!!!!!!!!!!!!!!!!");
-					sproutFeed.pop();
 					
 	
+					}
+	    			catch (...)
+	    			{
+	    				//i failed...um fuck it
+	    			}
 				}
-	    		catch (...)
-	    		{
-	    			//i failed...um fuck it
-	    		}
-				
 	    
 
 			}
@@ -1116,8 +1095,9 @@ void* insertToDb(void *thread_arg)
 				pthread_mutex_unlock(&mylock);
 				
 			}
-		//PQfinish(Conn);
+		
 		}
+		//PQfinish(Conn);
 	}
 
 
@@ -1153,7 +1133,7 @@ void* insertToDb(void *thread_arg)
  			{
  				pthread_mutex_unlock(&mylock);
 				
-				if(usleep(100000) == -1)
+				if(usleep(1000) == -1)
 				{
 					printf("Sleeping Error");
 				}
@@ -1405,9 +1385,9 @@ Information is passed through the api via named pipes
 {
 
 	int fd, ret_val, count, numread;
-	char bufpipe[maxPipe];
-	char copyPipe[maxPipe];
 	string word;
+	char bufpipe[4];
+	
 	
 	ret_val = mkfifo(sproutPipe, 0777); //make the sprout pipe
 	
@@ -1422,25 +1402,67 @@ Information is passed through the api via named pipes
 	while(1)
 	{
 		fd = open(sproutPipe, O_RDONLY); //open the pipe for reading
-		//Get an exclusive Lock
-
 		
-		
-		
-		numread = read(fd,bufpipe, maxPipe);
+		numread = read(fd,bufpipe, 4);
 		
 		if(numread > 1)
 		{
 			bufpipe[numread] = '\0';
-		//	printf("%s\n", bufpipe);
-			word = bufpipe; 
-			memset(bufpipe,'\0',maxPipe +1);
+
+			string temp = bufpipe;
+			
+			memset(bufpipe,'\0',4);
+			int pos = temp.find("^");
+			if(pos != string::npos)
+			{
+				temp = temp.substr(0, pos);
+			}
+					
+			int sizeOfString = atoi(temp.c_str());
+			
+			char feedWord[sizeOfString];
+			int numRead1 = read(fd, feedWord, sizeOfString);
+			
+			if(numRead1 > 1)
+			{					
+				feedWord[sizeOfString] = '\0';
+				word = feedWord;
+			}
+
 			close(fd);
 			
+			
+			/*
+			Find the number of spaces in the command to figure out how large to set the command[] buffer
+			*/
+			
+		
+			int NumSpacesCount = 0;
+			int loop;
+			for(loop =0; loop < word.length(); loop++)
+			{
+				string::size_type loc = word.find(' ', loop);
+				if(loc != string::npos)
+				{
+					NumSpacesCount +=1;
+				}
+				
+			}
+			
+		//	cout << "FOUND THIS MANY SPACES: " << NumSpacesCount << endl;
+			
 			string token;
-			string command[10];	//messages passed through can have a maximum of 10 arguments. (should never be more then that)
-			istringstream iss(word);
+			
+			if(NumSpacesCount == 0)
+			{
+				NumSpacesCount = 1;
+			}
+			
+			string parsWord = word;
+			string command[NumSpacesCount];	//messages passed through can have a maximum of 10 arguments. (should never be more then that)	
+			istringstream iss(parsWord);
 			int count1 = 0;
+			
 			
 			
 			/*
@@ -1451,11 +1473,10 @@ Information is passed through the api via named pipes
 			while(getline(iss,token,' '))
 			{
 				command[count1] = token;
-				cout << token << endl;
 				count1++;
 			}
 		
-		
+					
 			if(command[0] == "stopFeed")
 			{
 				closeAnnounce();
@@ -1468,17 +1489,7 @@ Information is passed through the api via named pipes
 	
 			if(command[0] == "getFeed")
 			{
-				/*
-				This will error out if the api starts a connection. Disconnects. Then restarts
-				Possible fix, have the thread start in the Main. Then use a boolean to detect weither it's
-				listening or not
-				*/
-				
 				getFeedBool = true;
-				
-				//int rc, i , status;
-				//pthread_t threads[1];
-				//pthread_create(&threads[0], NULL, getFeed, NULL);
 				printf("()()()()()()()()()()()()()()()()()()()()()()()()()Started getFeedThread\n");
 			}
 

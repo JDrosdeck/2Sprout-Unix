@@ -14,14 +14,14 @@ port = 4950
 host = socket.gethostbyname(hostname)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)	
 
-for x in xrange(5000):
+for x in xrange(10000):
 	m = md5.new()
 	tempMessage = "what^120511^"+ str(x) + "^0^TESTESTES125.99</price><sproutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>"
 	m.update(tempMessage)
 	msg1 = str(m.hexdigest()) + "^" + tempMessage
 	print msg1
-	msg = "KIi1SvqD" + msg1
-	msg = XOR(msg,'1op8LRA13Y')
+	msg = "yamNS5QT" + msg1
+	msg = XOR(msg,'ULympHS6bO')
 	msg = base64.b64encode(msg)
 	#g = random.uniform(.0001, .09)
 	time.sleep(.02)
