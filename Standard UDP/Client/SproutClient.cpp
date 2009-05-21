@@ -27,6 +27,7 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <sstream>
 #include <signal.h>
 #include <stdexcept>
+#include <sys/un.h>
 
 /*
 Includes for md5 summing and base64
@@ -60,6 +61,7 @@ using namespace std;
 #define passPipe "/tmp/pass"
 #define maxPipe		50000			
 
+#define NAME "/tmp/apiSocket"
 
 string url;
 int MYPORT;		//port which the client is bound to 
@@ -121,6 +123,7 @@ string currentDate = "";
 string nextDate = "";
 
 string cipher; //used to decode the message
+string updatedPassword;
 //
 //  libcurl variables for error strings and returned data
 bool getFeedBool = false;
@@ -267,7 +270,7 @@ void* announce(void *thread_arg)
 		if(section[0] != "" && section[1] != "" && section[2] != "")
 		{
 			cipher = section[2];
-			string updatedPassword = section[0];
+			updatedPassword = section[0];
 			int fd, ret_val, count, numread;
 			ret_val = mkfifo(passPipe, 0777); //create the pipe that will be used for transfering data back to user made app
 
@@ -279,12 +282,15 @@ void* announce(void *thread_arg)
 			char buffer1[50];
 			string messageToPass = section[0] + " " + section[2];
 			int n = sprintf(buffer1, messageToPass.c_str());
+		/*
 			fd = open(passPipe, O_WRONLY);
 			write(fd, buffer1, strlen(buffer1));
 			close(fd);
 			cout << "sleeping for:" << section[1] << endl;
 			buffer.clear();
+		*/
 			sleep(atoi(section[1].c_str()));
+		
 	}
 }
 }
@@ -316,68 +322,77 @@ int closeAnnounce()
 
 
 void* castListener(void *thread_arg)
-{ 	     
-	int i;
-	char buffer[10];
-	sprintf(buffer, "%i", MYPORT);
+{ 	
 	
-	string command = "./cast ";
-	//command += buffer;
-	//command += " &";
+	char *ipAdd;
+	int sockfd;
+	struct sockaddr_in my_addr;    // my address information
+	struct sockaddr_in their_addr; // connector's address information
+	socklen_t addr_len;
+	int numbytes;
+	string rawPacket;
 	
-	printf("Command is %s\n", command.c_str());
-	//i = system(command.c_str());
 	
-	pid_t pID = fork();
-	if(pID == 0)
-	{
-		
-		execl("cast","cast", buffer);
-		
-	}
-	else if(pID > 0)
-	{
+	
+	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) 
+    {
+        perror("socket\n");
+        exit(1);
+    }
 
-		//Once the command has been started We can listen on a pipe to recieve data that has been recieved
-		int fd1, numread;
-		char bufpipe[4];
+    my_addr.sin_family = AF_INET;         // host byte order
+    my_addr.sin_port = htons(MYPORT);     // short, network byte order
+    my_addr.sin_addr.s_addr = INADDR_ANY; // automatically fill with my IP
+    memset(my_addr.sin_zero, '\0', sizeof my_addr.sin_zero);
+
+
+    if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof my_addr) == -1) 
+    {
+        perror("bind\n");
+        exit(1);
+    }
+
+
+	printf("Entering while\n"); 
 	
-		while(1)
+ 	while(1)
+ 	{
+ 
+    	addr_len = sizeof their_addr;   		
+    	if ((numbytes = recvfrom(sockfd, (void *) rawPacket.c_str(), 50000 , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
+    	{
+        	perror("recvfrom\n");
+        	exit(1);
+   		}
+	
+        ipAdd = inet_ntoa(their_addr.sin_addr);
+         
+    	buf[numbytes] = '\0';
+    
+		if(numbytes < 5000 && unprocessedData.size() < 50000)
 		{
-			cout << "EXCEL" << endl;
-			fd1 = open(transferPipe, O_RDONLY);
-			numread = read(fd1,bufpipe, 4);
-			if(numread > 1)
+   	    	string input = rawPacket.c_str();
+			rawPacket.clear();
+				numbytes = 0;
+			string decoded = base64_decode(input);
+				
+			printf("Starting Encrpytion...\n");
+			string value(decoded);
+			string key(cipher);
+			value = XOR(decoded,key);
+			decoded.clear();
+			input.clear();
+			if(value.substr(0,8) == updatedPassword)
 			{
-				cout << "NUMREAD: " << numread << endl;
-				bufpipe[numread] = '\0';
-				string temp = bufpipe;
-				int pos = temp.find("^");
-				if(pos != string::npos)
-				{
-					temp = temp.substr(0, pos);
-				}
-				int sizeOfString = atoi(temp.c_str());
-				char feedWord[sizeOfString];
+				unprocessedData.push(value.substr(8,value.length()));
 				
-				int numRead1 = read(fd1, feedWord, sizeOfString);
-				cout << "NUMREAD1: " << numRead1 << endl;
-				
-				string sproutItem;
-				if(numRead1 > 1)
-				{					
-					feedWord[sizeOfString] = '\0';
-					sproutItem = feedWord;
-				}
-				close(fd1);
-				pthread_mutex_lock(&mylock);
-				unprocessedData.push(sproutItem);
 				printf("PUSHED\n");
-				pthread_mutex_unlock(&mylock);
-			}
-		}
-	}
+			} 		
+			value.clear();
 
+		}
+   }
+close(sockfd);
 }
 
 
@@ -472,7 +487,8 @@ void* checkPacketReliability(void *thread_arg)
 				
 				if(checkMd5 == section[0]) //The MD5 Sum is the same so data integrety is OK
 				{
-				
+					CastMinusMD5.clear();
+					checkMd5.clear();
 					//printf("MD5 Just Fine! PASSED\n");
 		  		
 					//check the secret key
@@ -556,6 +572,15 @@ void* checkPacketReliability(void *thread_arg)
 					printf("Secret Key FAILED\n");}
 				}
 				else{
+					
+					ofstream myfile;
+					myfile.open("md5Errors.txt",ios::out | ios::app);
+					myfile << "String: " << CastMinusMD5 << "\n";
+					myfile << "Client Created MD5: "<< checkMd5 << "\n";
+					myfile << "Python Created MD5: " << section[0] << "\n\n";
+					myfile.close();
+					CastMinusMD5.clear();
+					checkMd5.clear();
 				printf("MD5 sum FAILED\n");}
 			}
 			else{
@@ -1306,75 +1331,82 @@ Information is passed through the api via named pipes
   
  void* getFeed(void *thread_arg)
 {
-	printf("Waiting to transmit Packets\n");
-	int fd, ret_val, count, numread;
 
-	printf("creating pipe for data transmission");
-
-	
-	ret_val = mkfifo(feedPipe, 0777); //create the pipe that will be used for transfering data back to user made app
-	
-	if (( ret_val == -1) && (errno != EEXIST)) 
-	{
-		perror("Error creating named pipe");
-		exit(1);
-	}
-	int x = 0;
 	while(1)
 	{	
-		//pthread_mutex_lock(&mylock);
 		
-		if(!sproutFeed.empty() && getFeedBool == true)
+		if(!sproutFeed.empty()) //&& getFeedBool == true)
 		{
 			
-		//	signal(SIGPIPE, catch_sigpipe);
-			printf("NOT EMPTY \n");
-			//start of critcal section
-			string s;
-			s.clear();
-			s = sproutFeed.front();
-			sproutFeed.pop();
-			//pthread_mutex_unlock(&mylock);
-			//check the packet here
-			//end of critical section
+			 int sock;
+		     struct sockaddr_un server;
+
+
+		     sock = socket(AF_UNIX, SOCK_STREAM, 0);
+		     if (sock < 0) 
+			 {
+		         perror("opening stream socket");
+		     }
+		     server.sun_family = AF_UNIX;
+		     strcpy(server.sun_path, NAME);
 			
-			fd = open(feedPipe, O_WRONLY); //open the pipe for writing			
-			int sizeOfString = strlen(s.c_str());
-			char sizeofStringBuffer[10];
 			
-			sprintf(sizeofStringBuffer, "%i", sizeOfString);
-			string actualString = sizeofStringBuffer;
-			int tempSize = strlen(sizeofStringBuffer);
-			
-			int remainder = 4 - tempSize;
-			int x;
-			for(x =0; x < remainder; x++)
+		     if (connect(sock, (struct sockaddr *) &server, sizeof(struct sockaddr_un)) < 0) 
 			{
-				actualString = actualString + "^";
-			}
-			
-			
-			//string SendString = sizeofStringBuffer;
-			//string SendString = actualString;
-			
-			//SendString = SendString + s;
-			actualString = actualString + s;
+		         close(sock);
+		         perror("connecting stream socket");
+				 sleep(1);
+		    }
+			else
+			{
+					pthread_mutex_lock(&mylock);
+					string s;
+					s.clear();
+					s = sproutFeed.front();
+					sproutFeed.pop();
+					pthread_mutex_unlock(&mylock);
+					//check the packet here
+					//end of critical section
+
+					int sizeOfString = strlen(s.c_str());
+					char sizeofStringBuffer[10];
+
+					sprintf(sizeofStringBuffer, "%i", sizeOfString);
+					string actualString = sizeofStringBuffer;
+					int tempSize = strlen(sizeofStringBuffer);
+
+					int remainder = 4 - tempSize;
+					int x;
+					for(x =0; x < remainder; x++)
+					{
+						actualString = actualString + "^";
+					}
+
+
+					//string SendString = sizeofStringBuffer;
+					//string SendString = actualString;
+
+					//SendString = SendString + s;
+					cout << "LENGTH OF ACTUAL STRING: " << sizeOfString << endl;
+					
+					actualString = actualString + s;
+
+					cout << "************************" << actualString << endl;
+					int length = strlen(actualString.c_str());
+					
+					char finalString[length];
+					bzero(finalString, sizeof(finalString));
+					strcpy(finalString, actualString.c_str());
 				
-			cout << "************************" << actualString << endl;
-			
+		     if (write(sock, finalString, length) < 0)
+		         perror("writing on stream socket");		
 		
-			int written = write(fd,actualString.c_str(),strlen(actualString.c_str())); 	//write the string to the pipe
-			if(errno==EPIPE) //if the api closes the pipe mid write it will send a SIGPIPE signal. Which will kill the client
-			{
-			 	signal(SIGPIPE,SIG_IGN); //Ignore the SIGPIPE signal
 			}
-		
-			printf("WROTE: %i\n", written);
-			close(fd); //close the connection to the pipe	
+			close(sock);
+			
 		}
 		else
 		{
-			//pthread_mutex_unlock(&mylock);
 			if(usleep(1000) == -1)
 			{
 				printf("Sleeping Error");
@@ -1565,7 +1597,7 @@ int main(int argc, char *argv[])
 		printf("InsertDB Thread Started\n");
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
 		printf("lost packets starting\n");
-	//	pthread_create(&threads[4], NULL, checkLostPackets, NULL);
+		pthread_create(&threads[4], NULL, checkLostPackets, NULL);
 		printf("checking for packets on day2\n");
 		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
 		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);

@@ -9,9 +9,3 @@ md5.o : md5.cpp md5wrapper.cpp
 SproutClient.o : SproutClient.cpp
 	g++ -I/opt/local/include/postgresql83 -L/usr/local/pgsql/lib -L/usr/local/lib/mysql -I/usr/local/include/mysql -c SproutClient.cpp base64.cpp
 	
-
-cast : webCast.o base64.o
-	g++ -o cast webCast.o base64.o 
-
-webCast.o : webCast.cpp base64.cpp
-	g++ -c webCast.cpp base64.cpp
