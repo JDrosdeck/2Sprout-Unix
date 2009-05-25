@@ -656,7 +656,7 @@ void* checkLostPacketsDay2(void *thread_arg)
 
 					//if(!packetsRecieved.empty())
 
-			if(sizeOfRecievedDay2 > 1)
+			if(sizeOfRecievedDay2 >= 1)
 			{
 			printf("******************************\n");	
 			printf("Getting Ready to check packets\n");
@@ -888,7 +888,7 @@ void* checkLostPackets(void *thread_arg)
 
 				//if(!packetsRecieved.empty())
 
-				if(sizeOfRecieved > 1)
+				if(sizeOfRecieved >= 1)
 				{
 				printf("******************************\n");	
 				printf("Getting Ready to check packets\n");

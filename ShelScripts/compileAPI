@@ -1,0 +1,9 @@
+#!/bin/bash
+cd ~/Desktop/2sprout/2sprout\ API/
+rm libsprout.a
+g++ -c sprout.cpp
+ar cq libsprout.a *.o
+sudo cp libsprout.a /usr/local/2sprout/lib
+cd Test\ Applications/C++\ test\ app/
+g++ -L/usr/local/2sprout/lib -lsprout -o api test.cpp 
+
