@@ -21,8 +21,10 @@ using namespace std;
 	{
 		printf("X: %i\n", x++ );
 		char *test = getSproutItem();
+		if(test != NULL)
+		{
 		printf("%s", test);
-		
+		}
 	}
 }
  

@@ -28,6 +28,12 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <signal.h>
 #include <stdexcept>
 #include <sys/un.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <stdio.h>
+#include <string.h>
+#include <cstdlib>
 
 /*
 Includes for md5 summing and base64
@@ -59,9 +65,11 @@ using namespace std;
 #define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
 #define transferPipe "/tmp/transPipe" //pipe used to transfer data from the cast app into the client
 #define passPipe "/tmp/pass"
+
 #define maxPipe		50000			
 
-#define NAME "/tmp/apiSocket"
+#define MSGSZ     50000
+
 
 string url;
 int MYPORT;		//port which the client is bound to 
@@ -130,6 +138,15 @@ bool getFeedBool = false;
 
 static char errorBuffer[CURL_ERROR_SIZE];
 static std::string buffer;
+
+
+
+typedef struct msgbuf {
+         long    mtype;
+         char    mtext[MSGSZ];
+         } message_buf;
+
+
 //
 //  libcurl write callback function
 //
@@ -141,6 +158,33 @@ static int writer(char *data, size_t size, size_t nmemb,
 
   writerData->append(data, size*nmemb);
   return size * nmemb;
+}
+
+
+ssize_t r_read(int fd, char *buf, size_t size) {
+   ssize_t retval;
+   while (retval = read(fd, buf, size), retval == -1 && errno == EINTR) ;
+   return retval;
+}
+
+
+ssize_t r_write(int fd, char *buf, size_t size) {
+   char *bufp;
+   size_t bytestowrite;
+   ssize_t byteswritten;
+   size_t totalbytes;
+
+   for (bufp = buf, bytestowrite = size, totalbytes = 0;
+        bytestowrite > 0;
+        bufp += byteswritten, bytestowrite -= byteswritten) {
+      byteswritten = write(fd, bufp, bytestowrite);
+      if ((byteswritten) == -1 && (errno != EINTR))
+         return -1;
+      if (byteswritten == -1)
+         byteswritten = 0;
+      totalbytes += byteswritten;
+   }
+   return totalbytes;
 }
 
 
@@ -1093,8 +1137,11 @@ void* insertToDb(void *thread_arg)
 		 		unsigned long g = PQescapeStringConn(Conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()),error);  
 				cout << "Escaped String " << escapedString.c_str() << endl;
 				
-				if(strlen(escapedString.c_str()) > 1)
+				cout << "*********" << strlen(escapedString.c_str()) << endl; 
+				
+				if(g != 0 || escapedString != "")
 				{
+					cout << "!!!!!!!!!!!!!!" << strlen(escapedString.c_str()) <<" STRING: " << escapedString.c_str() << endl; 
 	   				try
 	    			{
 	  					// (Queries)
@@ -1332,86 +1379,75 @@ Information is passed through the api via named pipes
  void* getFeed(void *thread_arg)
 {
 
+	int msqid;
+    int msgflg = IPC_CREAT | 0666;
+    key_t key;
+    message_buf sbuf;
+    size_t buf_length;
+
+    /*
+     * Get the message queue id for the
+     * "name" 1234, which was created by
+     * the server.
+     */
+    key = 1234;
+
+	(void) fprintf(stderr, "\nmsgget: Calling msgget(%#lx,%#o)\n",key, msgflg);
+
+    if ((msqid = msgget(key, msgflg )) < 0) 
+	{
+        perror("msgget");
+        exit(1);
+    }
+    else 
+     (void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
+
+
+
 	while(1)
-	{	
-		
-		if(!sproutFeed.empty()) //&& getFeedBool == true)
+	{
+		if(!sproutFeed.empty())
 		{
-			
-			 int sock;
-		     struct sockaddr_un server;
-
-
-		     sock = socket(AF_UNIX, SOCK_STREAM, 0);
-		     if (sock < 0) 
-			 {
-		         perror("opening stream socket");
-		     }
-		     server.sun_family = AF_UNIX;
-		     strcpy(server.sun_path, NAME);
-			
-			
-		     if (connect(sock, (struct sockaddr *) &server, sizeof(struct sockaddr_un)) < 0) 
-			{
-		         close(sock);
-		         perror("connecting stream socket");
-				 sleep(1);
-		    }
-			else
-			{
-					pthread_mutex_lock(&mylock);
-					string s;
-					s.clear();
-					s = sproutFeed.front();
-					sproutFeed.pop();
-					pthread_mutex_unlock(&mylock);
-					//check the packet here
-					//end of critical section
-
-					int sizeOfString = strlen(s.c_str());
-					char sizeofStringBuffer[10];
-
-					sprintf(sizeofStringBuffer, "%i", sizeOfString);
-					string actualString = sizeofStringBuffer;
-					int tempSize = strlen(sizeofStringBuffer);
-
-					int remainder = 4 - tempSize;
-					int x;
-					for(x =0; x < remainder; x++)
-					{
-						actualString = actualString + "^";
-					}
-
-
-					//string SendString = sizeofStringBuffer;
-					//string SendString = actualString;
-
-					//SendString = SendString + s;
-					cout << "LENGTH OF ACTUAL STRING: " << sizeOfString << endl;
-					
-					actualString = actualString + s;
-
-					cout << "************************" << actualString << endl;
-					int length = strlen(actualString.c_str());
-					
-					char finalString[length];
-					bzero(finalString, sizeof(finalString));
-					strcpy(finalString, actualString.c_str());
-				
-		     if (write(sock, finalString, length) < 0)
-		         perror("writing on stream socket");		
+			string s;
+			s.clear();
+			s = sproutFeed.front();
 		
-			}
-			close(sock);
+		  	sbuf.mtype = 1;
+
+		    (void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
+
+		    (void) strcpy(sbuf.mtext, s.c_str());
+
+		    (void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
+
+		    buf_length = strlen(sbuf.mtext) + 1;
+
+
+		    /*
+		     * Send a message.
+		     */
+	
+		    	if (msgsnd(msqid, &sbuf, buf_length, false) < 0) 
+				{
+		       		printf ("%d, %d, %s, %d\n", msqid, sbuf.mtype, sbuf.mtext, buf_length);
+		        	perror("msgsnd");
+		        	exit(1);
+		    	}
+
+		    	else
+				{ 
+		      		printf("Message: \"%s\" Sent\n", sbuf.mtext);
+			  		sproutFeed.pop();		
+				}
 			
 		}
 		else
 		{
 			if(usleep(1000) == -1)
 			{
-				printf("Sleeping Error");
+				perror("Sleep failed\n");
 			}
-		}		
+		}
 	}
 }
  
