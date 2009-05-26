@@ -66,7 +66,6 @@ Includes for mysql C library
 
 using namespace std;
 
-#define feedPipe "/tmp/2sproutAPI"		//pipe that feeds data back through the api to the user made application
 #define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
 #define transferPipe "/tmp/transPipe" //pipe used to transfer data from the cast app into the client
 #define passPipe "/tmp/pass"
@@ -94,6 +93,7 @@ struct sockaddr_in their_addr; // connector's address information
 socklen_t addr_len;
 int numbytes;
 char buf[maxPipe];
+string useUPNP;
 
 
 void getData();
@@ -1277,10 +1277,6 @@ used to create a connection with a database.
 
 
 
-
-
-
-
 int readConfig()
 {
 	string line;
@@ -1355,12 +1351,17 @@ int readConfig()
 							col = secoundSub;	
 							numOfArgsFound++;
 						}
+						if(firstSub == "upnp" && secoundSub != "")
+						{
+							useUPNP = secoundSub;
+							numOfArgsFound++;
+						}
 				}	
 			}	
 		}
 		
 		cout << numOfArgsFound << endl;
-		if(numOfArgsFound != 9)
+		if(numOfArgsFound != 10)
 		{
 			printf("Configuration File is not Formatted Correctly...Exiting\n");
 			exit(0);
@@ -1378,7 +1379,7 @@ int readConfig()
 /*
 getFeed is an API function It allows users to not relay information directly into a database
 but rather gives them access to the data via their own queue within the 2sprout library. 
-Information is passed through the api via named pipes
+Information is passed through the api via a message Queue
 */
   
  void* getFeed(void *thread_arg)
@@ -1576,7 +1577,6 @@ void catch_int(int sig_num)
 {
     /* re-set the signal handler again to catch_int, for next time */
     signal(SIGINT, catch_int);
-	unlink(feedPipe);
 	unlink(sproutPipe);
 	unlink(transferPipe); 
 	unlink(passPipe);
@@ -1600,6 +1600,64 @@ else
 }
 
 
+void setUPNP(char* port)
+{
+	struct UPNPDev *devlist;
+	char lanaddr[16];
+	int i;
+	const char * rootdescurl = 0;
+	const char * multicastif = 0;
+	const char * minissdpdpath = 0; 
+
+	if( rootdescurl
+	  || (devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0)))
+	{
+		struct UPNPDev * device;
+		struct UPNPUrls urls;
+		struct IGDdatas data;
+		i = 1;
+		if( (rootdescurl && UPNP_GetIGDFromUrl(rootdescurl, &urls, &data, lanaddr, sizeof(lanaddr)))
+		  || (i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))))
+		{
+			switch(i) 
+			{
+			case 1:
+				//printf("Found valid IGD : %s\n", urls.controlURL);
+				break;
+			case 2:
+				printf("Internet Gateway Not Connected : %s\n", urls.controlURL);
+				printf("continuing...\n");
+				break;
+			case 3:
+				printf("UPnP device found. Checking for Internet Gateway : %s\n", urls.controlURL);
+				printf("continuing...\n");
+				break;
+			default:
+				printf("Found A Device : %s\n", urls.controlURL);
+				printf("continuing...\n");
+			}
+			//printf("Local LAN ip address : %s\n", lanaddr);
+			
+			forwardPort(&urls, &data, lanaddr,port,port,"UDP");
+
+			FreeUPNPUrls(&urls);
+		}
+		else
+		{
+			fprintf(stderr, "No valid UPNP gateway found\n");
+		}
+		freeUPNPDevlist(devlist); devlist = 0;
+	}
+	else
+	{
+		fprintf(stderr, "Unable to set port forwarding\n");
+	}
+
+
+}
+
+
+
 /*
 
 sproutClient takes 1 argument, which is the port number, This will be upated for username/password.
@@ -1618,6 +1676,8 @@ int main(int argc, char *argv[])
 	{
 		char port1[] = "4950";
 		argv[1] = port1;
+		MYPORT = atoi(argv[1]);
+		
 
 			
 	}
@@ -1632,67 +1692,19 @@ int main(int argc, char *argv[])
 		{
 			MYPORT = atoi(argv[1]);
 		}
-	
-		if(argc == 3)
-		{
-
-			struct UPNPDev *devlist;
-			char lanaddr[16];
-			int i;
-			const char * rootdescurl = 0;
-			const char * multicastif = 0;
-			const char * minissdpdpath = 0; 
-
-			if( rootdescurl
-			  || (devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0)))
-			{
-				struct UPNPDev * device;
-				struct UPNPUrls urls;
-				struct IGDdatas data;
-				i = 1;
-				if( (rootdescurl && UPNP_GetIGDFromUrl(rootdescurl, &urls, &data, lanaddr, sizeof(lanaddr)))
-				  || (i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))))
-				{
-					switch(i) {
-					case 1:
-						//printf("Found valid IGD : %s\n", urls.controlURL);
-						break;
-					case 2:
-						printf("Internet Gateway Not Connected : %s\n", urls.controlURL);
-						printf("continuing...\n");
-						break;
-					case 3:
-						printf("UPnP device found. Checking for Internet Gateway : %s\n", urls.controlURL);
-						printf("continuing...\n");
-						break;
-					default:
-						printf("Found A Device : %s\n", urls.controlURL);
-						printf("continuing...\n");
-					}
-					//printf("Local LAN ip address : %s\n", lanaddr);
-					
-					forwardPort(&urls, &data, lanaddr,argv[1],argv[1],"UDP");
-
-					FreeUPNPUrls(&urls);
-				}
-				else
-				{
-					fprintf(stderr, "No valid UPNP gateway found\n");
-				}
-				freeUPNPDevlist(devlist); devlist = 0;
-			}
-			else
-			{
-				fprintf(stderr, "Unable to set port forwarding\n");
-			}
-		}
+		
 	}
 	
 	
 	
 	
 	readConfig(); 	//read the configuration file for database access.
-    if(useDatabase == true)
+	if(useUPNP == "true")
+	{
+		setUPNP(argv[1]);
+    
+	}
+	if(useDatabase == true)
     {
 	
 		 //set the port
