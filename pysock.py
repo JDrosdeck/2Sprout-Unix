@@ -20,11 +20,11 @@ for x in xrange(10000):
 	m.update(tempMessage)
 	msg1 = str(m.hexdigest()) + "^" + tempMessage
 	print msg1
-	msg = "Q0sf7QWo" + msg1
-	msg = XOR(msg,'89CqYVEzKf')
+	msg = "jJJS8Oax" + msg1
+	msg = XOR(msg,'4xiDJCvCkL')
 	msg = base64.b64encode(msg)
 	#g = random.uniform(.002)
-	time.sleep(.0002)
+	time.sleep(.2)
 	#print g
 	s.sendto(msg,(host,port))
 	del msg1

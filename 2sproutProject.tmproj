@@ -13,7 +13,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/Makefile</string>
 					<key>lastUsed</key>
-					<date>2009-05-21T00:10:39Z</date>
+					<date>2009-05-26T00:58:46Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -37,7 +37,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-05-25T20:33:45Z</date>
+					<date>2009-05-26T00:58:46Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -45,7 +45,7 @@
 					<key>filename</key>
 					<string>pysock.py</string>
 					<key>lastUsed</key>
-					<date>2009-05-25T20:33:42Z</date>
+					<date>2009-05-26T00:23:23Z</date>
 				</dict>
 			</array>
 			<key>expanded</key>
@@ -263,9 +263,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>320</integer>
 				<key>line</key>
-				<integer>11</integer>
+				<integer>3</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -277,14 +277,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>24</integer>
+				<integer>20</integer>
 				<key>line</key>
-				<integer>890</integer>
+				<integer>1618</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>758</integer>
+			<integer>1599</integer>
 		</dict>
 		<key>Standard UDP/Client/md5.h</key>
 		<dict>
@@ -335,7 +335,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>21</integer>
+				<integer>23</integer>
 				<key>line</key>
 				<integer>16</integer>
 			</dict>
@@ -347,18 +347,13 @@
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>Standard UDP/Client/2sprout.conf</string>
 		<string>pysock.py</string>
-		<string>2sprout API/sprout.cpp</string>
-		<string>compile command line.txt</string>
-		<string>2sprout API/Test Applications/C++ test app/test.cpp</string>
-		<string>2sprout API/Test Applications/C#/test.cs</string>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
 		<string>Standard UDP/Client/Makefile</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{210, 0}, {956, 878}}</string>
+	<string>{{1528, 3}, {956, 878}}</string>
 </dict>
 </plist>

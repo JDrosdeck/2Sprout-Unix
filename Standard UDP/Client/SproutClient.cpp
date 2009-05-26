@@ -34,6 +34,11 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <stdio.h>
 #include <string.h>
 #include <cstdlib>
+#include "upnp/miniwget.h"
+#include "upnp/miniupnpc.h"
+#include "upnp/upnpcommands.h"
+#include "upnp/upnperrors.h"
+
 
 /*
 Includes for md5 summing and base64
@@ -1582,8 +1587,17 @@ void catch_int(int sig_num)
 
 
 
-
+static void forwardPort(struct UPNPUrls * urls,struct IGDdatas * data, const char * iaddr,const char * iport,const char * eport,const char * proto)
+{
  
+int r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
+	                        eport, iport, iaddr, 0, proto, 0);
+if(r!=UPNPCOMMAND_SUCCESS)
+	printf("AddPortMapping(%s, %s, %s) failed with code %d\n",eport, iport, iaddr, r);
+else
+	printf("Port added successfully\n");
+
+}
 
 
 /*
@@ -1598,30 +1612,90 @@ int main(int argc, char *argv[])
 	
 	
 	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
-  	signal(SIGPIPE,SIG_IGN); //Ignore the signal for a broken pipe
 	
 	apiReadyToRecieve = false;
 	if(argc < 2)
 	{
 		char port1[] = "4950";
-		argv[1] = port1;	
+		argv[1] = port1;
+
+			
+	}
+	else
+	{	
+		if(atoi(argv[1]) <= 1024)
+		{
+			printf("Port Number is system reserved: Must be greater then 1024\n");
+			exit(1);	
+		}
+		else
+		{
+			MYPORT = atoi(argv[1]);
+		}
+	
+		if(argc == 3)
+		{
+
+			struct UPNPDev *devlist;
+			char lanaddr[16];
+			int i;
+			const char * rootdescurl = 0;
+			const char * multicastif = 0;
+			const char * minissdpdpath = 0; 
+
+			if( rootdescurl
+			  || (devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0)))
+			{
+				struct UPNPDev * device;
+				struct UPNPUrls urls;
+				struct IGDdatas data;
+				i = 1;
+				if( (rootdescurl && UPNP_GetIGDFromUrl(rootdescurl, &urls, &data, lanaddr, sizeof(lanaddr)))
+				  || (i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))))
+				{
+					switch(i) {
+					case 1:
+						//printf("Found valid IGD : %s\n", urls.controlURL);
+						break;
+					case 2:
+						printf("Internet Gateway Not Connected : %s\n", urls.controlURL);
+						printf("continuing...\n");
+						break;
+					case 3:
+						printf("UPnP device found. Checking for Internet Gateway : %s\n", urls.controlURL);
+						printf("continuing...\n");
+						break;
+					default:
+						printf("Found A Device : %s\n", urls.controlURL);
+						printf("continuing...\n");
+					}
+					//printf("Local LAN ip address : %s\n", lanaddr);
+					
+					forwardPort(&urls, &data, lanaddr,argv[1],argv[1],"UDP");
+
+					FreeUPNPUrls(&urls);
+				}
+				else
+				{
+					fprintf(stderr, "No valid UPNP gateway found\n");
+				}
+				freeUPNPDevlist(devlist); devlist = 0;
+			}
+			else
+			{
+				fprintf(stderr, "Unable to set port forwarding\n");
+			}
+		}
 	}
 	
-	//check to see if the port number is less then 1024 (reserved ports)
 	
-	if(atoi(argv[1]) <= 1024)
-	{
-		printf("Port Number is system reserved: Must be greater then 1024\n");
-		exit(1);	
-	}
 	
 	
 	readConfig(); 	//read the configuration file for database access.
-
     if(useDatabase == true)
     {
 	
-		MYPORT = atoi(argv[1]); //set the port
+		 //set the port
 	
 		int rc, i , status;
 		pthread_t threads[8];
@@ -1653,7 +1727,6 @@ int main(int argc, char *argv[])
 	else
 	{
 		printf("Not using Database\n");
-		MYPORT = atoi(argv[1]); //set the port value
 		int rc, i , status;
 		pthread_t threads[9];		
 		printf("Starting Threads...\n");
