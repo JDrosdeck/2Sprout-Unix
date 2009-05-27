@@ -166,31 +166,6 @@ static int writer(char *data, size_t size, size_t nmemb,
 }
 
 
-ssize_t r_read(int fd, char *buf, size_t size) {
-   ssize_t retval;
-   while (retval = read(fd, buf, size), retval == -1 && errno == EINTR) ;
-   return retval;
-}
-
-
-ssize_t r_write(int fd, char *buf, size_t size) {
-   char *bufp;
-   size_t bytestowrite;
-   ssize_t byteswritten;
-   size_t totalbytes;
-
-   for (bufp = buf, bytestowrite = size, totalbytes = 0;
-        bytestowrite > 0;
-        bufp += byteswritten, bytestowrite -= byteswritten) {
-      byteswritten = write(fd, bufp, bytestowrite);
-      if ((byteswritten) == -1 && (errno != EINTR))
-         return -1;
-      if (byteswritten == -1)
-         byteswritten = 0;
-      totalbytes += byteswritten;
-   }
-   return totalbytes;
-}
 
 
 string XOR(string value,string key)
@@ -1139,41 +1114,40 @@ void* insertToDb(void *thread_arg)
 				//end of critical section
 				string escapedString;
 				int *error;
-		 		unsigned long g = PQescapeStringConn(Conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()),error);  
-				cout << "Escaped String " << escapedString.c_str() << endl;
 				
-				cout << "*********" << strlen(escapedString.c_str()) << endl; 
+				char escapeBuffer[(s.length() * 2)+1];
 				
-				if(g != 0 || escapedString != "")
-				{
-					cout << "!!!!!!!!!!!!!!" << strlen(escapedString.c_str()) <<" STRING: " << escapedString.c_str() << endl; 
+		 		unsigned long g = PQescapeStringConn(Conn, escapeBuffer, (char *)s.c_str(), strlen(s.c_str()),error);  
+				cout << "Escaped String " << escapeBuffer << endl;
+								
 	   				try
 	    			{
 	  					// (Queries)
 	  					string Query = "INSERT INTO ";
 	  					Query = Query + "\""+ table + "\"" + " (" + col + ") " + "VALUES('";	
-	  					Query = Query + escapedString.c_str();
+	  					Query = Query + escapeBuffer;
 	  					Query = Query +"');";
 	  					cout << Query << endl;
 	    				result = PQexec(Conn,Query.c_str());
 						if (PQresultStatus(result) != PGRES_COMMAND_OK) 
 						{
+							
 				    		fprintf(stderr,"BEGIN command failed");
+							
 				        	PQclear(result);
 				    	}
 						else
 						{
 							PQclear(result);
 						}
-					//printf("CLEAR!!!!!!!!!!!!!!!!!");
+						memset(escapeBuffer, '\0', sizeof(escapeBuffer) );
+			
 					
 	
 					}
 	    			catch (...)
 	    			{
-	    				//i failed...um fuck it
 	    			}
-				}
 	    
 
 			}
