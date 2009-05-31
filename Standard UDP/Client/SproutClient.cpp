@@ -404,9 +404,9 @@ void* castListener(void *thread_arg)
 			value = XOR(decoded,key);
 			decoded.clear();
 			input.clear();
-			if(value.substr(0,8) == updatedPassword)
+			if(value.substr(0,10) == updatedPassword)
 			{
-				unprocessedData.push(value.substr(8,value.length()));
+				unprocessedData.push(value.substr(10,value.length()));
 				
 				printf("PUSHED\n");
 			} 		
@@ -480,9 +480,9 @@ void* checkPacketReliability(void *thread_arg)
 			}
 		
 			
-			if((section[0]  != "") && section[1] != "" && section[2] != "" && section[3] != "" && section[4] != "" && section[5] != "" ) //make sure we have all the parts
+			if((section[0]  != "") && section[1] != "" && section[2] != "" && section[3] != "" && section[4] != "" ) //make sure we have all the parts
 			{	
-				string CastMinusMD5 = section[1] + "^" + section[2] + "^" + section[3] + "^" + section[4] + "^" + section[5]; //generate the origional string to grab the MD5 sum from	
+				string CastMinusMD5 = section[1] + "^" + section[2] + "^" + section[3] + "^" + section[4]; //generate the origional string to grab the MD5 sum from	
 				
 			
 				//check the md5 sum
@@ -513,49 +513,45 @@ void* checkPacketReliability(void *thread_arg)
 					checkMd5.clear();
 					//printf("MD5 Just Fine! PASSED\n");
 		  		
-					//check the secret key
-					if(section[1] == secretKey)
-					{
-						//printf("Secret Key just fine! PASSED\n");
-						
+				
 						
 						
 						if(currentDate == "")
 						{
 							printf("Current Day initially set\n");
-							currentDate = section[2];
+							currentDate = section[1];
 						}
 						
-						if(section[2] != currentDate && nextDate == "")
+						if(section[1] != currentDate && nextDate == "")
 						{
 							printf("next Date initially set\n");
-							nextDate = section[2];
+							nextDate = section[1];
 						}
 						
-						if(section[2] == currentDate && section[4] != "0")
+						if(section[1] == currentDate && section[3] != "0")
 						{
 							//printf("CurrentDate has been matched Pushing...\n");
-							reSentMissedPackets.push_back(atoi(section[3].c_str()));
+							reSentMissedPackets.push_back(atoi(section[2].c_str()));
 						}
-						if(section[2] == currentDate && section[4] == "0")
+						if(section[1] == currentDate && section[3] == "0")
 						{
-							packetsRecieved.push_back(atoi(section[3].c_str()));
+							packetsRecieved.push_back(atoi(section[2].c_str()));
 							printf("NOT REPLACING PACKET pusing back packet number\n");	
 								
 						}
-						if(section[2] == nextDate && section[4] != "0")
+						if(section[1] == nextDate && section[3] != "0")
 						{
-							reSentMissedPacketsDay2.push_back(atoi(section[3].c_str()));
+							reSentMissedPacketsDay2.push_back(atoi(section[2].c_str()));
 						}
 						
-						if(section[2] == nextDate && section[4] == "0")
+						if(section[1] == nextDate && section[2] == "0")
 						{
 							printf("NextDate has been matched Pushing...\n");
-							packetsRecievedDay2.push_back(atoi(section[3].c_str()));
+							packetsRecievedDay2.push_back(atoi(section[2].c_str()));
 							printf("NOT REPLACING PACKET pusing back packet number\n");	
 						}
 						
-						if(section[2] != currentDate && section[2] != nextDate && dateRecieved == false)
+						if(section[1] != currentDate && section[1] != nextDate && dateRecieved == false)
 						{
 							if(!packetsMissed.empty())
 								packetsMissed.clear();
@@ -563,11 +559,11 @@ void* checkPacketReliability(void *thread_arg)
 								packetsRecieved.clear();
 							
 							printf("new date found, current date being overwritten\n");
-							currentDate = section[2];
-							packetsRecieved.push_back(atoi(section[3].c_str()));
+							currentDate = section[1];
+							packetsRecieved.push_back(atoi(section[2].c_str()));
 							dateRecieved = true;	
 						}
-						else if(section[2] != currentDate && section[2] != nextDate && dateRecieved == true)
+						else if(section[1] != currentDate && section[1] != nextDate && dateRecieved == true)
 						{
 							if(!packetsMissedDay2.empty())
 								packetsMissedDay2.clear();
@@ -575,8 +571,8 @@ void* checkPacketReliability(void *thread_arg)
 								packetsRecievedDay2.clear();
 							
 							printf("new date found next date being overwritten\n");	
-							currentDate = section[2];
-							packetsRecieved.push_back(atoi(section[3].c_str()));
+							currentDate = section[1];
+							packetsRecieved.push_back(atoi(section[2].c_str()));
 							dateRecieved = false;							
 						}
 										
@@ -587,11 +583,9 @@ void* checkPacketReliability(void *thread_arg)
 					//pthread_mutex_lock(&mylock);
 							y++;
 							printf("Y: %i\n", y);
-		 			sproutFeed.push(section[5]);
+		 			sproutFeed.push(section[4]);
 					//pthread_mutex_unlock(&mylock);	
-					}
-					else{
-					printf("Secret Key FAILED\n");}
+			
 				}
 				else{
 					
