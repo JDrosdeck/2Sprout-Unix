@@ -137,6 +137,7 @@ string nextDate = "";
 
 string cipher; //used to decode the message
 string updatedPassword;
+int sleeptime = 0;
 //
 //  libcurl variables for error strings and returned data
 bool getFeedBool = false;
@@ -193,17 +194,20 @@ to that particular client
 */
 void* announce(void *thread_arg)
 {	
-		
+
 		CURL *curl;
 		CURLcode res;
 		char Portbuffer[10];
 		sprintf(Portbuffer, "%i", MYPORT);
 	
-		string url = "www.2sprout.com/onClient/?port=";
-		url += Portbuffer;
+		string url = "http://2sprout.com/u/8573/Frer8n4drE/";
+		//url += Portbuffer;
 		cout << url << endl;
 		while(1)
 		{
+			buffer.clear();
+			memset(errorBuffer, '\0', sizeof(errorBuffer));
+			sleep(sleeptime);	
 		curl = curl_easy_init();
     	if (curl == NULL)
     	{
@@ -256,7 +260,7 @@ void* announce(void *thread_arg)
   		cout << "Decoded: " <<  decoded << endl;
   		//XOR with the secret cypher
 		string value(decoded);
-		string key("23qwefwl;dg24t");
+		string key(cipher);
 		value = XOR(decoded,key);
 		cout << "Decrypted: " << value << endl;
 
@@ -293,8 +297,8 @@ void* announce(void *thread_arg)
 
 		if(section[0] != "" && section[1] != "" && section[2] != "")
 		{
-			cipher = section[2];
-			updatedPassword = section[0];
+			cipher = section[0];
+			updatedPassword = section[1];
 			int fd, ret_val, count, numread;
 			ret_val = mkfifo(passPipe, 0777); //create the pipe that will be used for transfering data back to user made app
 
@@ -303,17 +307,11 @@ void* announce(void *thread_arg)
 				perror("Error creating named pipe\n");
 				exit(1);
 			}
-			char buffer1[50];
-			string messageToPass = section[0] + " " + section[2];
-			int n = sprintf(buffer1, messageToPass.c_str());
-		/*
-			fd = open(passPipe, O_WRONLY);
-			write(fd, buffer1, strlen(buffer1));
-			close(fd);
-			cout << "sleeping for:" << section[1] << endl;
-			buffer.clear();
-		*/
-			sleep(atoi(section[1].c_str()));
+
+
+			cout << "CIPHER: " << cipher << endl;
+			cout <<"PASS: " << updatedPassword << endl;
+			sleeptime = atoi(section[2].c_str());
 		
 	}
 }
@@ -636,7 +634,7 @@ void* checkLostPacketsDay2(void *thread_arg)
 
 					//if(!packetsRecieved.empty())
 
-			if(sizeOfRecievedDay2 >= 1)
+			if(sizeOfRecievedDay2 > 1)
 			{
 			printf("******************************\n");	
 			printf("Getting Ready to check packets\n");
@@ -868,7 +866,7 @@ void* checkLostPackets(void *thread_arg)
 
 				//if(!packetsRecieved.empty())
 
-				if(sizeOfRecieved >= 1)
+				if(sizeOfRecieved > 1)
 				{
 				printf("******************************\n");	
 				printf("Getting Ready to check packets\n");
@@ -1069,7 +1067,6 @@ void* insertToDb(void *thread_arg)
 {
 	if(database == "postgres")
 	{
-
 		connectionString = "host=" + host + " port=" + port + " dbname=" + dbname + " user=" + user + " password=" + pass;
 		PGconn *Conn = PQconnectdb(connectionString.c_str());
 		PGresult* result;
@@ -1096,8 +1093,7 @@ void* insertToDb(void *thread_arg)
 			}
 			else
 			{
-				//pthread_mutex_unlock(&mylock);
-				
+				//pthread_mutex_unlock(&mylock);	
 			}
 			
 			
@@ -1141,26 +1137,18 @@ void* insertToDb(void *thread_arg)
 							PQclear(result);
 						}
 						memset(escapeBuffer, '\0', sizeof(escapeBuffer) );
-			
-					
-	
 					}
 	    			catch (...)
 	    			{
 	    			}
-	    
-
 			}
 			else
 			{
 				//pthread_mutex_unlock(&mylock);
-				
 			}
-		
 		}
 		//PQfinish(Conn);
 	}
-
 
 	if(database == "mysql")
 	{
@@ -1177,7 +1165,6 @@ void* insertToDb(void *thread_arg)
     		cout << "Mysql initiation failed" << endl;
     		exit(1);
     	}
-    
  
     	if(mysql_real_connect(conn, (char *)host.c_str(), (char *)user.c_str(), (char *)pass.c_str(), (char *)dbname.c_str(), atoi(port.c_str()), NULL,0) == NULL)
     	{
@@ -1192,8 +1179,7 @@ void* insertToDb(void *thread_arg)
 		
  			if(sproutFeed.empty())
  			{
- 				//pthread_mutex_unlock(&mylock);
-				
+ 				//pthread_mutex_unlock(&mylock);		
 				if(usleep(1000) == -1)
 				{
 					printf("Sleeping Error");
@@ -1217,7 +1203,6 @@ void* insertToDb(void *thread_arg)
 		 		string escapedString;    
     			string mysqlQuery;
 		   
-		   
 		  		unsigned long to_len = mysql_real_escape_string (conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()));	//use the built in mysql function to put in escape characters...if ther are any	
 				mysqlQuery = "INSERT INTO " + table + " ("+ col +") VALUES (\"" + escapedString.c_str() + "\");"; //actual creation of the sql statment
  				cout << mysqlQuery << endl;
@@ -1236,9 +1221,7 @@ void* insertToDb(void *thread_arg)
 		}    
 		mysql_close(conn); //close the database connection
    	    mysql_library_end(); //stop using the library
-
 	}
-
 }   
    
    
@@ -1632,6 +1615,128 @@ void setUPNP(char* port)
 
 
 
+
+
+bool registerClient()
+{
+		CURL *curl;
+		CURLcode res;
+		char Portbuffer[10];
+		sprintf(Portbuffer, "%i", MYPORT);
+	
+		string url = "http://2sprout.com/r/8573/Frer8n4drE/";
+		//url += Portbuffer;
+		cout << url << endl;
+		
+		curl = curl_easy_init();
+    	if (curl == NULL)
+    	{
+    		fprintf(stderr, "Failed to create CURL connection\n");
+    		exit(EXIT_FAILURE);
+  		}
+
+  		res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
+  		if (res != CURLE_OK)
+  		{
+    		fprintf(stderr, "Failed to set error buffer [%d]\n", res);
+    		return false;
+  		}
+
+  		res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  		if (res != CURLE_OK)
+  		{
+    		fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
+    		return false;
+  		}
+
+ 		res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+  		if (res != CURLE_OK)
+  		{
+    		fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
+    		return false;
+  		}
+
+  		res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
+  		if (res != CURLE_OK)
+  		{
+    		fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
+    		return false;
+  		}
+
+  		res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+  		if (res != CURLE_OK)
+  		{
+    		fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
+    		return false;
+  		}
+
+  		res = curl_easy_perform(curl);
+  		curl_easy_cleanup(curl);
+  		cout << buffer << endl;
+		if (buffer == "0000")
+		{
+			cout << "Client Already in the database" << endl;
+		}
+		else
+		{
+			cout << "Client Successfully Registerd" << endl;
+		}
+	
+		string decoded = base64_decode(buffer);
+	  	cout << "Decoded: " <<  decoded << endl;
+	  	//XOR with the secret cypher
+		string value(decoded);
+		string key("2#sPr0uT5!");
+		value = XOR(decoded,key);
+		cout << "Decrypted: " << value << endl;
+
+
+		//find the number of "^"
+		int NumSpacesCount = 0;
+		int loop;
+		for(loop =0; loop < value.length(); loop++)
+		{
+			string::size_type loc = value.find('^', loop);
+			if(loc != string::npos)
+			{
+				NumSpacesCount +=1;
+			}	
+		}		
+		if(NumSpacesCount == 0)
+		{
+			NumSpacesCount = 1;
+		}
+
+
+		string token;
+		string section[NumSpacesCount];	
+		istringstream iss(value);
+		int count1 = 0;
+
+		while(getline(iss,token,'^'))
+		{
+			section[count1] = token;
+			cout << token << endl;
+			count1++;
+		}
+
+		if(section[0] != "" && section[1] != "" && section[2] != "")
+		{
+			cipher = section[0];
+			updatedPassword = section[1];
+			int fd, ret_val, count, numread;
+			ret_val = mkfifo(passPipe, 0777); //create the pipe that will be used for transfering data back to user made app
+			if (( ret_val == -1) && (errno != EEXIST)) 
+			{
+				perror("Error creating named pipe\n");
+				exit(1);
+			}
+			cout << "CIPHER: " << cipher << endl;
+			cout <<"PASS: " << updatedPassword << endl;
+			sleeptime = atoi(section[2].c_str());
+		}
+}
+
 /*
 
 sproutClient takes 1 argument, which is the port number, This will be upated for username/password.
@@ -1641,8 +1746,6 @@ database
 */
 int main(int argc, char *argv[])
 {
-	
-	
 	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
 	
 	apiReadyToRecieve = false;
@@ -1650,10 +1753,7 @@ int main(int argc, char *argv[])
 	{
 		char port1[] = "4950";
 		argv[1] = port1;
-		MYPORT = atoi(argv[1]);
-		
-
-			
+		MYPORT = atoi(argv[1]);	
 	}
 	else
 	{	
@@ -1666,11 +1766,7 @@ int main(int argc, char *argv[])
 		{
 			MYPORT = atoi(argv[1]);
 		}
-		
 	}
-	
-	
-	
 	
 	readConfig(); 	//read the configuration file for database access.
 	if(useUPNP == "true")
@@ -1678,11 +1774,10 @@ int main(int argc, char *argv[])
 		setUPNP(argv[1]);
     
 	}
+	
+	registerClient();
 	if(useDatabase == true)
-    {
-	
-		 //set the port
-	
+    {	
 		int rc, i , status;
 		pthread_t threads[8];
 		printf("Starting Threads...\n");	
