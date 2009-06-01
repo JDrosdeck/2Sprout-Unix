@@ -429,7 +429,7 @@ checkPacketReliablity() will check the validity of each packet and make sure tha
 
 format is as follows:
 
-md5^secretKey^date^packetNumber^2sproutString
+md5^date^packetNumber^send\resend^2sproutString
 
 */
 void* checkPacketReliability(void *thread_arg)
@@ -443,7 +443,7 @@ void* checkPacketReliability(void *thread_arg)
  		{
 			//pthread_mutex_unlock(&mylock);
 		
- 				if(usleep(100) == -1)
+ 				if(usleep(1000) == -1)
 				{
 					printf("Sleeping Error");
 				}
@@ -1075,24 +1075,18 @@ void* insertToDb(void *thread_arg)
 
  		while(1)
  		{
-			//pthread_mutex_lock(&mylock);
  			if(sproutFeed.empty())
 	 		{
-				//pthread_mutex_unlock(&mylock);
-		
 				if(usleep(1000) == -1)
 				{
 					printf("Sleeping Error");
 				}	
 			}
-			else
-			{
-				//pthread_mutex_unlock(&mylock);	
-			}
+
 			
 			
 			//pthread_mutex_lock(&mylock);
-			if(!sproutFeed.empty()) //while the queue has items
+			else //while the queue has items
 			{
 				//start of critical section
 				string s = sproutFeed.front();
@@ -1136,10 +1130,7 @@ void* insertToDb(void *thread_arg)
 	    			{
 	    			}
 			}
-			else
-			{
-				//pthread_mutex_unlock(&mylock);
-			}
+
 		}
 		//PQfinish(Conn);
 	}
@@ -1169,24 +1160,17 @@ void* insertToDb(void *thread_arg)
     
     	while(1)
  		{
-			//pthread_mutex_lock(&mylock);
 		
  			if(sproutFeed.empty())
  			{
- 				//pthread_mutex_unlock(&mylock);		
 				if(usleep(1000) == -1)
 				{
 					printf("Sleeping Error");
 				}
 			}
-			else
-			{
-				//pthread_mutex_unlock(&mylock);
-			}
+	
 		
-			//pthread_mutex_lock(&mylock);
-		
-			if(!sproutFeed.empty()) //while the queue has items
+			else//while the queue has items
 			{
 				//start of critical section
 				string s = sproutFeed.front();
@@ -1207,10 +1191,7 @@ void* insertToDb(void *thread_arg)
           
           		sproutFeed.pop();
 			}
-			else
-			{
-				//pthread_mutex_unlock(&mylock);		
-			}
+ 
     
 		}    
 		mysql_close(conn); //close the database connection
@@ -1228,10 +1209,10 @@ used to create a connection with a database.
 
 
 
-int readConfig()
+int readConfig(string path)
 {
 	string line;
-	ifstream sproutConfig("2sprout.conf");
+	ifstream sproutConfig(path.c_str());
 	size_t found;
 	int foundPos;
 	string firstSub, secoundSub;
@@ -1743,6 +1724,49 @@ int main(int argc, char *argv[])
 	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
 	
 	apiReadyToRecieve = false;
+	string path = "2sprout.conf";
+	
+	int x;
+	for(x = 1; x < argc; x++)
+	{
+		string input = argv[x];
+		
+		if(strlen(input.c_str()) >= 3)
+		{
+			string preFix = input.substr(0,2);
+			string postFix = input.substr(2, strlen(input.c_str()));
+		
+			if(preFix == "-p")
+			{
+				if(atoi(postFix.c_str()) <= 1024)
+				{
+					printf("Port Number is system reserved: Must be greater then 1024\n");
+					exit(1);	
+				}
+				else
+				{
+					MYPORT = atoi(postFix.c_str());
+					cout << postFix.c_str() << endl;
+					
+					preFix.clear();
+					postFix.clear();
+				}
+			}		
+			if(preFix == "-c")
+			{
+				path = postFix;
+				postFix.clear();
+				preFix.clear();
+				cout << path << endl;
+			}
+		}
+		else
+		{	
+			cout << "Arguments: -p[port] -c[config path]" << endl;
+		}
+	}
+	
+	/*	
 	if(argc < 2)
 	{
 		char port1[] = "4950";
@@ -1761,13 +1785,15 @@ int main(int argc, char *argv[])
 			MYPORT = atoi(argv[1]);
 		}
 	}
+	*/
 	
-	readConfig(); 	//read the configuration file for database access.
+	readConfig(path); 	//read the configuration file for database access.
 	if(useUPNP == "true")
 	{
 		setUPNP(argv[1]);
     
 	}
+	
 	
 	registerClient();
 	if(useDatabase == true)
