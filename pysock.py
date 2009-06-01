@@ -7,8 +7,6 @@ import base64, random
 def XOR(value,key):
 	return ''.join(chr(ord(x) ^ ord(y)) for (x,y) in izip(value, cycle(key)))
 
-# "HZmCniVvOX"
-# "kwYCZyfuTI"
 
 hostname = '127.0.0.1'
 port = 4950
@@ -23,8 +21,8 @@ for x in xrange(10):
 	m.update(tempMessage)
 	msg1 = str(m.hexdigest()) + "^" + tempMessage
 	print msg1
-	msg = "usBz801JpI" + msg1
-	msg = XOR(msg,'WWPtHOp3J6')
+	msg = "CYTYrGWYGC" + msg1
+	msg = XOR(msg,'YJ3kwZa37x')
 	msg = base64.b64encode(msg)
 	#g = random.uniform(.002)
 	time.sleep(.2)

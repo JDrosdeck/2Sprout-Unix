@@ -67,16 +67,15 @@ Includes for mysql C library
 using namespace std;
 
 #define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
-#define transferPipe "/tmp/transPipe" //pipe used to transfer data from the cast app into the client
-#define passPipe "/tmp/pass"
 
 #define maxPipe		50000			
 
 #define MSGSZ     50000
+#define version "1.0.1"
 
 
 string url;
-int MYPORT;		//port which the client is bound to 
+int MYPORT = 0;		//port which the client is bound to 
 
 //getData vars
 
@@ -299,15 +298,7 @@ void* announce(void *thread_arg)
 		{
 			cipher = section[0];
 			updatedPassword = section[1];
-			int fd, ret_val, count, numread;
-			ret_val = mkfifo(passPipe, 0777); //create the pipe that will be used for transfering data back to user made app
-
-			if (( ret_val == -1) && (errno != EEXIST)) 
-			{
-				perror("Error creating named pipe\n");
-				exit(1);
-			}
-
+		
 
 			cout << "CIPHER: " << cipher << endl;
 			cout <<"PASS: " << updatedPassword << endl;
@@ -1309,9 +1300,8 @@ int readConfig(string path)
 
  
 /*
-getFeed is an API function It allows users to not relay information directly into a database
-but rather gives them access to the data via their own queue within the 2sprout library. 
-Information is passed through the api via a message Queue
+GetFeed uses Sys V Message Queues in order to transfer data from the Client into the User made application via
+the API.
 */
   
  void* getFeed(void *thread_arg)
@@ -1510,8 +1500,6 @@ void catch_int(int sig_num)
     /* re-set the signal handler again to catch_int, for next time */
     signal(SIGINT, catch_int);
 	unlink(sproutPipe);
-	unlink(transferPipe); 
-	unlink(passPipe);
 	printf("Files deleted");
     fflush(stdout);
 	exit(0);
@@ -1525,7 +1513,48 @@ static void forwardPort(struct UPNPUrls * urls,struct IGDdatas * data, const cha
 int r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
 	                        eport, iport, iaddr, 0, proto, 0);
 if(r!=UPNPCOMMAND_SUCCESS)
-	printf("AddPortMapping(%s, %s, %s) failed with code %d\n",eport, iport, iaddr, r);
+{
+	//printf("AddPortMapping(%s, %s, %s) failed with code %d\n",eport, iport, iaddr, r);
+	switch(r)
+	{
+		case 402:
+			printf("Invalid arguments\n");
+			break;
+		case 501:
+			printf("Action Failed\n");
+			break;
+		case 715:
+			printf("Wildcard Not Permitted In Source IP\n");
+			break;
+		case 716:
+			printf("Wildcard Not Permitted In External Port\n");
+			break;
+		case 718:
+			printf("Mapping Assigned to Another User\n");
+			break;
+		case 724:
+			printf("Internal And External Port Values Must Be The Same\n");
+			break;
+		case 725:
+			printf("NAT Implementation Only Supports Permanent least Times On Port Mappings\n");
+			break;
+		case 726:
+			printf("Remote Host Must Be A Wildcard And Cannot Be A Specific IP Address Or DNS Name\n");
+			break;
+		case 727:
+			printf("External Port Must Be A Wildcard And Connot Be A Specific Port Value\n");
+			break;
+			
+		default:
+			printf("Unknown UPNP Error Ocurred\n");
+			break;
+		
+		
+	}
+	printf("Unable To Set Port Forwarding. Please Check Configuration File, Or Turn Off Support For UPNP\n");
+	exit(1);
+}
+	
 else
 	printf("Port added successfully\n");
 
@@ -1699,13 +1728,7 @@ bool registerClient()
 		{
 			cipher = section[0];
 			updatedPassword = section[1];
-			int fd, ret_val, count, numread;
-			ret_val = mkfifo(passPipe, 0777); //create the pipe that will be used for transfering data back to user made app
-			if (( ret_val == -1) && (errno != EEXIST)) 
-			{
-				perror("Error creating named pipe\n");
-				exit(1);
-			}
+		
 			cout << "CIPHER: " << cipher << endl;
 			cout <<"PASS: " << updatedPassword << endl;
 			sleeptime = atoi(section[2].c_str());
@@ -1713,11 +1736,21 @@ bool registerClient()
 }
 
 /*
+showHelp() Prints out the program usage.
+*/
+void showHelp()
+{
+	printf("Usage: 2sproutClient [-p port_number] [-c configuration_path]\nOptional: [-h help][-v version]\n");
+}
 
-sproutClient takes 1 argument, which is the port number, This will be upated for username/password.
-The defualt port used is 4950, otherwise set it to the user specified port. Once the port number
-is relayed to the webserver the threads start for pening the UDP listener and Inserting data into the 
-database
+void showVersion()
+{
+	printf("Client Version: %s\n", version);
+}
+
+
+/*
+2sproutClient takes in two arguments in the following form [-p port_number] [-c configuration_path]
 */
 int main(int argc, char *argv[])
 {
@@ -1725,22 +1758,36 @@ int main(int argc, char *argv[])
 	
 	apiReadyToRecieve = false;
 	string path = "2sprout.conf";
-	
+
+
+	/*
+	This will loop through the array of command line arguments searching for the preFix which is the -* and the 
+	postFix which is anything after that preFix. It sets the arguments appropriatly.
+	*/
+
 	int x;
 	for(x = 1; x < argc; x++)
 	{
 		string input = argv[x];
 		
-		if(strlen(input.c_str()) >= 3)
+		if(strlen(input.c_str()) >= 2)
 		{
 			string preFix = input.substr(0,2);
 			string postFix = input.substr(2, strlen(input.c_str()));
 		
-			if(preFix == "-p")
+			if(preFix != "-p" && preFix != "-c" && preFix != "-h" && preFix != "-v")
 			{
-				if(atoi(postFix.c_str()) <= 1024)
+				printf("Unknown Option: %s\n", input.c_str());
+				showHelp();
+				exit(1);
+			}
+		
+			if(preFix == "-p") //port number
+			{
+				if(postFix.length() < 4 || atoi(postFix.c_str()) <= 1024)
 				{
 					printf("Port Number is system reserved: Must be greater then 1024\n");
+					showHelp();
 					exit(1);	
 				}
 				else
@@ -1752,45 +1799,58 @@ int main(int argc, char *argv[])
 					postFix.clear();
 				}
 			}		
-			if(preFix == "-c")
+			if(preFix == "-c") //configuration path
 			{
-				path = postFix;
-				postFix.clear();
-				preFix.clear();
-				cout << path << endl;
+				if(postFix.length() >=1)
+				{
+					path = postFix;
+					postFix.clear();
+					preFix.clear();
+					cout << path << endl;
+				}
+				else
+				{
+					printf("Path to configuration file is not set Properly");
+					showHelp();
+					exit(1);
+				}
+			}
+			if(preFix == "-h") //show the help file
+			{
+				showHelp();
+				exit(1);
+			}
+			if(preFix == "-v")
+			{
+				showVersion();
+				exit(1);
 			}
 		}
 		else
 		{	
-			cout << "Arguments: -p[port] -c[config path]" << endl;
+			showHelp();
+			exit(1);
 		}
 	}
 	
-	/*	
-	if(argc < 2)
-	{
-		char port1[] = "4950";
-		argv[1] = port1;
-		MYPORT = atoi(argv[1]);	
-	}
-	else
-	{	
-		if(atoi(argv[1]) <= 1024)
-		{
-			printf("Port Number is system reserved: Must be greater then 1024\n");
-			exit(1);	
-		}
-		else
-		{
-			MYPORT = atoi(argv[1]);
-		}
-	}
+	
+	/*
+	Sets the default port number to 4950 if no port number has been given
 	*/
+	if(MYPORT == 0)
+	{
+		MYPORT = 4950;
+	}
+	
+
 	
 	readConfig(path); 	//read the configuration file for database access.
 	if(useUPNP == "true")
 	{
-		setUPNP(argv[1]);
+		char portBuffer[20];
+		sprintf(portBuffer, "%i", MYPORT);
+		setUPNP(portBuffer);
+		memset(portBuffer, '\0', sizeof(portBuffer));
     
 	}
 	
