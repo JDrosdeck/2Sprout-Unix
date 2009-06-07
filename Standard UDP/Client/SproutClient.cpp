@@ -3,84 +3,12 @@
 THIS IS AN UNPUBLISHED WORK CONTAINING 2SPROUT INC CONFIDENTIAL AND PROPRIETARY INFORMATION. 
 DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTLY PROHIBITED.
 */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <iostream>
-#include <curl/curl.h>
-#include <ctype.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <queue>
-#include <vector>
-#include <algorithm>
-#include <pthread.h>
-#include <fstream>
-#include <sstream>
-#include <signal.h>
-#include <stdexcept>
-#include <sys/un.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <stdio.h>
-#include <string.h>
-#include <cstdlib>
-#include "upnp/miniwget.h"
-#include "upnp/miniupnpc.h"
-#include "upnp/upnpcommands.h"
-#include "upnp/upnperrors.h"
+#include "sprout.h"
 
 
-/*
-Includes for md5 summing and base64
-*/
-#include "md5wrapper.h"
-#include "base64.h"
-
-
-/*
-Includes for postgres C library
-*/
-#include <libpq-fe.h>
-#include <iomanip>
-
-
-/*
-Includes for mysql C library
-*/
-#include <my_global.h> 
-#include <my_sys.h> 
-#include <mysql.h> 
-
-
-
-
-using namespace std;
-
-#define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
-
-#define maxPipe		50000			
-
-#define MSGSZ     50000
-#define version "1.0.1"
-
-
-string url;
 int MYPORT = 0;		//port which the client is bound to 
 
-//getData vars
-
 bool useDatabase = true;
-bool apiReadyToRecieve;
 
 /*
 Declarations for networking code
@@ -92,32 +20,29 @@ struct sockaddr_in their_addr; // connector's address information
 socklen_t addr_len;
 int numbytes;
 char buf[maxPipe];
-string useUPNP;
 
 
-void getData();
-void catch_sigpipe(int sig_num);
 
 
 queue<string> sproutFeed; //this is the queue where the approved data is located
 queue<string> unprocessedData; //this is the queue for data that has yet been tested
 
-pthread_mutex_t mylock = PTHREAD_MUTEX_INITIALIZER;
-string connectionString;
 
 
 vector<int> packetsRecieved;	//Stores any new packet number that comes in
 vector<int> packetsRecievedDay2;
-
 vector<int> packetsMissed;	//Stores the numbers of missed packets
 vector<int> packetsMissedDay2;
-
 vector<int> reSentMissedPackets;	//Stores the packet numbers of packets that have been sent to replace missed packets
 vector<int> reSentMissedPacketsDay2;
+
 bool dateRecieved = false;
 
 
-//Used to hold database information
+/*
+variables for holding data read in from the configuration files
+*/
+string useUPNP;
 string database;
 string host;
 string port; 
@@ -126,35 +51,44 @@ string user;
 string pass;
 string table;
 string col;
+string connectionString;
+
 	
-static MYSQL *conn;
-
-
-string secretKey = "what"; //The Initial secretKey should be gatherd by a call made to 2sprout and gotten from our page
+/*
+strings used to keep track of the current date and the date of the next day
+*/
 string currentDate = "";
 string nextDate = "";
+
 
 string cipher; //used to decode the message
 string updatedPassword;
 int sleeptime = 0;
+
+
 //
 //  libcurl variables for error strings and returned data
-bool getFeedBool = false;
+
 
 static char errorBuffer[CURL_ERROR_SIZE];
 static std::string buffer;
+pthread_mutex_t mylock = PTHREAD_MUTEX_INITIALIZER;
 
 
 
+/*
+Used for created a message for SYS V Message Queues, which is used for passing data from the client into the 
+API for passing into a user made function
+*/
 typedef struct msgbuf {
          long    mtype;
          char    mtext[MSGSZ];
          } message_buf;
 
 
-//
-//  libcurl write callback function
-//
+/*
+Libcurl callback which will write the html recieved into memory instead of passing it to stdout
+*/
 static int writer(char *data, size_t size, size_t nmemb,
                   std::string *writerData)
 {
@@ -167,7 +101,9 @@ static int writer(char *data, size_t size, size_t nmemb,
 
 
 
-
+/*
+Performs XOR operation on a string given a key
+*/
 string XOR(string value,string key)
 {
     string retval(value);
@@ -322,7 +258,7 @@ int closeAnnounce()
 	curl = curl_easy_init();
 	if(curl)
 	{
-		url = "http://2sprout.com/client/close/?port=";
+		string url = "http://2sprout.com/client/close/?port=";
 		url += MYPORT;
 		curl_easy_setopt(curl,CURLOPT_URL, url.c_str());
 		res = curl_easy_perform(curl);
@@ -1128,6 +1064,8 @@ void* insertToDb(void *thread_arg)
 
 	if(database == "mysql")
 	{
+	 	MYSQL *conn;
+		
     	if (mysql_library_init(0,NULL,NULL))
 		{
 			cout << "Library init failed" << endl;
@@ -1290,6 +1228,12 @@ int readConfig(string path)
 			exit(0);
 			
 		}
+	
+	}
+	else
+	{
+		printf("Cannot Open Configuration File\n");
+		exit(0);
 	}
 }
 
@@ -1485,8 +1429,6 @@ the API.
 	
 			if(command[0] == "getFeed")
 			{
-				getFeedBool = true;
-				printf("()()()()()()()()()()()()()()()()()()()()()()()()()Started getFeedThread\n");
 			}
 		}
 	}
@@ -1611,7 +1553,8 @@ void setUPNP(char* port)
 	}
 	else
 	{
-		fprintf(stderr, "Unable to set port forwarding\n");
+		fprintf(stderr, "Unable To Set Port Forwarding. Please Check Configuration File, Or Turn Off Support For UPNP\n");
+		exit(1);
 	}
 
 
@@ -1756,7 +1699,6 @@ int main(int argc, char *argv[])
 {
 	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
 	
-	apiReadyToRecieve = false;
 	string path = "2sprout.conf";
 
 
@@ -1775,7 +1717,7 @@ int main(int argc, char *argv[])
 			string preFix = input.substr(0,2);
 			string postFix = input.substr(2, strlen(input.c_str()));
 		
-			if(preFix != "-p" && preFix != "-c" && preFix != "-h" && preFix != "-v")
+			if(preFix != "-p" && preFix != "-c" && preFix != "-h" && preFix != "-v" && preFix != "-d")
 			{
 				printf("Unknown Option: %s\n", input.c_str());
 				showHelp();
@@ -1825,6 +1767,24 @@ int main(int argc, char *argv[])
 				showVersion();
 				exit(1);
 			}
+			if(preFix == "-d") //this is used for testing the database connection
+			{
+				readConfig(path);
+				bool ableToConnect = testConnection(database, host,port,dbname,user,pass);
+				if(ableToConnect == true)
+				{
+					cout <<"Works" << endl;
+					exit(1);
+				}
+				else
+				{
+					cout << "Did not work" << endl;
+					exit(1);
+				}
+				
+				
+			}
+			
 		}
 		else
 		{	

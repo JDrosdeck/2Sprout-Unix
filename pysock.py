@@ -15,17 +15,17 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 
-for x in xrange(10):
+for x in xrange(1000):
 	m = md5.new()
 	tempMessage = "120511^"+ str(x) + "^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufot"
 	m.update(tempMessage)
 	msg1 = str(m.hexdigest()) + "^" + tempMessage
 	print msg1
-	msg = "CYTYrGWYGC" + msg1
-	msg = XOR(msg,'YJ3kwZa37x')
+	msg = "NXFp8f285k" + msg1
+	msg = XOR(msg,'xaTyhCF8vs')
 	msg = base64.b64encode(msg)
 	#g = random.uniform(.002)
-	time.sleep(.2)
+	time.sleep(.00002)
 	#print g
 	s.sendto(msg,(host,port))
 	del msg1

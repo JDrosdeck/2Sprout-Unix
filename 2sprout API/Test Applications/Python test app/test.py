@@ -9,7 +9,7 @@ class get2sproutFeed(threading.Thread):
 		while 1:
 			data = sprout.getSproutItem()
 			x = x + 1
-			print data
+			print data.upper()
 			print x
 
 
