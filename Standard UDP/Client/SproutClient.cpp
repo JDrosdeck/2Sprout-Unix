@@ -72,10 +72,10 @@ pthread_mutex_t mylock = PTHREAD_MUTEX_INITIALIZER;
 Used for created a message for SYS V Message Queues, which is used for passing data from the client into the 
 API for passing into a user made function
 */
-typedef struct msgbuf {
+typedef struct msgbuf1 {
          long    mtype;
          char    mtext[MSGSZ];
-         } message_buf;
+         } message_buf1;
 
 
 /*
@@ -298,6 +298,7 @@ void* castListener(void *thread_arg)
 	
  	while(1)
  	{
+		cout << "HERE" << endl;
  
     	addr_len = sizeof their_addr;   		
     	if ((numbytes = recvfrom(sockfd, (void *) rawPacket.c_str(), 50000 , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
@@ -313,6 +314,7 @@ void* castListener(void *thread_arg)
 		if(numbytes < 5000 && unprocessedData.size() < 50000)
 		{
    	    	string input = rawPacket.c_str();
+			cout << input << endl;
 			rawPacket.clear();
 				numbytes = 0;
 			string decoded = base64_decode(input);
@@ -401,7 +403,7 @@ void* checkPacketReliability(void *thread_arg)
 			
 			if((section[0]  != "") && section[1] != "" && section[2] != "" && section[3] != "" && section[4] != "" ) //make sure we have all the parts
 			{	
-				string CastMinusMD5 = section[1] + "^" + section[2] + "^" + section[3] + "^" + section[4]; //generate the origional string to grab the MD5 sum from	
+				string CastMinusMD5 = section[1] + "^" + section[2] + "^" + section[3] + "^" + section[4] + "\0"; //generate the origional string to grab the MD5 sum from	
 				
 			
 				//check the md5 sum
@@ -1245,7 +1247,7 @@ the API.
 	int msqid;
     int msgflg = IPC_CREAT | 0666;
     key_t key;
-    message_buf sbuf;
+    message_buf1 sbuf;
     size_t buf_length;
 
     /*
