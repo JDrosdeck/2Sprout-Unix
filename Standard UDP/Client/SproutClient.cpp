@@ -22,13 +22,8 @@ int numbytes;
 char buf[maxPipe];
 
 
-
-
 queue<string> sproutFeed; //this is the queue where the approved data is located
 queue<string> unprocessedData; //this is the queue for data that has yet been tested
-
-
-
 vector<int> packetsRecieved;	//Stores any new packet number that comes in
 vector<int> packetsRecievedDay2;
 vector<int> packetsMissed;	//Stores the numbers of missed packets
@@ -65,9 +60,6 @@ string cipher; //used to decode the message
 string updatedPassword;
 int sleeptime = 0;
 
-
-//
-//  libcurl variables for error strings and returned data
 
 
 static char errorBuffer[CURL_ERROR_SIZE];
@@ -1221,7 +1213,6 @@ int readConfig(string path)
 			}	
 		}
 		
-		cout << numOfArgsFound << endl;
 		if(numOfArgsFound != 10)
 		{
 			printf("Configuration File is not Formatted Correctly...Exiting\n");
@@ -1748,7 +1739,6 @@ int main(int argc, char *argv[])
 					path = postFix;
 					postFix.clear();
 					preFix.clear();
-					cout << path << endl;
 				}
 				else
 				{
@@ -1773,12 +1763,12 @@ int main(int argc, char *argv[])
 				bool ableToConnect = testConnection(database, host,port,dbname,user,pass);
 				if(ableToConnect == true)
 				{
-					cout <<"Works" << endl;
+					cout <<"Database Connection Successful." << endl;
 					exit(1);
 				}
 				else
 				{
-					cout << "Did not work" << endl;
+					cout << "Unable to connect to database. Please check configuration" << endl;
 					exit(1);
 				}
 				

@@ -21,8 +21,8 @@ for x in xrange(1000):
 	m.update(tempMessage)
 	msg1 = str(m.hexdigest()) + "^" + tempMessage
 	print msg1
-	msg = "NXFp8f285k" + msg1
-	msg = XOR(msg,'xaTyhCF8vs')
+	msg = "WLkYVhcWc6" + msg1
+	msg = XOR(msg,'YJ5jrANt5g')
 	msg = base64.b64encode(msg)
 	#g = random.uniform(.002)
 	time.sleep(.00002)
