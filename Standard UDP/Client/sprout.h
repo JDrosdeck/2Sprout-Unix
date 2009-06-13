@@ -40,7 +40,6 @@ Includes For UPNP Library
 /*
 Includes for md5 summing and base64
 */
-#include "md5wrapper.h"
 #include "base64.h"
 /*
 Includes for postgres C library

@@ -20478,3 +20478,363 @@ String: 120511^99^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com
 Client Created MD5: 3a3b6851f77c66ff534caad09d779bf0
 Python Created MD5: 36d49999f8cf80e6d3b4bea998312cdb
 
+String: 120511^10^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 353b12ae6d21fb332337c52e9f6eb088
+Python Created MD5: b0f96819d000c3754ded39ce6518c914
+
+String: 120511^11^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: a996d06911c0cd16951d825ecb40e036
+Python Created MD5: 619cb9f56d5cc4738ccb406942e4b4c2
+
+String: 120511^12^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 376868c5e34e1ef1ca1c81c119d9c474
+Python Created MD5: 90f854dc63f0b1a6a3a03e0901ca0aa0
+
+String: 120511^13^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: cc9973729c73c3c916d6e1830dd768fe
+Python Created MD5: 206d39f2e21769e05326441ade9bdecb
+
+String: 120511^14^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 6bce258e1d56174892ef1fd007816634
+Python Created MD5: 3f9ef848a8eb88b7c3819ea9971429d1
+
+String: 120511^15^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 4764b574c21994de863d2ac2163100ff
+Python Created MD5: 68f64520d617da3f03d8dcaa0eff2e79
+
+String: 120511^16^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: b246779eb210b5914b327286bfe528a8
+Python Created MD5: 0c7d7cb0b4694f7fa9dba5261f13ace0
+
+String: 120511^17^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: da940c93ddd3a0c7fad73180db7dcac6
+Python Created MD5: 918a1267c3dc9d03b17322c1e4b6ec2e
+
+String: 120511^18^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 86168777194111ccb2891cded7c350c8
+Python Created MD5: c1463e9a7e0a5cb88db6f86a2401e19f
+
+String: 120511^19^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: b9975a1be21cad732e3f80ebaed9266e
+Python Created MD5: 44c6aead174178320689173de080ba27
+
+String: 120511^20^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 1554c088e2abf589fc3aca78d2051602
+Python Created MD5: abaea1f96c2c9d16c3039820dc4632b4
+
+String: 120511^21^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 7f1051a3b21d95b1c786ef18122c735a
+Python Created MD5: 31eb73a2b05936980b67ce6ee48c5cca
+
+String: 120511^22^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: f88c90a4cffd009178fb8a07dc155b81
+Python Created MD5: 4202662d84b9f6bf12c87d52f54c6530
+
+String: 120511^23^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 0379f448760482b23dc37dbac6f9a9af
+Python Created MD5: b6257fef6e98a9c263ef467e64460437
+
+String: 120511^24^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: ddf5c9059cecf8e4b29659edfc6c1caa
+Python Created MD5: 0294262b28d6f34d65eb524343c74331
+
+String: 120511^25^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 3706e85628a2ac7732d9aedad4bc1458
+Python Created MD5: 4723ae961b952dcb18e23c08015caf3a
+
+String: 120511^26^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: b4a6c8fe4b51e8b2194cb36387009e45
+Python Created MD5: d04f43214018d2f7243178427abd8a8f
+
+String: 120511^27^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: a47720392ffddd4cf286dfd94ff63f98
+Python Created MD5: 8404d6e47cf13c588151ffd593ffb97a
+
+String: 120511^28^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: b6c7f9f66b2d44fe52a60ca74b2dbf34
+Python Created MD5: 200c8d623196c35ee2d5fa828e8af532
+
+String: 120511^29^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 02c5bb7d3d77a4b37d6aacfa3c2dde21
+Python Created MD5: bd74cb314be9d56a919ff35f98b52088
+
+String: 120511^30^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: b6750c9b4a62d84b5879c4f32704f0ae
+Python Created MD5: ce8ad170714ca8a352e56c638eda32db
+
+String: 120511^31^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 47597eb194119a97219c665bdb06fb39
+Python Created MD5: a220465dd5ef1997572d6bc62d529679
+
+String: 120511^32^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 33b1320e038bc51f8122fef9c600981b
+Python Created MD5: 2df14a4737887795871f092ef5b7cb32
+
+String: 120511^33^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 64521d555024835d56d3985f2f9a6ee6
+Python Created MD5: 6ea134b01c9e4b0e1cb2a30ee0cedaa4
+
+String: 120511^34^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: d51289726ea151dcbdbb43835bb6e4cf
+Python Created MD5: d6b93f9b53771a602328d181750e64d9
+
+String: 120511^35^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: dc7b21486bd6d7b028f7751b70ff6b87
+Python Created MD5: cd59644df610ca5c81c09a535edafa2c
+
+String: 120511^36^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 3c8ccf5804c9248edbd761eb86ae3833
+Python Created MD5: 7433501baeedb63ea92d282330d080e2
+
+String: 120511^37^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 4e77f2a20fbd6427d9e9b45ab5ed5464
+Python Created MD5: 9a8a25b9dcdf4ad4cdc1c71bf978363a
+
+String: 120511^38^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: ae7cb4c31affbf972be1a2f2556372ed
+Python Created MD5: dcdd8402f6346d7125573f769149157d
+
+String: 120511^39^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 5a395ffcf5521ebb417ee4be14e1f0bd
+Python Created MD5: 7ad3c80f488a383f541a4b3e4b76137d
+
+String: 120511^40^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 0c14c276e9e88027d3e7511c6f57b3d9
+Python Created MD5: ff8e3cf422d887a04e155f45fbcda40e
+
+String: 120511^41^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: acbe572859ea8b639552b93d48a844e3
+Python Created MD5: 36db95aed2ef4f02d2a5e5fb46842b7c
+
+String: 120511^42^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 329fc5d4693a2970052b22b2852d3c1d
+Python Created MD5: 169d07b73083a54d78b58251952b7206
+
+String: 120511^43^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: ffd0ef90759e3b05f51262c7caf7500d
+Python Created MD5: cf57fb261ae809d1bbce5c58d7dee00f
+
+String: 120511^44^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: a88be020c4c4049d425903dcb60b5e4e
+Python Created MD5: 82f6eae0f02791222ed11ef0bdfe8e50
+
+String: 120511^45^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 4e47a13d2dd44ee37fc642c411227196
+Python Created MD5: 29ccc1e58ae359fc408ab6ab9f30c090
+
+String: 120511^46^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 00383e528c8a27794dc482467efa6af4
+Python Created MD5: 665b3becfa1c836cab02ef1cb12e84a5
+
+String: 120511^47^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: c4d522491ede545e8bcffe21a6fbb770
+Python Created MD5: 352c47eac5c82d08ab780d4437787643
+
+String: 120511^48^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 752c855e1ba241ba7a82addc24c8e7b9
+Python Created MD5: 9517d9dccc8a2d8f66a3e05c5734a0df
+
+String: 120511^49^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 1502baa32321968ace8e10c73496a121
+Python Created MD5: 35069bbef82613eac91ac2bf35363eb8
+
+String: 120511^50^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 91ee59712f87c876c3819e58493f42b4
+Python Created MD5: f3931536af3be2514fdc374e601631c5
+
+String: 120511^51^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: a7e8a9123bd178dd0a86f810db302c42
+Python Created MD5: 75dac3c00e41ad2c0517d4b0ae9a3cb3
+
+String: 120511^52^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: ec81dbfe4252eae9f20ef91691a53694
+Python Created MD5: 6667a51ea91d6d8de729112db3cdf391
+
+String: 120511^53^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 128269277885cd269519d18a0cfebc41
+Python Created MD5: 1c00c5223e6d3cc3c7e235563edbf209
+
+String: 120511^54^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: fff56bd5c7bd1e657017f5bbe0e19d34
+Python Created MD5: 8e3445a96da274ba0fd88263a2a72a68
+
+String: 120511^55^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 774edef5e0d32a06c31d3998ac658fd8
+Python Created MD5: 3f7b438cbee2de32df26a52a6d435e35
+
+String: 120511^56^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 436a432d037abd4268749695ce163a8c
+Python Created MD5: 23e7e10e893a9eecaea3dd87e5e8953c
+
+String: 120511^57^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 87e01b3473c5c72b678c26bd73e410db
+Python Created MD5: 937651c61891d05b852f6130bd60bbf7
+
+String: 120511^58^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 59d257f3ae65bcf2a43f5c4c4a9b4c2f
+Python Created MD5: a1468465221d34df28a160c09c96ec65
+
+String: 120511^59^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: b879963bf0bbe7e2f3484c5731b7d400
+Python Created MD5: c442eb6ba46ec3acc78ca36c215c7e66
+
+String: 120511^60^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 8b54120c2b13649df3ecc35b0498e6fa
+Python Created MD5: 894c070f0d6081e6d9af4d17ed59aa22
+
+String: 120511^61^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 6ca1b9c4d47c845c19440f5e8663f20b
+Python Created MD5: c2e81361e3d128dbccddcd8a4f11d1a8
+
+String: 120511^62^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: b68a73b1ada8dfbc316024f93b085820
+Python Created MD5: 62aebbc33d66609253cc539b7e0cd6e6
+
+String: 120511^63^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 042367dbadeb8e857d07148ba7a49f15
+Python Created MD5: feecfec9f51e89d5eacc6b3c79d10410
+
+String: 120511^64^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: ab109a2be53c49c214e897b667c7f36a
+Python Created MD5: 3272b823bb8da3034d53ab492dcbabc5
+
+String: 120511^65^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: d57fef1173c053a119949e79741e912e
+Python Created MD5: 4c29f3271ce2da4c45d94efae14c2be0
+
+String: 120511^66^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: e627d9c3588781578548e395b18f9ee6
+Python Created MD5: 4f07872823669ebfad25f1dbd6dbb51c
+
+String: 120511^67^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 40c73884689c2e40c57ec1045c707e50
+Python Created MD5: 6f1e7d93b8dcf9be6a70c713cc262248
+
+String: 120511^68^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 7e4ec6c4bab597d4c19fd0aac0a64aa4
+Python Created MD5: b03f8a9608f710abef194372403c22a5
+
+String: 120511^69^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: f47de368e63a91f3bf2b68fbabb2a245
+Python Created MD5: 9a64d4f83ac122532d1f5c653abac17a
+
+String: 120511^70^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 5be17412f7a40fb48130888e974d4a81
+Python Created MD5: 6d9a0655f8ffe615ba2a6c67151f2c7a
+
+String: 120511^71^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 7b73817698a9029794999a4375f01c45
+Python Created MD5: ffbec9493b42a66be7c56feb44578b16
+
+String: 120511^72^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 0635d66009d5700a4d193ca1a9df26b2
+Python Created MD5: 29138df5f1f620b815cfc8cb6117342d
+
+String: 120511^73^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 5eb3220b6fe12c9176278414be631421
+Python Created MD5: 5aac3d1e304b7410d62dd5c96b0b4ef2
+
+String: 120511^74^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 3b8d95eb5bd4c76dfd1e50dc48912dd0
+Python Created MD5: 104676c27fc2e797b50ddb0d710b341b
+
+String: 120511^75^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: b660e4641754f9d843b91a6efe8231d5
+Python Created MD5: 62ea4c3e063924954bcc10dac39ec257
+
+String: 120511^76^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 6c65337119da658cfa69a91c1fe8f022
+Python Created MD5: 6ed2e560583cc3ce2fa2bbdaba07b6c4
+
+String: 120511^77^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 6ca584b4a63f2eab3c40bfe71336a477
+Python Created MD5: 6a1ba27d3f803423995ff4d4eba8c885
+
+String: 120511^78^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 1109a7f11cfd6a913a0cf50f9a72c9e1
+Python Created MD5: a0100c1273e0a5aa906ccc6927aea57f
+
+String: 120511^79^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: a73a4a329df804a61efde009c1bd24b1
+Python Created MD5: d6f6913192c1b57fb924a23aafd19c9d
+
+String: 120511^80^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 50838d465f302bebe8d4315959ccaa31
+Python Created MD5: f82f59770a5e7acc9f41cb1bad2cf94f
+
+String: 120511^81^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 55d2e9b9665aed2aee67144c1d23cbf8
+Python Created MD5: 16977a37ab105cac8423d2fc6319ee34
+
+String: 120511^82^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: a0e137d16176e3dbe8b673e21e6c7ef4
+Python Created MD5: 37a7a91216694d4418fcba4546f3f413
+
+String: 120511^83^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: a9385710d7b501a69d0762124a66ff16
+Python Created MD5: 7c99130782be03dfe9c36da5dde9c4a0
+
+String: 120511^84^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 5cf6304849f0131c39ca41358dc528f3
+Python Created MD5: 32c74e493b1956497d4f7cfb949764f4
+
+String: 120511^85^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 575740392a2185d148ea386faa983a36
+Python Created MD5: 696316362872aa6ccbac7471bac962b9
+
+String: 120511^86^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: eac36888806e7c718703d05658b07df3
+Python Created MD5: bcd69ca25633b00a3ffe52bc6cb2ee51
+
+String: 120511^87^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 77a805205933a04bc1ed9a794784eb00
+Python Created MD5: 59d2b4cec62f1d7c1403197101d50c27
+
+String: 120511^88^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: aa32092db393353c0520e3b6e3e404fa
+Python Created MD5: f5ef79842dcf76f550787034b94a71a1
+
+String: 120511^89^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 084afed740b795740f4735a995b0a092
+Python Created MD5: 7457cd0dda75c7e3a493e262fe1b2ee6
+
+String: 120511^90^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 1a698190bae8ae7450590386d7732b17
+Python Created MD5: e8e706a5928e1909fe2e046987484967
+
+String: 120511^91^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 12113519c005cbc2122c3b40ebcb9145
+Python Created MD5: 130b22af55f3adff89d2cebcfc73ce58
+
+String: 120511^92^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 686e3cbdf86d4cd7ee960ed61262f046
+Python Created MD5: ab19d555e2156fb3d0731c58a54aa25e
+
+String: 120511^93^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 2ff90c03bf8b821248dd87efeb6d8674
+Python Created MD5: ee530adf49d2e80918a7b8b063ed1855
+
+String: 120511^94^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 126fddb7949bca4a09ccaf83e893e0d3
+Python Created MD5: 03b59e2e4700072ae2c00c2f0f1b348b
+
+String: 120511^95^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: fe421c9530746ccf9fc80338bcc25201
+Python Created MD5: 1fb3eb38e1eb0525944d66f4fa3be948
+
+String: 120511^96^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 301fb966604c9a378a2ebe5aefa35272
+Python Created MD5: 0f0fac7adf2645493ed5aafad524247b
+
+String: 120511^97^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: d25ab8537ceca2b303bbb98e7a457fcf
+Python Created MD5: 59bc884c5a4445ec8be8390492a45725
+
+String: 120511^98^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: b34a14fe2bb4fbb60581a1a5615f54f4
+Python Created MD5: 3a2f0cc32945902f9b48ef582ee53797
+
+String: 120511^99^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufott
+Client Created MD5: 3a3b6851f77c66ff534caad09d779bf0
+Python Created MD5: 36d49999f8cf80e6d3b4bea998312cdb
+

@@ -341,6 +341,18 @@ close(sockfd);
 
 
 
+int calcCheckSum(string str)
+{
+        int a; //Number of letters
+		int ASCII = 0;
+        for(a = 0; a!=str.length(); ++a) /*Prints out each letter converted into a int value.*/
+        {
+			ASCII += int(str[a]);
+		}
+		
+		return ASCII;
+}
+
 
 
 
@@ -403,35 +415,18 @@ void* checkPacketReliability(void *thread_arg)
 			
 			if((section[0]  != "") && section[1] != "" && section[2] != "" && section[3] != "" && section[4] != "" ) //make sure we have all the parts
 			{	
-				string CastMinusMD5 = section[1] + "^" + section[2] + "^" + section[3] + "^" + section[4] + "\0"; //generate the origional string to grab the MD5 sum from	
-				
+				string CastMinusChecksum = section[1] + "^" + section[2] + "^" + section[3] + "^" + section[4] + "\0"; //generate the origional string to grab the checksum sum from					
 			
-				//check the md5 sum
-				
-				try
-				{
-					CastMinusMD5.erase(CastMinusMD5.find('\n'));
-				}
-				catch(out_of_range& e)
-				{
-					cout << "out of range " << e.what() << "\n";
-				}
-				catch(exception& e)
-				{
-					cout << "some of exception: " << e.what() << "\n";
-				}
 				
 				
 				//string checkMd5 = MD5String(CastMinusMD5); //get the value of the MD5 string
 				//printf("MD5 SUM IS: %s", checkMd5.c_str());
 			
-				md5wrapper md5;
-				string checkMd5 = md5.getHashFromString(CastMinusMD5); 
+				int CheckSum = calcCheckSum(CastMinusChecksum);
 				
-				if(checkMd5 == section[0]) //The MD5 Sum is the same so data integrety is OK
+				if(CheckSum == atoi(section[0].c_str())) //The MD5 Sum is the same so data integrety is OK
 				{
-					CastMinusMD5.clear();
-					checkMd5.clear();
+					CastMinusChecksum.clear();
 					//printf("MD5 Just Fine! PASSED\n");
 		  		
 				
@@ -509,19 +504,11 @@ void* checkPacketReliability(void *thread_arg)
 			
 				}
 				else{
-					
-					ofstream myfile;
-					myfile.open("md5Errors.txt",ios::out | ios::app);
-					myfile << "String: " << CastMinusMD5 << "\n";
-					myfile << "Client Created MD5: "<< checkMd5 << "\n";
-					myfile << "Python Created MD5: " << section[0] << "\n\n";
-					myfile.close();
-					CastMinusMD5.clear();
-					checkMd5.clear();
-				printf("MD5 sum FAILED\n");}
+					CastMinusChecksum.clear();
+				printf("CheckSum FAILED\n");}
 			}
 			else{
-			printf("Not all data recieved FAIL!\n");}
+			printf("Not all data recieved FAILed!\n");}
 		
 		}
 		else
