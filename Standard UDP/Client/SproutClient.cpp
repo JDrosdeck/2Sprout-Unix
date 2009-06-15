@@ -37,6 +37,7 @@ bool dateRecieved = false;
 /*
 variables for holding data read in from the configuration files
 */
+string apiKey;
 string useUPNP;
 string database;
 string host;
@@ -126,9 +127,11 @@ void* announce(void *thread_arg)
 		CURLcode res;
 		char Portbuffer[10];
 		sprintf(Portbuffer, "%i", MYPORT);
+		string port = Portbuffer;
 	
-		string url = "http://2sprout.com/u/8573/Frer8n4drE/";
-		//url += Portbuffer;
+		string url = "http://2sprout.com/u/" + port + "/" + apiKey + "/";
+		port.clear();
+		bzero(Portbuffer, sizeof(Portbuffer));
 		cout << url << endl;
 		while(1)
 		{
@@ -1145,7 +1148,6 @@ int readConfig(string path)
 						if(firstSub == "usedb" && secoundSub == "false")
 						{
 							useDatabase = false;	
-							return 0;
 						}
 						else if(firstSub == "usedb" && secoundSub == "true")
 						{
@@ -1198,11 +1200,40 @@ int readConfig(string path)
 							useUPNP = secoundSub;
 							numOfArgsFound++;
 						}
+						if(firstSub == "apiKey" && secoundSub != "")
+						{
+							apiKey = secoundSub;
+							
+							int i;
+							for (i = 0; i < apiKey.length(); i++)
+							{
+								if(isalnum(apiKey[i]) == 0)
+								{
+									cout << "API Key has invalid character, Check configuration file." << endl;
+									exit(0);
+									
+								}
+								
+							}
+							
+							if(apiKey.length() != 10)
+							{
+								cout << "API Key is not a valid length, Check configuration file." << endl;
+								exit(0);
+							}
+							numOfArgsFound++;
+							
+						}
 				}	
 			}	
 		}
 		
-		if(numOfArgsFound != 10)
+		if(useDatabase == false && apiKey != "")
+		{
+			return 0;
+		}
+		
+		if(numOfArgsFound != 11 )
 		{
 			printf("Configuration File is not Formatted Correctly...Exiting\n");
 			exit(0);
@@ -1550,9 +1581,10 @@ bool registerClient()
 		CURLcode res;
 		char Portbuffer[10];
 		sprintf(Portbuffer, "%i", MYPORT);
-	
-		string url = "http://2sprout.com/r/8573/Frer8n4drE/";
-		//url += Portbuffer;
+		string port = Portbuffer;
+		string url = "http://2sprout.com/r/" + port + "/" + apiKey + "/";
+		port.clear();
+		bzero(Portbuffer, sizeof(Portbuffer));
 		cout << url << endl;
 		
 		curl = curl_easy_init();

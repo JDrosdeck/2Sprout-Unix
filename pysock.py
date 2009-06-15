@@ -7,30 +7,30 @@ import base64, random
 def XOR(value,key):
 	return ''.join(chr(ord(x) ^ ord(y)) for (x,y) in izip(value, cycle(key)))
 
-
+def checksum(st):
+    return reduce(lambda x,y:x+y, map(ord, st))
+	
 hostname = '127.0.0.1'
-port = 4950
+port = 4000
 host = socket.gethostbyname(hostname)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)	
 
 
 
-for x in xrange(1000):
-	m = md5.new()
+for x in xrange(10):
 	tempMessage = "120511^"+ str(x) + "^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufot"
-	m.update(tempMessage)
-	msg1 = str(m.hexdigest()) + "^" + tempMessage
+	total = checksum(tempMessage)
+	msg1 = str(total) + "^" + tempMessage
 	print msg1
-	msg = "e8rgpCMNPb" + msg1
-	msg = XOR(msg,'VLcil99YZ2')
+	msg = "MGIWz3IYEo" + msg1     #This is the SECRET KEY
+	msg = XOR(msg,'KgybCgsAIn')   # THIS IS THE CIPHER
 	msg = base64.b64encode(msg)
 	#g = random.uniform(.002)
-	time.sleep(.01)
+	time.sleep(.0000002)
 	#print g
 	s.sendto(msg,(host,port))
 	del msg1
 	del msg
-	del m
 	del tempMessage
 
 

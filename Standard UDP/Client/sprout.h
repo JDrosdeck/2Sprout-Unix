@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <cstdlib>
+#include <cctype>
 #include "testDBConnection.h"
 /*
 Includes For UPNP Library
