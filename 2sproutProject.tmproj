@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Standard UDP/Client/2sprout.conf</string>
+	<string>compile command line.txt</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -19,27 +19,25 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/2sprout.conf</string>
 					<key>lastUsed</key>
-					<date>2009-06-15T02:31:36Z</date>
-					<key>selected</key>
-					<true/>
+					<date>2009-06-15T02:40:14Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/sprout.h</string>
 					<key>lastUsed</key>
-					<date>2009-06-13T02:11:24Z</date>
+					<date>2009-06-15T19:46:34Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-06-15T02:31:36Z</date>
+					<date>2009-06-15T20:00:37Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>pysock.py</string>
 					<key>lastUsed</key>
-					<date>2009-06-13T02:44:31Z</date>
+					<date>2009-06-15T19:55:23Z</date>
 				</dict>
 			</array>
 			<key>expanded</key>
@@ -64,7 +62,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Server/sproutServer.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-05-10T17:20:33Z</date>
+					<date>2009-06-15T19:53:14Z</date>
 				</dict>
 			</array>
 			<key>expanded</key>
@@ -119,7 +117,9 @@
 					<key>filename</key>
 					<string>compile command line.txt</string>
 					<key>lastUsed</key>
-					<date>2009-06-04T01:51:24Z</date>
+					<date>2009-06-17T18:20:30Z</date>
+					<key>selected</key>
+					<true/>
 				</dict>
 			</array>
 			<key>expanded</key>
@@ -154,6 +154,20 @@
 	<integer>215</integer>
 	<key>metaData</key>
 	<dict>
+		<key>2sprout API/Dynamic libraries/Python/2.5.4/sprout.i</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>2sprout API/Test Applications/C#/test.cs</key>
 		<dict>
 			<key>caret</key>
@@ -196,6 +210,36 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>2sprout API/Test Applications/Python test app/2.6.2/test.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>24</integer>
+				<key>line</key>
+				<integer>16</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
 		<key>Server Applications/Python Global Queue/CQueue.cpp</key>
 		<dict>
 			<key>caret</key>
@@ -224,20 +268,6 @@
 			<key>firstVisibleLine</key>
 			<integer>5</integer>
 		</dict>
-		<key>Standard UDP/Client/2sprout.conf</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>17</integer>
-				<key>line</key>
-				<integer>4</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
 		<key>Standard UDP/Client/Makefile</key>
 		<dict>
 			<key>caret</key>
@@ -257,14 +287,56 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>40</integer>
+				<integer>23</integer>
 				<key>line</key>
-				<integer>1568</integer>
+				<integer>1209</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1438</integer>
+			<integer>1179</integer>
+		</dict>
+		<key>Standard UDP/Client/sprout.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>17</integer>
+				<key>line</key>
+				<integer>31</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Standard UDP/Server/sproutServer.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>2</integer>
+				<key>line</key>
+				<integer>101</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>77</integer>
+		</dict>
+		<key>compile command line.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>54</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>18</integer>
 		</dict>
 		<key>pysock.py</key>
 		<dict>
@@ -285,12 +357,16 @@
 	<array>
 		<string>pysock.py</string>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
-		<string>Standard UDP/Client/2sprout.conf</string>
+		<string>2sprout API/Test Applications/Python test app/2.6.2/test.py</string>
+		<string>compile command line.txt</string>
+		<string>Standard UDP/Server/sproutServer.cpp</string>
+		<string>2sprout API/Dynamic libraries/Python/2.5.4/sprout.i</string>
+		<string>Standard UDP/Client/sprout.h</string>
 		<string>Standard UDP/Client/Makefile</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
-	<false/>
+	<true/>
 	<key>windowFrame</key>
-	<string>{{120, -298}, {956, 878}}</string>
+	<string>{{233, 0}, {956, 878}}</string>
 </dict>
 </plist>
