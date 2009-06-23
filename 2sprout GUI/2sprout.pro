@@ -14,3 +14,9 @@ SOURCES += main.cpp\
 HEADERS  += sprout.h
 
 FORMS    += sprout.ui
+
+mystaticconfig{
+    QMAKE_LIBS_QT =
+LIBS += /usr/local/TrollTech/Qt-4.6.0/lib/libQtCore.a
+LIBS += /usr/local/TrollTech/Qt-4.6.0/lib/libQtGui.a -lz -framework Carbon
+}

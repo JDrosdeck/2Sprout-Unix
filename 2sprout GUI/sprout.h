@@ -20,7 +20,12 @@ private:
     Ui::sproutClass *ui;
 
 private slots:
-    void on_pushButton_4_clicked();
+    void readFromStdout();
+    void readSTDOut();
+    void on_pushButton_5_clicked();
+    void on_pushButton_2_clicked();
+    void on_pushButton_clicked();
+    void writeFile();
     void on_pushButton_6_clicked();
     void on_pushButton_3_clicked();
 };

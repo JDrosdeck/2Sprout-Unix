@@ -17,13 +17,13 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 
-for x in xrange(10000):
+for x in xrange(1):
 	tempMessage = "120511^"+ str(x) + "^0^TESTdddkjESTES125.99</price><spdroutcast><url>www.amazon.com/prod1d=43453</url><title>gold watch</title></sproutcast><price>125.99</price>kjg;gkhvlhvjhvkhgadfadlhfhgckghhckfugotdufot"
 	total = checksum(tempMessage)
 	msg1 = str(total) + "^" + tempMessage
 	print msg1
-	msg = "87tJZx3SgN" + msg1     #This is the SECRET KEY
-	msg = XOR(msg,'A7rnkNaZfF')   # THIS IS THE CIPHER
+	msg = "ePsYDJbtxC" + msg1     #This is the SECRET KEY
+	msg = XOR(msg,'aACZfGGL8R')   # THIS IS THE CIPHER
 	msg = base64.b64encode(msg)
 	#g = random.uniform(.002)
 	time.sleep(.0000002)

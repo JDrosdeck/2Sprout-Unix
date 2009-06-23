@@ -132,7 +132,7 @@ void* announce(void *thread_arg)
 		string url = "http://2sprout.com/u/" + port + "/" + apiKey + "/";
 		port.clear();
 		bzero(Portbuffer, sizeof(Portbuffer));
-		cout << url << endl;
+		//cout << url << endl;
 		while(1)
 		{
 			buffer.clear();
@@ -182,17 +182,17 @@ void* announce(void *thread_arg)
 
   		res = curl_easy_perform(curl);
   		curl_easy_cleanup(curl);
-  		cout << buffer << endl;
+  		//cout << buffer << endl;
 
 		//Convert the buffer from base64
   
   		string decoded = base64_decode(buffer);
-  		cout << "Decoded: " <<  decoded << endl;
+  		//cout << "Decoded: " <<  decoded << endl;
   		//XOR with the secret cypher
 		string value(decoded);
 		string key(cipher);
 		value = XOR(decoded,key);
-		cout << "Decrypted: " << value << endl;
+		//cout << "Decrypted: " << value << endl;
 
 		//parse the buffer Password^sleepTime
 
@@ -231,8 +231,8 @@ void* announce(void *thread_arg)
 			updatedPassword = section[1];
 		
 
-			cout << "CIPHER: " << cipher << endl;
-			cout <<"PASS: " << updatedPassword << endl;
+			//cout << "CIPHER: " << cipher << endl;
+			//cout <<"PASS: " << updatedPassword << endl;
 			sleeptime = atoi(section[2].c_str());
 		
 	}
@@ -260,7 +260,6 @@ int closeAnnounce()
 		curl_easy_cleanup(curl);
 	}
 	
-	printf("\n"); //Will hold message from server when client is closed 
 	return 1;
 }
 
@@ -280,7 +279,7 @@ void* castListener(void *thread_arg)
 	
 	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) 
     {
-        perror("socket\n");
+        perror("Unable to set socket\n");
         exit(1);
     }
 
@@ -292,16 +291,15 @@ void* castListener(void *thread_arg)
 
     if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof my_addr) == -1) 
     {
-        perror("bind\n");
+        perror("Unable to bind to socket\n");
         exit(1);
     }
 
-
-	printf("Entering while\n"); 
+	cout << "Waiting for updates.." << endl;
 	
  	while(1)
  	{
-		cout << "HERE" << endl;
+		
  
     	addr_len = sizeof their_addr;   		
     	if ((numbytes = recvfrom(sockfd, (void *) rawPacket.c_str(), 50000 , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
@@ -313,27 +311,26 @@ void* castListener(void *thread_arg)
         ipAdd = inet_ntoa(their_addr.sin_addr);
          
     	buf[numbytes] = '\0';
-    
+
 		if(numbytes < 5000 && unprocessedData.size() < 50000)
 		{
    	    	string input = rawPacket.c_str();
-			cout << input << endl;
 			rawPacket.clear();
 				numbytes = 0;
 			string decoded = base64_decode(input);
 				
-			printf("Starting Encrpytion...\n");
+		//	printf("Starting Encrpytion...\n");
 			string value(decoded);
 			string key(cipher);
 			value = XOR(decoded,key);
-			decoded.clear();
+			decoded.clear();	
 			input.clear();
 			if(value.substr(0,10) == updatedPassword)
 			{
 				unprocessedData.push(value.substr(10,value.length()));
 				
-				printf("PUSHED\n");
-			} 		
+			}
+				
 			value.clear();
 
 		}
@@ -370,14 +367,11 @@ md5^date^packetNumber^send\resend^2sproutString
 */
 void* checkPacketReliability(void *thread_arg)
 {
-	int x = 0;
-	int y=0;
+
 	while(1)
 	{
-		//pthread_mutex_lock(&mylock);
 		if(unprocessedData.empty())
  		{
-			//pthread_mutex_unlock(&mylock);
 		
  				if(usleep(1000) == -1)
 				{
@@ -386,17 +380,14 @@ void* checkPacketReliability(void *thread_arg)
 		}
 		else
 		{
-			//pthread_mutex_unlock(&mylock);
 		}
-		//pthread_mutex_lock(&mylock);
+		
 		if(!unprocessedData.empty()) //while the queue has items
 		{
-			x++;
-			printf("X: %i\n", x);
+
 			//start of critical section
 			string s = unprocessedData.front();
 			unprocessedData.pop();
-			//pthread_mutex_unlock(&mylock);	
 			
 			//end of critial section
 			
@@ -418,7 +409,7 @@ void* checkPacketReliability(void *thread_arg)
 			
 			if((section[0]  != "") && section[1] != "" && section[2] != "" && section[3] != "" && section[4] != "" ) //make sure we have all the parts
 			{	
-				string CastMinusChecksum = section[1] + "^" + section[2] + "^" + section[3] + "^" + section[4] + "\0"; //generate the origional string to grab the checksum sum from					
+				string CastMinusChecksum = "^" + section[1] + "^" + section[2] + "^" + section[3] + "^" + section[4]; //generate the origional string to grab the checksum sum from					
 			
 				
 				
@@ -427,96 +418,90 @@ void* checkPacketReliability(void *thread_arg)
 			
 				int CheckSum = calcCheckSum(CastMinusChecksum);
 				
+			//	cout << "Calculated CheckSum: " << CheckSum << " Recieved Checksum: " << section[0].c_str() << endl;
+				
 				if(CheckSum == atoi(section[0].c_str())) //The MD5 Sum is the same so data integrety is OK
 				{
 					CastMinusChecksum.clear();
-					//printf("MD5 Just Fine! PASSED\n");
-		  		
-				
-						
-						
-						if(currentDate == "")
+					if(currentDate == "")
+					{
+				//		printf("Current Day initially set\n");
+						currentDate = section[1];
+					}						
+					if(section[1] != currentDate && nextDate == "")
+					{
+				//		printf("next Date initially set\n");
+						nextDate = section[1];
+					}	
+					if(section[1] == currentDate && section[3] != "0")
+					{
+				//		printf("CurrentDate has been matched Pushing...\n");
+						reSentMissedPackets.push_back(atoi(section[2].c_str()));
+					}
+					if(section[1] == currentDate && section[3] == "0")
+					{
+						packetsRecieved.push_back(atoi(section[2].c_str()));
+				//		printf("NOT REPLACING PACKET pusing back packet number\n");				
+					}
+					if(section[1] == nextDate && section[3] != "0")
+					{
+						reSentMissedPacketsDay2.push_back(atoi(section[2].c_str()));
+					}	
+					if(section[1] == nextDate && section[2] == "0")
+					{
+				//		printf("NextDate has been matched Pushing...\n");
+						packetsRecievedDay2.push_back(atoi(section[2].c_str()));
+				//		printf("NOT REPLACING PACKET pusing back packet number\n");	
+					}	
+					if(section[1] != currentDate && section[1] != nextDate && dateRecieved == false)
+					{
+						if(!packetsMissed.empty())
 						{
-							printf("Current Day initially set\n");
-							currentDate = section[1];
+							packetsMissed.clear();
 						}
-						
-						if(section[1] != currentDate && nextDate == "")
+						if(!packetsRecieved.empty())
 						{
-							printf("next Date initially set\n");
-							nextDate = section[1];
-						}
-						
-						if(section[1] == currentDate && section[3] != "0")
+							packetsRecieved.clear();
+						}	
+				//		printf("new date found, current date being overwritten\n");
+						currentDate = section[1];
+						packetsRecieved.push_back(atoi(section[2].c_str()));
+						dateRecieved = true;	
+					}
+					else if(section[1] != currentDate && section[1] != nextDate && dateRecieved == true)
+					{
+						if(!packetsMissedDay2.empty())
 						{
-							//printf("CurrentDate has been matched Pushing...\n");
-							reSentMissedPackets.push_back(atoi(section[2].c_str()));
+							packetsMissedDay2.clear();
 						}
-						if(section[1] == currentDate && section[3] == "0")
+						if(!packetsRecievedDay2.empty())
 						{
-							packetsRecieved.push_back(atoi(section[2].c_str()));
-							printf("NOT REPLACING PACKET pusing back packet number\n");	
-								
-						}
-						if(section[1] == nextDate && section[3] != "0")
-						{
-							reSentMissedPacketsDay2.push_back(atoi(section[2].c_str()));
-						}
-						
-						if(section[1] == nextDate && section[2] == "0")
-						{
-							printf("NextDate has been matched Pushing...\n");
-							packetsRecievedDay2.push_back(atoi(section[2].c_str()));
-							printf("NOT REPLACING PACKET pusing back packet number\n");	
-						}
-						
-						if(section[1] != currentDate && section[1] != nextDate && dateRecieved == false)
-						{
-							if(!packetsMissed.empty())
-								packetsMissed.clear();
-							if(!packetsRecieved.empty())
-								packetsRecieved.clear();
-							
-							printf("new date found, current date being overwritten\n");
-							currentDate = section[1];
-							packetsRecieved.push_back(atoi(section[2].c_str()));
-							dateRecieved = true;	
-						}
-						else if(section[1] != currentDate && section[1] != nextDate && dateRecieved == true)
-						{
-							if(!packetsMissedDay2.empty())
-								packetsMissedDay2.clear();
-							if(!packetsRecievedDay2.empty())
-								packetsRecievedDay2.clear();
-							
-							printf("new date found next date being overwritten\n");	
-							currentDate = section[1];
-							packetsRecieved.push_back(atoi(section[2].c_str()));
-							dateRecieved = false;							
-						}
+							packetsRecievedDay2.clear();
+						}	
+				//		printf("new date found next date being overwritten\n");	
+						currentDate = section[1];
+						packetsRecieved.push_back(atoi(section[2].c_str()));
+						dateRecieved = false;							
+					}
 										
 					//if this passes add the packet number to the array of recieved packet numbers
-			
 					//Add only the message to the sproutQueue
-					printf("Packet OK!!!!!!!!\n");
-					//pthread_mutex_lock(&mylock);
-							y++;
-							printf("Y: %i\n", y);
+				
 		 			sproutFeed.push(section[4]);
-					//pthread_mutex_unlock(&mylock);	
 			
 				}
-				else{
+				else
+				{
 					CastMinusChecksum.clear();
-				printf("CheckSum FAILED\n");}
+				}
 			}
-			else{
-			printf("Not all data recieved FAILed!\n");}
+			else
+			{
 		
+			}
 		}
 		else
 		{
-			//pthread_mutex_unlock(&mylock);
 		}		
 	}		
 }
@@ -532,7 +517,7 @@ void* checkLostPacketsDay2(void *thread_arg)
 	
 	while(1)
 	{
-			printf("******************************\n");	
+		//	printf("******************************\n");	
 				
 			sleep(15);
 			int sizeOfRecievedDay2 = (int) packetsRecievedDay2.size();
@@ -541,24 +526,24 @@ void* checkLostPacketsDay2(void *thread_arg)
 
 			if(sizeOfRecievedDay2 > 1)
 			{
-			printf("******************************\n");	
-			printf("Getting Ready to check packets\n");
-			printf("******************************\n");	
+		//	printf("******************************\n");	
+		//	printf("Getting Ready to check packets\n");
+		//	printf("******************************\n");	
 			
 			//start of critical section
 			pthread_mutex_lock(&mylock);
 			tempVector = packetsRecievedDay2;
 			//end critial section
-			printf("******************************\n");	
-			printf("Clearing old Vector\n");
-			printf("******************************\n");	
+		//	printf("******************************\n");	
+		//	printf("Clearing old Vector\n");
+		//	printf("******************************\n");	
 			packetsRecievedDay2.clear();		
 			pthread_mutex_unlock(&mylock);
 			
 			//sort the tempVector
-			printf("******************************\n");	
-			printf("Sorting the Vector\n");
-			printf("******************************\n");
+		//	printf("******************************\n");	
+		//	printf("Sorting the Vector\n");
+		//	printf("******************************\n");
 			sort(tempVector.begin(),tempVector.end());
 			
 			int sizeOfTempVector = (int) tempVector.size();
@@ -584,45 +569,43 @@ void* checkLostPacketsDay2(void *thread_arg)
 			int sizeOfNewPackets = (int) tempVector.size();
 					
 			int i;
-			printf("******************************\n");	
-			printf("Calculating lost packets\n");
-			printf("******************************\n");
+		//	printf("******************************\n");	
+		//	printf("Calculating lost packets\n");
+		//	printf("******************************\n");
 			
-			cout << "size of new packets: " << sizeOfNewPackets << endl;
+		//	cout << "size of new packets: " << sizeOfNewPackets << endl;
 			int remainder;
 			for (i = 0; i < sizeOfNewPackets-1; i++)
 			{
-				cout << "packets: " <<  tempVector[i+1] << " " << tempVector[i] << endl;
+		//		cout << "packets: " <<  tempVector[i+1] << " " << tempVector[i] << endl;
 				remainder = tempVector[i+1] - tempVector[i];
 		
 				
 				if(( remainder != 1)) //if they are not sequential
 				{
-					printf("******************************\n");	
-					printf("There are missing packets\n");
-					printf("******************************\n");
+		//			printf("******************************\n");	
+		//			printf("There are missing packets\n");
+		//			printf("******************************\n");
 					
-					cout << "remainder: " << remainder << endl;
+		//			cout << "remainder: " << remainder << endl;
 					int j;
 					for(j = 1; j < remainder; j ++)
 					{
 						//add these values to the missing packet vector
-						cout << "pushing packet " << tempVector[i] + j <<endl;
+		//				cout << "pushing packet " << tempVector[i] + j <<endl;
 					 	packetsMissedDay2.push_back(tempVector[i] + j);
 					
 					}
 							
 				}
-				cout << i << endl;
+		//		cout << i << endl;
 						
 			}
 			tempVector.clear(); //empty this vector
 						
 		}
 		
-				printf("******************************\n");	
-				printf("No Missing packets WOOHOO\n");
-				printf("******************************\n");
+
 			//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
 		
 			/*
@@ -660,13 +643,12 @@ void* replaceLostPacketsDay2(void *thread_arg)
 	while(1)
 	{
 		sleep(20);
-	//pthread_mutex_lock(&mylock);
 	
 		if(!packetsMissedDay2.empty() && !reSentMissedPacketsDay2.empty()) //there have been missed packets
 		{
-			printf("******************************\n");	
-			printf("There have been missing packets\n");
-			printf("******************************\n");
+		//	printf("******************************\n");	
+		//	printf("There have been missing packets\n");
+		//	printf("******************************\n");
 			//search for missed packets for anything new that may have come in
 		    vector<int>::iterator searchMissingPackets;
 					int sizeOfVector = (int) packetsMissed.size();
@@ -677,11 +659,11 @@ void* replaceLostPacketsDay2(void *thread_arg)
 			{
 				int match[] = {packetsMissedDay2[loop]};
 				
-				cout << "looking for match: " << match[0] << endl;
+		//		cout << "looking for match: " << match[0] << endl;
 				
 
-				printf("Searching for missing packet in newley recived packets\n");
-				cout << "before Search " << reSentMissedPacketsDay2.size() << endl;
+		//		printf("Searching for missing packet in newley recived packets\n");
+		//		cout << "before Search " << reSentMissedPacketsDay2.size() << endl;
 				
 
 				if(reSentMissedPacketsDay2.empty() == false)
@@ -690,10 +672,10 @@ void* replaceLostPacketsDay2(void *thread_arg)
 					searchMissingPackets = reSentMissedPacketsDay2.begin();
 					while(searchMissingPackets != reSentMissedPacketsDay2.end())
 					{
-						cout << "missingPacket: " << *searchMissingPackets << " Loop: " << *match << endl;
+		//				cout << "missingPacket: " << *searchMissingPackets << " Loop: " << *match << endl;
 						if(*searchMissingPackets == *match)
 						{
-							printf("Found missing packet\n");
+		//					printf("Found missing packet\n");
 							reSentMissedPacketsDay2.erase(find( packetsMissedDay2.begin(), packetsMissedDay2.end(), *match) );
 							packetsMissedDay2.erase(find( packetsMissedDay2.begin(), packetsMissedDay2.end(), *match) ); 						
 							--loop;
@@ -757,14 +739,12 @@ Number will come in looking like month/day/year/packetNumber
 void* checkLostPackets(void *thread_arg)
 {
 
-	printf("CHECK LOST PACKETS\n");
 		vector<int> tempVector;
-	//	vector<int> brandNewPacket; //this stores packets #'s that we have not been searching for and need to check missing packets based on
 
 
 		while(1)
 		{
-				printf("******************************\n");	
+				//printf("******************************\n");	
 
 				sleep(15);
 				int sizeOfRecieved = (int) packetsRecieved.size();
@@ -773,24 +753,25 @@ void* checkLostPackets(void *thread_arg)
 
 				if(sizeOfRecieved > 1)
 				{
-				printf("******************************\n");	
-				printf("Getting Ready to check packets\n");
-				printf("******************************\n");	
+			
+			//	printf("******************************\n");	
+			//	printf("Getting Ready to check packets\n");
+			//	printf("******************************\n");	
 
 				//start of critical section
 				pthread_mutex_lock(&mylock);
 				tempVector = packetsRecieved;
 				//end critial section
-				printf("******************************\n");	
-				printf("Clearing old Vector\n");
-				printf("******************************\n");	
+			//	printf("******************************\n");	
+			//	printf("Clearing old Vector\n");
+			//	printf("******************************\n");	
 				packetsRecieved.clear();		
 				pthread_mutex_unlock(&mylock);
 
 				//sort the tempVector
-				printf("******************************\n");	
-				printf("Sorting the Vector\n");
-				printf("******************************\n");
+			//	printf("******************************\n");	
+			//	printf("Sorting the Vector\n");
+			//	printf("******************************\n");
 				sort(tempVector.begin(),tempVector.end());
 
 
@@ -823,30 +804,30 @@ void* checkLostPackets(void *thread_arg)
 				int sizeOfNewPackets = (int) tempVector.size();
 
 				int i;
-				printf("******************************\n");	
-				printf("Calculating lost packets\n");
-				printf("******************************\n");
+			//	printf("******************************\n");	
+			//	printf("Calculating lost packets\n");
+			//	printf("******************************\n");
 
-				cout << "size of new packets: " << sizeOfNewPackets << endl;
+			//	cout << "size of new packets: " << sizeOfNewPackets << endl;
 				int remainder;
 				for (i = 0; i < sizeOfNewPackets-1; i++)
 				{
-					cout << "packets: " <<  tempVector[i+1] << " " << tempVector[i] << endl;
+			//		cout << "packets: " <<  tempVector[i+1] << " " << tempVector[i] << endl;
 					remainder = tempVector[i+1] - tempVector[i];
 
 
 					if(( remainder != 1)) //if they are not sequential
 					{
-						printf("******************************\n");	
-						printf("There are missing packets DAY 1\n");
-						printf("******************************\n");
+			//			printf("******************************\n");	
+			//			printf("There are missing packets DAY 1\n");
+			//			printf("******************************\n");
 
-						cout << "remainder: " << remainder << endl;
+			//			cout << "remainder: " << remainder << endl;
 						int j;
 						for(j = 1; j < remainder; j ++)
 						{
 							//add these values to the missing packet vector
-							cout << "pushing packet " << tempVector[i] + j <<endl;
+			//				cout << "pushing packet " << tempVector[i] + j <<endl;
 							pthread_mutex_lock(&mylock);
 						 	packetsMissed.push_back(tempVector[i] + j);
 							pthread_mutex_unlock(&mylock);
@@ -854,7 +835,7 @@ void* checkLostPackets(void *thread_arg)
 						}
 
 					}
-					cout << i << endl;
+			//		cout << i << endl;
 				}
 					tempVector.clear(); //empty this vector
 			}
@@ -865,9 +846,7 @@ void* checkLostPackets(void *thread_arg)
 
 void* replaceLostPackets(void *thread_arg)
 {
-	
-	printf("REPLACE LOST PACKETS\n");
-	
+		
 	while(1)
 	{
 		sleep(20);
@@ -896,9 +875,9 @@ void* replaceLostPackets(void *thread_arg)
 						//cout << "Packet To Replace: " << *searchMissingPackets << " Replacing: " << *match << endl;
 						if(*searchMissingPackets == *match)
 						{
-							printf("Found missing packet\n");
+							//printf("Found missing packet\n");
 							 reSentMissedPackets.erase(find( reSentMissedPackets.begin(), reSentMissedPackets.end(), *match));
-							cout << "SIZE" << reSentMissedPackets.size() << endl;
+							//cout << "SIZE" << reSentMissedPackets.size() << endl;
 							packetsMissed.erase(find( packetsMissed.begin(), packetsMissed.end(), *match) ); 						
 							--loop;
 							break;
@@ -995,18 +974,11 @@ void* insertToDb(void *thread_arg)
 			}
 
 			
-			
-			//pthread_mutex_lock(&mylock);
 			else //while the queue has items
 			{
-				//start of critical section
 				string s = sproutFeed.front();
 				sproutFeed.pop();
 				
-				//printf("read in: %s\n", s.c_str());
-				//printf("Putting into Database\n");
-				//pthread_mutex_unlock(&mylock);
-				//end of critical section
 				string escapedString;
 				int *error;
 				
@@ -1022,7 +994,7 @@ void* insertToDb(void *thread_arg)
 	  					Query = Query + "\""+ table + "\"" + " (" + col + ") " + "VALUES('";	
 	  					Query = Query + escapeBuffer;
 	  					Query = Query +"');";
-	  					cout << Query << endl;
+	  					//cout << Query << endl;
 	    				result = PQexec(Conn,Query.c_str());
 						if (PQresultStatus(result) != PGRES_COMMAND_OK) 
 						{
@@ -1088,7 +1060,8 @@ void* insertToDb(void *thread_arg)
 				//start of critical section
 				string s = sproutFeed.front();
 				printf("read in: %s\n", s.c_str());
-				printf("Putting into Database\n");
+								
+				
 				//pthread_mutex_unlock(&mylock);
 				//end of critical section
 		 		string escapedString;    
@@ -1096,7 +1069,6 @@ void* insertToDb(void *thread_arg)
 		   
 		  		unsigned long to_len = mysql_real_escape_string (conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()));	//use the built in mysql function to put in escape characters...if ther are any	
 				mysqlQuery = "INSERT INTO " + table + " ("+ col +") VALUES (\"" + escapedString.c_str() + "\");"; //actual creation of the sql statment
- 				cout << mysqlQuery << endl;
  				if(mysql_query(conn, mysqlQuery.c_str()) != 0)
  		  		{
  		   			cout << "error query failed" << endl;
@@ -1132,6 +1104,7 @@ int readConfig(string path)
 	int numOfArgsFound = 0;
 	if(sproutConfig.is_open())
 	{
+		cout << "Reading Configuration File" << endl;
 		while(!sproutConfig.eof())
 		{
 			getline(sproutConfig,line);
@@ -1275,7 +1248,7 @@ the API.
      */
     key = 1234;
 
-	(void) fprintf(stderr, "\nmsgget: Calling msgget(%#lx,%#o)\n",key, msgflg);
+	//(void) fprintf(stderr, "\nmsgget: Calling msgget(%#lx,%#o)\n",key, msgflg);
 
     if ((msqid = msgget(key, msgflg )) < 0) 
 	{
@@ -1283,7 +1256,7 @@ the API.
         exit(1);
     }
     else 
-     (void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
+     //(void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
 
 
 
@@ -1297,11 +1270,11 @@ the API.
 		
 		  	sbuf.mtype = 1;
 
-		    (void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
+		   // (void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
 
 		    (void) strcpy(sbuf.mtext, s.c_str());
 
-		    (void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
+		   // (void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
 
 		    buf_length = strlen(sbuf.mtext) + 1;
 
@@ -1312,14 +1285,14 @@ the API.
 	
 		    	if (msgsnd(msqid, &sbuf, buf_length, false) < 0) 
 				{
-		       		printf ("%d, %d, %s, %d\n", msqid, sbuf.mtype, sbuf.mtext, buf_length);
+		      // 		printf ("%d, %d, %s, %d\n", msqid, sbuf.mtype, sbuf.mtext, buf_length);
 		        	perror("msgsnd");
 		        	exit(1);
 		    	}
 
 		    	else
 				{ 
-		      		printf("Message: \"%s\" Sent\n", sbuf.mtext);
+		      	//	printf("Message: \"%s\" Sent\n", sbuf.mtext);
 			  		sproutFeed.pop();		
 				}
 			
@@ -1453,7 +1426,7 @@ void catch_int(int sig_num)
     /* re-set the signal handler again to catch_int, for next time */
     signal(SIGINT, catch_int);
 	unlink(sproutPipe);
-	printf("Files deleted");
+	printf("Cleaning Files\n");
     fflush(stdout);
 	exit(0);
 }
@@ -1585,7 +1558,6 @@ bool registerClient()
 		string url = "http://2sprout.com/r/" + port + "/" + apiKey + "/";
 		port.clear();
 		bzero(Portbuffer, sizeof(Portbuffer));
-		cout << url << endl;
 		
 		curl = curl_easy_init();
     	if (curl == NULL)
@@ -1631,23 +1603,23 @@ bool registerClient()
 
   		res = curl_easy_perform(curl);
   		curl_easy_cleanup(curl);
-  		cout << buffer << endl;
+  		//cout << buffer << endl;
 		if (buffer == "0000")
 		{
-			cout << "Client Already in the database" << endl;
+			cout << "Client already registered" << endl;
 		}
 		else
 		{
-			cout << "Client Successfully Registerd" << endl;
+			cout << "Client successfully registered" << endl;
 		}
 	
 		string decoded = base64_decode(buffer);
-	  	cout << "Decoded: " <<  decoded << endl;
+	  	//cout << "Decoded: " <<  decoded << endl;
 	  	//XOR with the secret cypher
 		string value(decoded);
 		string key("2#sPr0uT5!");
 		value = XOR(decoded,key);
-		cout << "Decrypted: " << value << endl;
+		//cout << "Decrypted: " << value << endl;
 
 
 		//find the number of "^"
@@ -1675,7 +1647,7 @@ bool registerClient()
 		while(getline(iss,token,'^'))
 		{
 			section[count1] = token;
-			cout << token << endl;
+		//	cout << token << endl;
 			count1++;
 		}
 
@@ -1684,8 +1656,8 @@ bool registerClient()
 			cipher = section[0];
 			updatedPassword = section[1];
 		
-			cout << "CIPHER: " << cipher << endl;
-			cout <<"PASS: " << updatedPassword << endl;
+			//cout << "CIPHER: " << cipher << endl;
+			//cout <<"PASS: " << updatedPassword << endl;
 			sleeptime = atoi(section[2].c_str());
 		}
 }
@@ -1747,7 +1719,7 @@ int main(int argc, char *argv[])
 				else
 				{
 					MYPORT = atoi(postFix.c_str());
-					cout << postFix.c_str() << endl;
+					//cout << postFix.c_str() << endl;
 					
 					preFix.clear();
 					postFix.clear();
@@ -1831,16 +1803,12 @@ int main(int argc, char *argv[])
     {	
 		int rc, i , status;
 		pthread_t threads[8];
-		printf("Starting Threads...\n");	
+		cout << "Starting 2Sprout Client" << endl;	
 		pthread_create(&threads[0], NULL, announce, NULL);
 		pthread_create(&threads[1], NULL, castListener, NULL);
-		printf("Socket Thread Started\n");
 		pthread_create(&threads[2], NULL, insertToDb, NULL);		
-		printf("InsertDB Thread Started\n");
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
-		printf("lost packets starting\n");
 		pthread_create(&threads[4], NULL, checkLostPackets, NULL);
-		printf("checking for packets on day2\n");
 		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
 		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);
 	 	pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);	
@@ -1858,17 +1826,14 @@ int main(int argc, char *argv[])
 	*/
 	else
 	{
-		printf("Not using Database\n");
 		int rc, i , status;
-		pthread_t threads[9];		
-		printf("Starting Threads...\n");
+		pthread_t threads[9];	
+		cout << "Starting 2Sprout Client" << endl;	
 		pthread_create(&threads[0], NULL, announce, NULL);
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		pthread_create(&threads[2], NULL, createAndReadPipe, NULL);
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
-		printf("lost packets starting\n");
 		pthread_create(&threads[4], NULL, checkLostPackets, NULL);
-		printf("checking for packets on day2\n");
 		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
 		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);
 		pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);
