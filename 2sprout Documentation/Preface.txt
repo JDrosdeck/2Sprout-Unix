@@ -1,0 +1,175 @@
+2sprout API Documentation
+
+
+Purpose:
+	The 2Sprout API exists in order to provide a simple and reliable method of transferring data from the 2Sprout Client application to any third party application. It is possible to interact with the 2Sprout Client, through the 2Sprout API in many different Languages. Currently supported languages are C++, C#, Python, Java, and Ruby across all major operating systems such as Windows, Mac OS X, And Debian Based Linux (FreeBSD support will be coming soon).
+	
+	
+Functions available through the API:
+	Currently there is only one function available through the API. It provides the simplest of services, only to pass data from the Client into any other application which is being developed to use the 2Sprout data stream. The function is listed as follows.
+	
+	char* getSproutItem();
+	 
+Calling getSproutItem simply returns the newest piece of data from the client application and stores the Json string as a char pointer.
+
+
+
+
+*Note: It is important to keep in mind that the client can very easily get backed up with information if the time between calls to getSproutItem() is too far in between. It is recommended that if the processing of data will take an extended period of time that you eaither use the built in database support in the 2Sprout Client and process the data later or write the application using the API using threads, and have one thread read the data and put it in a queue, and another thread process.
+
+Python Tutorial:
+
+	In order to use the 2Sprout API for python you can copy the two files (_sprout.so, sprout.py) in either the python directory which on unix machines is normally /usr/local/lib/python2.6/ or you can keep it in the same directory which the python script utilizing the 2Sprout API will be kept.
+	
+	Example Program:
+	
+	import threading
+	import sprout, time
+	
+	class get2sproutFeed(threading.Thread):
+		def run(self):
+			while 1:
+				data = sprout.getSproutItem()
+				print data
+
+	get2sproutFeed().start()
+	
+	
+	
+
+
+C++ Tutorial:
+
+	The 2Sprout API will automatically install the 2sprout library in /usr/local/lib and the 2sprout header file in /usr/local/include. In order to successfully compile the program all you have to do is link with the library (libsprout.a) and the header file sprout.h.
+	
+	Example Program:
+	
+	#include "sprout.h"
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+	#include <iostream>
+	#include <sys/stat.h>
+	#include <pthread.h>
+
+	 void* get2sproutFeed(void *thread_arg)
+	{
+
+		while(1)
+		{
+			char *test = getSproutItem();
+			printf("%s", test);
+
+		}
+	}
+
+
+
+	int main()
+	{
+		int rc, i , status;
+		pthread_t threads[1];
+		pthread_create(&threads[0], NULL, get2sproutFeed, NULL);
+		rc = pthread_join(threads[0], (void **) &status); 
+	}
+
+
+Compiling and linking looks like: 
+	
+	g++ -L/usr/local/lib -I/usr/local/Include -lsprout -o sample sampleProgram.cpp 
+	
+	
+	
+
+C# Tutorial:
+
+	The 2Sprout API was tested under Mono (http://www.mono-project.com) for all Operating Systems. It would work fine for the Microsoft .net compilers but it has not been tested. Compiling requiers three files, sprout.cs, sproutPINVOKE.cs and the sprout library libsprout.so/sprout.dll.
+	
+	Example Program:
+	
+		
+		using System;
+		using System.Threading;
+
+		public class test
+		{
+			static void start2sprout()
+			{
+				for(;;)
+				{
+					string data = sprout.getSproutItem();
+					Console.WriteLine(data);
+				}
+			}
+
+
+			static void Main(string[] args)
+			{	
+				Thread thread1 = new Thread(new ThreadStart(start2sprout));
+				thread1.Start();
+			}
+
+		}
+
+Compiling under mono can be done with the commands mcs sample.cs sprout.cs sproutPINVOKE.cs
+Executing under mono can be done with mono sample.exe
+
+
+
+Java Tutorial:
+
+	Compiling the Java bridge requires three files, sprout.java sproutJNI.java and libsprout.so/sprout.dll
+	
+
+	Example Program
+	
+	public class test implements Runnable
+	{
+		public void run()
+		{
+
+			for(;;)
+			{
+				String jsonString = sprout.getSproutItem();
+				System.out.println(jsonString);
+			}
+
+		}
+
+		public static void main(String args[])
+		{
+			System.load("/Users/jonathandrosdeck/Desktop/2sprout/2sprout API/Dynamic libraries/Java/libsprout.so");
+
+			(new Thread(new test())).start();
+
+		}
+
+	}
+
+
+
+Ruby Tutorial:
+	Compiling under *nix based systems is done with the sprout.bundle file and under windows it compiled with sprout.dll. In order to use a program with the api keep the two files in the same directory.
+
+
+
+require 'sprout'
+
+def get2sproutData()
+  while 1
+  s = Sprout.getSproutItem()
+  print s
+  end
+end
+
+
+t1 = Thread.new{get2sproutData()}
+
+t1.join()	
+
+
+	
+	
+
+
+

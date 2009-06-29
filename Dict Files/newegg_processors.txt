@@ -1,0 +1,122 @@
+{
+	"Item":
+	<%{
+	<p class="clear"></p>{% ITEM %}<h1>
+	}%>,
+	
+	"Price": 
+	<%{
+		<h3 class="zmp">{% PRICE %}</h3>
+	}%>,
+	
+	"Brand": 
+	<%{
+		<tr><td class="name">Brand</td><td class="desc">{% BRAND %}</td></tr>
+	}%>,
+	
+	"Processor Type": 
+	<%{
+		<tr><td class="name">Processors Type</td><td class="desc">{% TYPE %}</td></tr>
+	}%>,
+	
+	"Series": 
+	<%{
+		<tr><td class="name">Series</td><td class="desc">{% SERIES %}</td></tr>
+	}%>,
+	
+	"Model": 
+	<%{
+		<tr><td class="name">Model</td><td class="desc">{% MODEL %}</td></tr>
+	}%>,
+	
+	"Core": 
+	<%{
+		<tr><td class="name">Core</td><td class="desc">{% CORE %}</td></tr>
+	}%>,
+	
+	"Core Number": 
+	<%{
+		<tr><td class="name">Multi-Core</td><td class="desc">{% CORE %}</td></tr>
+	}%>,
+	
+	"Name": 
+	<%{
+		<tr><td class="name">Name</td><td class="desc">{% NAME %}</td></tr>
+	}%>,
+	
+	"Frequency": 
+	<%{
+		<tr><td class="name">Operating Frequency</td><td class="desc">{% FREQUENCY %}</td></tr>
+	}%>,
+	
+	"Hyper Transport": 
+	<%{
+		<tr><td class="name">Hyper Transports</td><td class="desc">{% HYPER %}</td></tr>
+	}%>,
+	
+	"L1 Cache": 
+	<%{
+		<tr><td class="name">L1 Cache</td><td class="desc">{% L1 %}</td></tr>
+	}%>,
+	
+	"L2 Cahce": 
+	<%{
+		<tr><td class="name">L2 Cache</td><td class="desc">{% L2 %}</td></tr>
+	}%>,
+	
+	"L3 Cache": 
+	<%{
+		<tr><td class="name">L3 Cache</td><td class="desc">{% L3 %}</td></tr>
+	}%>,
+	
+	"Manufacturing Tech": 
+	<%{
+		<tr><td class="name">Manufacturing Tech</td><td class="desc">{% TECH %}</td></tr>
+	}%>,
+	
+	"64 Bit": 
+	<%{
+		<tr><td class="name">64 bit Support</td><td class="desc">{% 64 %}</td></tr>
+	}%>,
+	
+	"Hyper-Transport Support": 
+	<%{
+		<tr><td class="name">Hyper-Transport Support</td><td class="desc">{% HYPER %}</td></tr>
+	}%>,
+	
+	"Virtualization Support": 
+	<%{
+		<tr><td class="name">Virtualization Technology Support</td><td class="desc">{% VIRTUALIZATION %}</td></tr>
+	}%>,
+	
+	"Multimedia Instruction": 
+	<%{
+		<tr><td class="name">Multimedia Instruction</td><td class="desc">{% MULTIMEDIA %}</td></tr>
+	}%>,
+	
+	"Voltage": 
+	<%{
+		<tr><td class="name">Voltage</td><td class="desc">{% VOLTAGE %}</td></tr>
+	}%>,
+	
+	"Thermal Design Power": 
+	<%{
+		<tr><td class="name">Thermal Design Power</td><td class="desc">{% THERMAL %}</td></tr>
+	}%>,
+	
+	"Cooling Device": 
+	<%{
+		<tr><td class="name">Cooling Device</td><td class="desc">{% COOLING %}</td></tr>
+	}%>,
+	
+	"FSB": 
+	<%{
+		<tr><td class="name">FSB</td><td class="desc">{% FSB %}</td></tr>
+	}%>,
+	
+	"Socket Type": 
+	<%{
+		<tr><td class="name">CPU Socket Type</td><td class="desc">{% SOCKET %}</td></tr>
+	}%>
+		
+}

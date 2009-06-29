@@ -1,0 +1,19 @@
+
+
+
+
+
+	When the internet was first developed it was done with the intention of exchanging raw data, which today has been surpassed by emphasis on graphical presentation and visual appearance. This evolution has made it increasingly difficult in order to gather and mine the raw data underneath. The focus of 2Sprout is to join these two aspects of the web together creating a unified platform allowing for instantaneous real-time transmission of web updates to all third party developers
+
+	The biggest detriment to the advancement of internet applications such as search engines and other web services is the lack of knowledge of when a web site updates it's content. At the present time applications which wish to discover when a site has updated needs to continuously crawl pages and RSS feeds in order to detect new information. Search engines and other applications employ the use of web crawlers which haphazardly crawl the web indexing data and looking for updated pages. Both of these approaches are flawed in two ways; they will never allow for instantaneous detection of updates on all websites on the internet, and they are also a waste of expensive computer power. 
+
+	The second problem relates to the lack of ability of web-site owners and maintainers to notifiy developers and their target markets of content updates. A person can create a website today and be indexed by one search engine but be completley missed by many others. In order to create content update visibility there must exist a system which allows for web maintainers to notify a third party source (2Sprout) of content updates and then broadcast that information to developers, who would then use that updated information for tools such as search engines and other applications. 
+
+	2Sprout is built from the ground up as a platform that allows software developers to tap into a wide stream of real-time information. Developers will be able to directly interact with the real-time feed by the use of a database through a scripting language (i.e. php) or directly through the 2Sprout API which provides support for C++, C#, Python, Ruby and Java across multiple operating systems such as OS X, Linux , and Windows.
+
+	Web developers will be able to create websites based on dynamic real-time content across any public website. 2Sprout will enable search engines to have the most up to date index as well as allow search engines to implement real-time data searching. Developers could use this feed to build competition tracking software capable of obtaining prices on a competitors website in real-time, therefore gaining a competitive edge.
+
+	2Sprout is about the raw data, creating a real-time feed of pricing, web, and social data from any publicly facing website without tapping into any 3rd party API's (Twitter, Facebook). 2Sprout will not crawl for just any data; as popularity among web site maintainers spreads all updates will come directly from the sources themselves the moment they update; instantaneously.
+
+	2Sprout is a real-time notification and distribution stream for all public web sites on the internet. 
+

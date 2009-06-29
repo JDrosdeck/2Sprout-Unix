@@ -402,7 +402,6 @@ void* checkPacketReliability(void *thread_arg)
 			while(getline(iss,token,'^'))
 			{
 				section[count1] = token;
-				cout << token << endl;
 				count1++;
 			}
 		

@@ -1,0 +1,22 @@
+{
+	"price": 
+	<%{
+		<li class="list">Price: {% PRICE %}</li>
+	}%>,
+	"model": 
+	<%{
+		<li class="list">Model #: {% MODEL %}</li>
+	}%>,
+	"quantity": 
+	<%{
+		<li class="list">Quantity: {% QUANTITY %}</li>
+	}%>,
+	"brand": 
+	<%{
+		<li class="list">Brand: {% BRAND %}</li>
+	}%>,
+	"title":
+	<%{
+		<h1 id="productName">{% TITLE %}</h1>
+	}%>
+}
