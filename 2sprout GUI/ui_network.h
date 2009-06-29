@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'network.ui'
 **
-** Created: Mon Jun 29 12:20:39 2009
+** Created: Mon Jun 29 14:35:28 2009
 **      by: Qt User Interface Compiler version 4.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -67,6 +67,9 @@ public:
         label = new QLabel(Network);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(10, 110, 211, 17));
+        QFont font;
+        font.setPointSize(9);
+        label->setFont(font);
 
         retranslateUi(Network);
 

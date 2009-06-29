@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>2sprout API/Test Applications/C++ test app/test.cpp</string>
+	<string>Standard UDP/Client/SproutClient.cpp</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -19,7 +19,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/2sprout.conf</string>
 					<key>lastUsed</key>
-					<date>2009-06-23T17:17:18Z</date>
+					<date>2009-06-29T18:30:36Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -31,7 +31,9 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-06-25T21:26:08Z</date>
+					<date>2009-06-29T18:30:36Z</date>
+					<key>selected</key>
+					<true/>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -160,20 +162,6 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>2sprout API/Test Applications/C++ test app/test.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
 		<key>2sprout API/Test Applications/Java/test.java</key>
 		<dict>
 			<key>caret</key>
@@ -276,6 +264,34 @@
 			<key>firstVisibleLine</key>
 			<integer>5</integer>
 		</dict>
+		<key>Standard UDP/Client/2sprout.conf</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>3</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Standard UDP/Client/SproutClient.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>19</integer>
+				<key>line</key>
+				<integer>1850</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>1814</integer>
+		</dict>
 		<key>pysock.py</key>
 		<dict>
 			<key>caret</key>
@@ -294,11 +310,12 @@
 	<key>openDocuments</key>
 	<array>
 		<string>2sprout API/sprout.cpp</string>
-		<string>2sprout API/Test Applications/C++ test app/test.cpp</string>
+		<string>Standard UDP/Client/SproutClient.cpp</string>
+		<string>Standard UDP/Client/2sprout.conf</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{223, 0}, {956, 878}}</string>
+	<string>{{399, 0}, {956, 878}}</string>
 </dict>
 </plist>

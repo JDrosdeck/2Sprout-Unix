@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'database.ui'
 **
-** Created: Mon Jun 29 13:43:45 2009
+** Created: Mon Jun 29 14:35:43 2009
 **      by: Qt User Interface Compiler version 4.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -126,7 +126,7 @@ public:
         spinBox->setBaseSize(QSize(30, 0));
         spinBox->setMinimum(1025);
         spinBox->setMaximum(49150);
-        spinBox->setValue(4950);
+        spinBox->setValue(5432);
 
         horizontalLayout->addWidget(spinBox);
 
@@ -180,6 +180,9 @@ public:
         label = new QLabel(Database);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(30, 220, 221, 17));
+        QFont font;
+        font.setPointSize(9);
+        label->setFont(font);
 
         retranslateUi(Database);
 

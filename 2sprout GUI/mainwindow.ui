@@ -25,6 +25,10 @@
   <property name="windowTitle">
    <string>2Sprout</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/icons/2sprout.png</normaloff>:/icons/2sprout.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
@@ -107,6 +111,17 @@ color: #000000;
       <width>211</width>
       <height>17</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>211</width>
+      <height>17</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
     </property>
     <property name="text">
      <string/>

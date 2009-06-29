@@ -159,7 +159,7 @@
           <number>49150</number>
          </property>
          <property name="value">
-          <number>4950</number>
+          <number>5432</number>
          </property>
         </widget>
        </item>
@@ -265,6 +265,11 @@
      <width>221</width>
      <height>17</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
    </property>
    <property name="text">
     <string/>

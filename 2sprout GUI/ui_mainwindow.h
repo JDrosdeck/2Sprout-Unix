@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'mainwindow.ui'
 **
-** Created: Sun Jun 28 19:04:27 2009
+** Created: Mon Jun 29 14:35:28 2009
 **      by: Qt User Interface Compiler version 4.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -54,25 +54,28 @@ public:
         MainWindowClass->resize(474, 392);
         MainWindowClass->setMinimumSize(QSize(474, 392));
         MainWindowClass->setMaximumSize(QSize(474, 392));
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/icons/2sprout.png"), QSize(), QIcon::Normal, QIcon::Off);
+        MainWindowClass->setWindowIcon(icon);
         actionNetwork = new QAction(MainWindowClass);
         actionNetwork->setObjectName(QString::fromUtf8("actionNetwork"));
-        QIcon icon;
-        icon.addFile(QString::fromUtf8(":/icons/bullet_wrench.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionNetwork->setIcon(icon);
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/icons/bullet_wrench.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionNetwork->setIcon(icon1);
         actionDatabase = new QAction(MainWindowClass);
         actionDatabase->setObjectName(QString::fromUtf8("actionDatabase"));
-        QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/icons/database_connect.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionDatabase->setIcon(icon1);
+        QIcon icon2;
+        icon2.addFile(QString::fromUtf8(":/icons/database_connect.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionDatabase->setIcon(icon2);
         actionOnline_Help = new QAction(MainWindowClass);
         actionOnline_Help->setObjectName(QString::fromUtf8("actionOnline_Help"));
         actionAbout = new QAction(MainWindowClass);
         actionAbout->setObjectName(QString::fromUtf8("actionAbout"));
         actionDeveloper_Key = new QAction(MainWindowClass);
         actionDeveloper_Key->setObjectName(QString::fromUtf8("actionDeveloper_Key"));
-        QIcon icon2;
-        icon2.addFile(QString::fromUtf8(":/icons/key_add.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionDeveloper_Key->setIcon(icon2);
+        QIcon icon3;
+        icon3.addFile(QString::fromUtf8(":/icons/key_add.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionDeveloper_Key->setIcon(icon3);
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         groupBox = new QGroupBox(centralWidget);
@@ -93,18 +96,22 @@ public:
         pushButton = new QPushButton(centralWidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
         pushButton->setGeometry(QRect(260, 310, 91, 32));
-        QIcon icon3;
-        icon3.addFile(QString::fromUtf8(":/icons/control_play_blue.png"), QSize(), QIcon::Normal, QIcon::Off);
-        pushButton->setIcon(icon3);
+        QIcon icon4;
+        icon4.addFile(QString::fromUtf8(":/icons/control_play_blue.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pushButton->setIcon(icon4);
         pushButton_2 = new QPushButton(centralWidget);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
         pushButton_2->setGeometry(QRect(360, 310, 91, 32));
-        QIcon icon4;
-        icon4.addFile(QString::fromUtf8(":/icons/control_pause_blue.png"), QSize(), QIcon::Normal, QIcon::Off);
-        pushButton_2->setIcon(icon4);
+        QIcon icon5;
+        icon5.addFile(QString::fromUtf8(":/icons/control_pause_blue.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pushButton_2->setIcon(icon5);
         label = new QLabel(centralWidget);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(10, 320, 211, 17));
+        label->setMinimumSize(QSize(211, 17));
+        QFont font;
+        font.setPointSize(9);
+        label->setFont(font);
         MainWindowClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindowClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));

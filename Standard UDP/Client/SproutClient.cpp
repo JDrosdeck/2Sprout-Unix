@@ -1787,6 +1787,13 @@ int main(int argc, char *argv[])
 
 	
 	readConfig(path); 	//read the configuration file for database access.
+	
+	
+
+	
+	
+	
+	
 	if(useUPNP == "true")
 	{
 		char portBuffer[20];
@@ -1797,9 +1804,25 @@ int main(int argc, char *argv[])
 	}
 	
 	
-	registerClient();
 	if(useDatabase == true)
     {	
+		//Test To make sure we can access the database
+
+		cout << "Testing Database Configuration..." << endl;
+		bool ableToConnect = testConnection(database, host,port,dbname,user,pass);
+		if(ableToConnect == true)
+		{
+			cout <<"Database Connection Successful." << endl;
+		}
+		else
+		{
+			cout << "Unable to connect to database. Please check configuration" << endl;
+			exit(1);
+		}
+		
+		registerClient();
+		
+	
 		int rc, i , status;
 		pthread_t threads[8];
 		cout << "Starting 2Sprout Client" << endl;	
@@ -1825,6 +1848,7 @@ int main(int argc, char *argv[])
 	*/
 	else
 	{
+		registerClient();
 		int rc, i , status;
 		pthread_t threads[9];	
 		cout << "Starting 2Sprout Client" << endl;	
