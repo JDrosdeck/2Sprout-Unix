@@ -1,14 +1,11 @@
 %module sprout
 
 %{
-extern int startFeed();
-extern int stopFeed();
-extern int getFeed();
+extern char * jsonGetMember(char *json, char *key);
+extern bool jsonHasKey(char * json, char * key);
 extern char* getSproutItem();
 %}
-
-extern int startFeed();
-extern int stopFeed();
-extern int getFeed();
+extern char * jsonGetMember(char *json, char *key);
+extern bool jsonHasKey(char * json, char * key);
 extern char* getSproutItem();
 

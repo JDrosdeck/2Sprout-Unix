@@ -11,18 +11,13 @@ using System;
 using System.Runtime.InteropServices;
 
 public class sprout {
-  public static int startFeed() {
-    int ret = sproutPINVOKE.startFeed();
+  public static string jsonGetMember(string json, string key) {
+    string ret = sproutPINVOKE.jsonGetMember(json, key);
     return ret;
   }
 
-  public static int stopFeed() {
-    int ret = sproutPINVOKE.stopFeed();
-    return ret;
-  }
-
-  public static int getFeed() {
-    int ret = sproutPINVOKE.getFeed();
+  public static bool jsonHasKey(string json, string key) {
+    bool ret = sproutPINVOKE.jsonHasKey(json, key);
     return ret;
   }
 

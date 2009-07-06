@@ -10,9 +10,7 @@
 #include <fstream>
 #include <sys/types.h>
 #include <unistd.h>
-#include <queue>
 
-int startFeed();
-int stopFeed();
-int getFeed();
 char * getSproutItem();
+char * jsonGetMember(char *json, char *key);
+bool jsonHasKey(char * json, char * key);

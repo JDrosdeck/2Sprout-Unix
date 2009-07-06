@@ -1,0 +1,34 @@
+{
+	"date": 
+	<%{
+	<meta  name="DISPLAYDATE" content="{% DATE %}">
+	}%>,
+	
+	"title":
+	<%{
+		<meta  name="hdl" content="{% TITLE %}">
+	}%>,
+	
+	"author":
+	<%{
+		<meta  name="byl" content="By{% AUTHOR %}">
+	}%>,
+	
+	"summary":
+	<%{
+		<meta  name="lp" content="{% SUMMARY %}">
+	}%>,
+	
+	"geo":
+	<%{
+		<meta  name="geo" content="{% GEO %}">
+	}%>,
+	"category":
+	<%{
+		<meta  name="CG" content="{% CATEGORY %}"/>
+	}%>,
+	"subcategory":
+	<%{
+		<meta  name="SCG" content="{% SUBCATEGORY %}"/>
+	}%>
+}

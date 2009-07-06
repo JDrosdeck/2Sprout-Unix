@@ -1,0 +1,10 @@
+{
+	"date": 
+	<%{
+		<div class="datestamp">{% DATE %}</div>
+	}%>,
+	"title": 
+	<%{
+		<div section="txt" class="txtWrap"><h1>{% TITLE %}</h1>
+	}%>
+}

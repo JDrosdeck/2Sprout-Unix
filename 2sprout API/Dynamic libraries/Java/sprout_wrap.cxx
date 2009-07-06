@@ -189,9 +189,8 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #define SWIG_contract_assert(nullreturn, expr, msg) if (!(expr)) {SWIG_JavaThrowException(jenv, SWIG_JavaIllegalArgumentException, msg); return nullreturn; } else
 
 
-extern int startFeed();
-extern int stopFeed();
-extern int getFeed();
+extern char * jsonGetMember(char *json, char *key);
+extern bool jsonHasKey(char * json, char * key);
 extern char* getSproutItem();
 
 
@@ -199,38 +198,54 @@ extern char* getSproutItem();
 extern "C" {
 #endif
 
-SWIGEXPORT jint JNICALL Java_sproutJNI_startFeed(JNIEnv *jenv, jclass jcls) {
-  jint jresult = 0 ;
-  int result;
+SWIGEXPORT jstring JNICALL Java_sproutJNI_jsonGetMember(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2) {
+  jstring jresult = 0 ;
+  char *arg1 = (char *) 0 ;
+  char *arg2 = (char *) 0 ;
+  char *result = 0 ;
   
   (void)jenv;
   (void)jcls;
-  result = (int)startFeed();
-  jresult = (jint)result; 
+  arg1 = 0;
+  if (jarg1) {
+    arg1 = (char *)jenv->GetStringUTFChars(jarg1, 0);
+    if (!arg1) return 0;
+  }
+  arg2 = 0;
+  if (jarg2) {
+    arg2 = (char *)jenv->GetStringUTFChars(jarg2, 0);
+    if (!arg2) return 0;
+  }
+  result = (char *)jsonGetMember(arg1,arg2);
+  if(result) jresult = jenv->NewStringUTF((const char *)result);
+  if (arg1) jenv->ReleaseStringUTFChars(jarg1, (const char *)arg1);
+  if (arg2) jenv->ReleaseStringUTFChars(jarg2, (const char *)arg2);
   return jresult;
 }
 
 
-SWIGEXPORT jint JNICALL Java_sproutJNI_stopFeed(JNIEnv *jenv, jclass jcls) {
-  jint jresult = 0 ;
-  int result;
+SWIGEXPORT jboolean JNICALL Java_sproutJNI_jsonHasKey(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2) {
+  jboolean jresult = 0 ;
+  char *arg1 = (char *) 0 ;
+  char *arg2 = (char *) 0 ;
+  bool result;
   
   (void)jenv;
   (void)jcls;
-  result = (int)stopFeed();
-  jresult = (jint)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jint JNICALL Java_sproutJNI_getFeed(JNIEnv *jenv, jclass jcls) {
-  jint jresult = 0 ;
-  int result;
-  
-  (void)jenv;
-  (void)jcls;
-  result = (int)getFeed();
-  jresult = (jint)result; 
+  arg1 = 0;
+  if (jarg1) {
+    arg1 = (char *)jenv->GetStringUTFChars(jarg1, 0);
+    if (!arg1) return 0;
+  }
+  arg2 = 0;
+  if (jarg2) {
+    arg2 = (char *)jenv->GetStringUTFChars(jarg2, 0);
+    if (!arg2) return 0;
+  }
+  result = (bool)jsonHasKey(arg1,arg2);
+  jresult = (jboolean)result; 
+  if (arg1) jenv->ReleaseStringUTFChars(jarg1, (const char *)arg1);
+  if (arg2) jenv->ReleaseStringUTFChars(jarg2, (const char *)arg2);
   return jresult;
 }
 

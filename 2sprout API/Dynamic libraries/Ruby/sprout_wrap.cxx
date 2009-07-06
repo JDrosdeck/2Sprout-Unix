@@ -1565,32 +1565,9 @@ static VALUE mSprout;
 #include <stdexcept>
 
 
-extern int startFeed();
-extern int stopFeed();
-extern int getFeed();
+extern char * jsonGetMember(char *json, char *key);
+extern bool jsonHasKey(char * json, char * key);
 extern char* getSproutItem();
-
-
-#include <limits.h>
-#ifndef LLONG_MIN
-# define LLONG_MIN	LONG_LONG_MIN
-#endif
-#ifndef LLONG_MAX
-# define LLONG_MAX	LONG_LONG_MAX
-#endif
-#ifndef ULLONG_MAX
-# define ULLONG_MAX	ULONG_LONG_MAX
-#endif
-
-
-  #define SWIG_From_long   LONG2NUM 
-
-
-SWIGINTERNINLINE VALUE
-SWIG_From_int  (int value)
-{    
-  return SWIG_From_long  (value);
-}
 
 
 SWIGINTERN swig_type_info*
@@ -1604,6 +1581,47 @@ SWIG_pchar_descriptor(void)
   }
   return info;
 }
+
+
+SWIGINTERN int
+SWIG_AsCharPtrAndSize(VALUE obj, char** cptr, size_t* psize, int *alloc)
+{
+  if (TYPE(obj) == T_STRING) {
+    
+
+
+    char *cstr = STR2CSTR(obj);
+    
+    size_t size = RSTRING_LEN(obj) + 1;
+    if (cptr)  {
+      if (alloc) {
+	if (*alloc == SWIG_NEWOBJ) {
+	  *cptr = reinterpret_cast< char* >(memcpy((new char[size]), cstr, sizeof(char)*(size)));
+	} else {
+	  *cptr = cstr;
+	  *alloc = SWIG_OLDOBJ;
+	}
+      }
+    }
+    if (psize) *psize = size;
+    return SWIG_OK;
+  } else {
+    swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+    if (pchar_descriptor) {
+      void* vptr = 0;
+      if (SWIG_ConvertPtr(obj, &vptr, pchar_descriptor, 0) == SWIG_OK) {
+	if (cptr) *cptr = (char *)vptr;
+	if (psize) *psize = vptr ? (strlen((char*)vptr) + 1) : 0;
+	if (alloc) *alloc = SWIG_OLDOBJ;
+	return SWIG_OK;
+      }
+    }
+  }  
+  return SWIG_TypeError;
+}
+
+
+
 
 
 SWIGINTERNINLINE VALUE 
@@ -1629,50 +1647,85 @@ SWIG_FromCharPtr(const char *cptr)
   return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
 }
 
+
+SWIGINTERNINLINE VALUE
+SWIG_From_bool  (bool value)
+{
+  return value ? Qtrue : Qfalse;
+}
+
 SWIGINTERN VALUE
-_wrap_startFeed(int argc, VALUE *argv, VALUE self) {
-  int result;
+_wrap_jsonGetMember(int argc, VALUE *argv, VALUE self) {
+  char *arg1 = (char *) 0 ;
+  char *arg2 = (char *) 0 ;
+  char *result = 0 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
   VALUE vresult = Qnil;
   
-  if ((argc < 0) || (argc > 0)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  if ((argc < 2) || (argc > 2)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
   }
-  result = (int)startFeed();
-  vresult = SWIG_From_int(static_cast< int >(result));
+  res1 = SWIG_AsCharPtrAndSize(argv[0], &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "jsonGetMember" "', argument " "1"" of type '" "char *""'");
+  }
+  arg1 = reinterpret_cast< char * >(buf1);
+  res2 = SWIG_AsCharPtrAndSize(argv[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "jsonGetMember" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  result = (char *)jsonGetMember(arg1,arg2);
+  vresult = SWIG_FromCharPtr((const char *)result);
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
   return vresult;
 fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
   return Qnil;
 }
 
 
 SWIGINTERN VALUE
-_wrap_stopFeed(int argc, VALUE *argv, VALUE self) {
-  int result;
+_wrap_jsonHasKey(int argc, VALUE *argv, VALUE self) {
+  char *arg1 = (char *) 0 ;
+  char *arg2 = (char *) 0 ;
+  bool result;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
   VALUE vresult = Qnil;
   
-  if ((argc < 0) || (argc > 0)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  if ((argc < 2) || (argc > 2)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
   }
-  result = (int)stopFeed();
-  vresult = SWIG_From_int(static_cast< int >(result));
+  res1 = SWIG_AsCharPtrAndSize(argv[0], &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "jsonHasKey" "', argument " "1"" of type '" "char *""'");
+  }
+  arg1 = reinterpret_cast< char * >(buf1);
+  res2 = SWIG_AsCharPtrAndSize(argv[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "jsonHasKey" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  result = (bool)jsonHasKey(arg1,arg2);
+  vresult = SWIG_From_bool(static_cast< bool >(result));
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
   return vresult;
 fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_getFeed(int argc, VALUE *argv, VALUE self) {
-  int result;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 0) || (argc > 0)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
-  }
-  result = (int)getFeed();
-  vresult = SWIG_From_int(static_cast< int >(result));
-  return vresult;
-fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
   return Qnil;
 }
 
@@ -1955,9 +2008,8 @@ SWIGEXPORT void Init_sprout(void) {
   }
   
   SWIG_RubyInitializeTrackings();
-  rb_define_module_function(mSprout, "startFeed", VALUEFUNC(_wrap_startFeed), -1);
-  rb_define_module_function(mSprout, "stopFeed", VALUEFUNC(_wrap_stopFeed), -1);
-  rb_define_module_function(mSprout, "getFeed", VALUEFUNC(_wrap_getFeed), -1);
+  rb_define_module_function(mSprout, "jsonGetMember", VALUEFUNC(_wrap_jsonGetMember), -1);
+  rb_define_module_function(mSprout, "jsonHasKey", VALUEFUNC(_wrap_jsonHasKey), -1);
   rb_define_module_function(mSprout, "getSproutItem", VALUEFUNC(_wrap_getSproutItem), -1);
 }
 

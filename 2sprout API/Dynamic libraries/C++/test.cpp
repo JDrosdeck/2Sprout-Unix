@@ -15,7 +15,6 @@ using namespace std;
 
  void* get2sproutFeed(void *thread_arg)
 {
-	getFeed();
 	int x = 0;
 	while(1)
 	{

@@ -8,16 +8,12 @@
 
 
 public class sprout {
-  public static int startFeed() {
-    return sproutJNI.startFeed();
+  public static String jsonGetMember(String json, String key) {
+    return sproutJNI.jsonGetMember(json, key);
   }
 
-  public static int stopFeed() {
-    return sproutJNI.stopFeed();
-  }
-
-  public static int getFeed() {
-    return sproutJNI.getFeed();
+  public static boolean jsonHasKey(String json, String key) {
+    return sproutJNI.jsonHasKey(json, key);
   }
 
   public static String getSproutItem() {

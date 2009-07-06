@@ -48,9 +48,8 @@ except AttributeError:
 del types
 
 
-startFeed = _sprout.startFeed
-stopFeed = _sprout.stopFeed
-getFeed = _sprout.getFeed
+jsonGetMember = _sprout.jsonGetMember
+jsonHasKey = _sprout.jsonHasKey
 getSproutItem = _sprout.getSproutItem
 
 

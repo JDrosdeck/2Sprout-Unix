@@ -259,9 +259,8 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterStringCallback_sprout(SWIG_CSharpStringH
 #define SWIG_contract_assert(nullreturn, expr, msg) if (!(expr)) {SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, msg, ""); return nullreturn; } else
 
 
-extern int startFeed();
-extern int stopFeed();
-extern int getFeed();
+extern char * jsonGetMember(char *json, char *key);
+extern bool jsonHasKey(char * json, char * key);
 extern char* getSproutItem();
 
 
@@ -269,31 +268,29 @@ extern char* getSproutItem();
 extern "C" {
 #endif
 
-SWIGEXPORT int SWIGSTDCALL CSharp_startFeed() {
-  int jresult ;
-  int result;
+SWIGEXPORT char * SWIGSTDCALL CSharp_jsonGetMember(char * jarg1, char * jarg2) {
+  char * jresult ;
+  char *arg1 = (char *) 0 ;
+  char *arg2 = (char *) 0 ;
+  char *result = 0 ;
   
-  result = (int)startFeed();
-  jresult = result; 
+  arg1 = (char *)jarg1; 
+  arg2 = (char *)jarg2; 
+  result = (char *)jsonGetMember(arg1,arg2);
+  jresult = SWIG_csharp_string_callback((const char *)result); 
   return jresult;
 }
 
 
-SWIGEXPORT int SWIGSTDCALL CSharp_stopFeed() {
-  int jresult ;
-  int result;
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_jsonHasKey(char * jarg1, char * jarg2) {
+  unsigned int jresult ;
+  char *arg1 = (char *) 0 ;
+  char *arg2 = (char *) 0 ;
+  bool result;
   
-  result = (int)stopFeed();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_getFeed() {
-  int jresult ;
-  int result;
-  
-  result = (int)getFeed();
+  arg1 = (char *)jarg1; 
+  arg2 = (char *)jarg2; 
+  result = (bool)jsonHasKey(arg1,arg2);
   jresult = result; 
   return jresult;
 }

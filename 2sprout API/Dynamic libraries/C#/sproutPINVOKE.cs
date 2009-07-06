@@ -184,14 +184,11 @@ class sproutPINVOKE {
   static protected SWIGStringHelper swigStringHelper = new SWIGStringHelper();
 
 
-  [DllImport("sprout", EntryPoint="CSharp_startFeed")]
-  public static extern int startFeed();
+  [DllImport("sprout", EntryPoint="CSharp_jsonGetMember")]
+  public static extern string jsonGetMember(string jarg1, string jarg2);
 
-  [DllImport("sprout", EntryPoint="CSharp_stopFeed")]
-  public static extern int stopFeed();
-
-  [DllImport("sprout", EntryPoint="CSharp_getFeed")]
-  public static extern int getFeed();
+  [DllImport("sprout", EntryPoint="CSharp_jsonHasKey")]
+  public static extern bool jsonHasKey(string jarg1, string jarg2);
 
   [DllImport("sprout", EntryPoint="CSharp_getSproutItem")]
   public static extern string getSproutItem();
