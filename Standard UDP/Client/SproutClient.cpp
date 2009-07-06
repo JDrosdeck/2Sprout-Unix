@@ -6,67 +6,6 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include "sprout.h"
 
 
-int MYPORT = 0;		//port which the client is bound to 
-
-bool useDatabase = true;
-
-/*
-Declarations for networking code
-*/
-char *ipAdd;
-int sockfd;
-struct sockaddr_in my_addr;    // my address information
-struct sockaddr_in their_addr; // connector's address information
-socklen_t addr_len;
-int numbytes;
-char buf[maxPipe];
-
-
-queue<string> sproutFeed; //this is the queue where the approved data is located
-queue<string> unprocessedData; //this is the queue for data that has yet been tested
-vector<int> packetsRecieved;	//Stores any new packet number that comes in
-vector<int> packetsRecievedDay2;
-vector<int> packetsMissed;	//Stores the numbers of missed packets
-vector<int> packetsMissedDay2;
-vector<int> reSentMissedPackets;	//Stores the packet numbers of packets that have been sent to replace missed packets
-vector<int> reSentMissedPacketsDay2;
-
-bool dateRecieved = false;
-
-
-/*
-variables for holding data read in from the configuration files
-*/
-string apiKey;
-string useUPNP;
-string database;
-string host;
-string port; 
-string dbname;
-string user;
-string pass;
-string table;
-string col;
-string connectionString;
-
-	
-/*
-strings used to keep track of the current date and the date of the next day
-*/
-string currentDate = "";
-string nextDate = "";
-
-
-string cipher; //used to decode the message
-string updatedPassword;
-int sleeptime = 0;
-
-
-
-static char errorBuffer[CURL_ERROR_SIZE];
-static std::string buffer;
-pthread_mutex_t mylock = PTHREAD_MUTEX_INITIALIZER;
-
 
 
 /*
@@ -115,14 +54,10 @@ string XOR(string value,string key)
     return retval;
 }
 /*
-startFeed takes in one argument which is the string, the argument is not used right now.
-The libcurl library is used to contact 2sprout.com over http using tcp protocol, for reliability.
-By being directed to the webpage the ipaddress is added to the database, and feeds are then sent
-to that particular client
+Announce uses CURL in order to contact the 2sprout server and requests an updated cipher,password,update triple
 */
 void* announce(void *thread_arg)
 {	
-
 		CURL *curl;
 		CURLcode res;
 		char Portbuffer[10];
@@ -138,105 +73,98 @@ void* announce(void *thread_arg)
 			buffer.clear();
 			memset(errorBuffer, '\0', sizeof(errorBuffer));
 			sleep(sleeptime);	
-		curl = curl_easy_init();
-    	if (curl == NULL)
-    	{
-    		fprintf(stderr, "Failed to create CURL connection\n");
-    		exit(EXIT_FAILURE);
-  		}
+			curl = curl_easy_init();
+    		if (curl == NULL)
+    		{
+    			fprintf(stderr, "Failed to create CURL connection\n");
+    			exit(EXIT_FAILURE);
+  			}
 
-  		res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-  		if (res != CURLE_OK)
-  		{
-    		fprintf(stderr, "Failed to set error buffer [%d]\n", res);
-    		return false;
-  		}
+  			res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
+  			if (res != CURLE_OK)
+  			{
+    			fprintf(stderr, "Failed to set error buffer [%d]\n", res);
+    			return false;
+  			}
 
-  		res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-  		if (res != CURLE_OK)
-  		{
-    		fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
-    		return false;
-  		}
+  			res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  			if (res != CURLE_OK)
+  			{
+    			fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
+    			return false;
+  			}
 
- 		res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-  		if (res != CURLE_OK)
-  		{
-    		fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
-    		return false;
-  		}
+ 			res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+  			if (res != CURLE_OK)
+  			{
+    			fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
+    			return false;
+  			}
 
-  		res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
-  		if (res != CURLE_OK)
-  		{
-    		fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
-    		return false;
-  		}
+  			res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
+  			if (res != CURLE_OK)
+  			{
+    			fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
+    			return false;
+  			}
 
-  		res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
-  		if (res != CURLE_OK)
-  		{
-    		fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
-    		return false;
-  		}
+  			res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+  			if (res != CURLE_OK)
+  			{
+    			fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
+    			return false;
+  			}
 
-  		res = curl_easy_perform(curl);
-  		curl_easy_cleanup(curl);
-  		//cout << buffer << endl;
+  			res = curl_easy_perform(curl);
+  			curl_easy_cleanup(curl);
 
-		//Convert the buffer from base64
-  
-  		string decoded = base64_decode(buffer);
-  		//cout << "Decoded: " <<  decoded << endl;
-  		//XOR with the secret cypher
-		string value(decoded);
-		string key(cipher);
-		value = XOR(decoded,key);
-		//cout << "Decrypted: " << value << endl;
+			//Convert the buffer from base64
+  			string decoded = base64_decode(buffer);
+  			//XOR with the secret cypher
+			string value(decoded);
+			string key(cipher);
+			value = XOR(decoded,key);
 
-		//parse the buffer Password^sleepTime
+			//parse the buffer Password^sleepTime
 
-		//find the number of "^"
-		int NumSpacesCount = 0;
-		int loop;
-		for(loop =0; loop < value.length(); loop++)
-		{
-			string::size_type loc = value.find('^', loop);
-			if(loc != string::npos)
+			//find the number of "^"
+			int NumSpacesCount = 0;
+			int loop;
+			for(loop =0; loop < value.length(); loop++)
 			{
-				NumSpacesCount +=1;
-			}	
-		}		
-		if(NumSpacesCount == 0)
-		{
-			NumSpacesCount = 1;
+				string::size_type loc = value.find('^', loop);
+				if(loc != string::npos)
+				{
+					NumSpacesCount +=1;
+				}	
+			}		
+			if(NumSpacesCount == 0)
+			{
+				NumSpacesCount = 1;
+			}
+
+		
+			string token;
+			string section[NumSpacesCount];	
+			istringstream iss(value);
+			int count1 = 0;
+
+			while(getline(iss,token,'^'))
+			{
+				section[count1] = token;
+				cout << token << endl;
+				count1++;
+			}
+
+			if(section[0] != "" && section[1] != "" && section[2] != "")
+			{
+				cipher = section[0];
+				updatedPassword = section[1];
+				
+				#warning todo: Check The Return value of atoi
+				sleeptime = atoi(section[2].c_str());
+			}
 		}
-
-		
-		string token;
-		string section[NumSpacesCount];	
-		istringstream iss(value);
-		int count1 = 0;
-
-		while(getline(iss,token,'^'))
-		{
-			section[count1] = token;
-			cout << token << endl;
-			count1++;
-		}
-
-		if(section[0] != "" && section[1] != "" && section[2] != "")
-		{
-			cipher = section[0];
-			updatedPassword = section[1];
-		
-
-			//cout << "CIPHER: " << cipher << endl;
-			//cout <<"PASS: " << updatedPassword << endl;
-			sleeptime = atoi(section[2].c_str());
-		
-	}
-}
 }
 
 
@@ -263,6 +191,9 @@ int closeAnnounce()
 	return 1;
 }
 
+/*
+castListner binds to the port specified, and waits for packets to come in from the server
+*/
 
 void* castListener(void *thread_arg)
 { 	
@@ -274,9 +205,6 @@ void* castListener(void *thread_arg)
 	socklen_t addr_len;
 	int numbytes;
 	string rawPacket;
-	
-	
-	
 	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) 
     {
         perror("Unable to set socket\n");
@@ -299,8 +227,6 @@ void* castListener(void *thread_arg)
 	
  	while(1)
  	{
-		
- 
     	addr_len = sizeof their_addr;   		
     	if ((numbytes = recvfrom(sockfd, (void *) rawPacket.c_str(), 50000 , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
     	{
@@ -316,10 +242,8 @@ void* castListener(void *thread_arg)
 		{
    	    	string input = rawPacket.c_str();
 			rawPacket.clear();
-				numbytes = 0;
+			numbytes = 0;
 			string decoded = base64_decode(input);
-				
-		//	printf("Starting Encrpytion...\n");
 			string value(decoded);
 			string key(cipher);
 			value = XOR(decoded,key);
@@ -327,19 +251,18 @@ void* castListener(void *thread_arg)
 			input.clear();
 			if(value.substr(0,10) == updatedPassword)
 			{
-				unprocessedData.push(value.substr(10,value.length()));
-				
+				unprocessedData.push(value.substr(10,value.length()));				
 			}
-				
 			value.clear();
-
 		}
    }
-close(sockfd);
+	close(sockfd);
 }
 
 
-
+/*
+calcCheckSum calculates the total sum of the ASCII characters recieved in the string
+*/
 
 int calcCheckSum(string str)
 {
@@ -349,7 +272,6 @@ int calcCheckSum(string str)
         {
 			ASCII += int(str[a]);
 		}
-		
 		return ASCII;
 }
 
@@ -359,11 +281,6 @@ int calcCheckSum(string str)
 /*
 checkPacketReliablity() will check the validity of each packet and make sure that it is actually part of a 
 2sprout broadcast.
-
-format is as follows:
-
-md5^date^packetNumber^send\resend^2sproutString
-
 */
 void* checkPacketReliability(void *thread_arg)
 {
@@ -737,109 +654,61 @@ Number will come in looking like month/day/year/packetNumber
 
 void* checkLostPackets(void *thread_arg)
 {
-
-		vector<int> tempVector;
-
-
-		while(1)
+	vector<int> tempVector;
+	while(1)
+	{
+		sleep(15);
+		int sizeOfRecieved = (int) packetsRecieved.size();
+		if(sizeOfRecieved > 1)
 		{
-				//printf("******************************\n");	
+			//start of critical section
+			pthread_mutex_lock(&mylock);
+			tempVector = packetsRecieved;
+			//end critial section
+			packetsRecieved.clear();		
+			pthread_mutex_unlock(&mylock);
+			//sort the tempVector
+			sort(tempVector.begin(),tempVector.end());
+			int sizeOfTempVector = (int) tempVector.size();
 
-				sleep(15);
-				int sizeOfRecieved = (int) packetsRecieved.size();
+			/*
+				The Next two lines are for in in between recieving one section of packets
+				and recieving the next section some packets may be lost
+				say you recieved packets..1,2,3,4,7 and the missing packets were calculated
+				and then the next set came in as 9,10,11. This will catch the missing packets
+				between 7 and 9.
+			*/
 
-				//if(!packetsRecieved.empty())
+			int lastPacket = tempVector[sizeOfTempVector-1];
+			pthread_mutex_lock(&mylock);
+			packetsRecieved.push_back(lastPacket);
+			pthread_mutex_unlock(&mylock);
+			int sizeOfVector = (int) packetsMissed.size();
 
-				if(sizeOfRecieved > 1)
+			//Check the recieved packets against what was missing
+			//Figure out which are the missing packets
+			int sizeOfNewPackets = (int) tempVector.size();
+			int i;
+			int remainder;
+			for (i = 0; i < sizeOfNewPackets-1; i++)
+			{
+				remainder = tempVector[i+1] - tempVector[i];
+				if(( remainder != 1)) //if they are not sequential
 				{
-			
-			//	printf("******************************\n");	
-			//	printf("Getting Ready to check packets\n");
-			//	printf("******************************\n");	
-
-				//start of critical section
-				pthread_mutex_lock(&mylock);
-				tempVector = packetsRecieved;
-				//end critial section
-			//	printf("******************************\n");	
-			//	printf("Clearing old Vector\n");
-			//	printf("******************************\n");	
-				packetsRecieved.clear();		
-				pthread_mutex_unlock(&mylock);
-
-				//sort the tempVector
-			//	printf("******************************\n");	
-			//	printf("Sorting the Vector\n");
-			//	printf("******************************\n");
-				sort(tempVector.begin(),tempVector.end());
-
-
-				int sizeOfTempVector = (int) tempVector.size();
-
-
-				/*
-					The Next two lines are for in in between recieving one section of packets
-					and recieving the next section some packets may be lost
-					say you recieved packets..1,2,3,4,7 and the missing packets were calculated
-					and then the next set came in as 9,10,11. This will catch the missing packets
-					between 7 and 9.
-				*/
-
-				int lastPacket = tempVector[sizeOfTempVector-1];
-				pthread_mutex_lock(&mylock);
-				packetsRecieved.push_back(lastPacket);
-				pthread_mutex_unlock(&mylock);
-				
-
-				int sizeOfVector = (int) packetsMissed.size();
-
-				//Check the recieved packets against what was missing
-
-
-
-
-
-				//Figure out which are the missing packets
-				int sizeOfNewPackets = (int) tempVector.size();
-
-				int i;
-			//	printf("******************************\n");	
-			//	printf("Calculating lost packets\n");
-			//	printf("******************************\n");
-
-			//	cout << "size of new packets: " << sizeOfNewPackets << endl;
-				int remainder;
-				for (i = 0; i < sizeOfNewPackets-1; i++)
-				{
-			//		cout << "packets: " <<  tempVector[i+1] << " " << tempVector[i] << endl;
-					remainder = tempVector[i+1] - tempVector[i];
-
-
-					if(( remainder != 1)) //if they are not sequential
+					int j;
+					for(j = 1; j < remainder; j ++)
 					{
-			//			printf("******************************\n");	
-			//			printf("There are missing packets DAY 1\n");
-			//			printf("******************************\n");
-
-			//			cout << "remainder: " << remainder << endl;
-						int j;
-						for(j = 1; j < remainder; j ++)
-						{
-							//add these values to the missing packet vector
-			//				cout << "pushing packet " << tempVector[i] + j <<endl;
-							pthread_mutex_lock(&mylock);
-						 	packetsMissed.push_back(tempVector[i] + j);
-							pthread_mutex_unlock(&mylock);
-							
-						}
-
+						//add these values to the missing packet vector
+						pthread_mutex_lock(&mylock);
+					 	packetsMissed.push_back(tempVector[i] + j);
+						pthread_mutex_unlock(&mylock);	
 					}
-			//		cout << i << endl;
 				}
-					tempVector.clear(); //empty this vector
 			}
+			tempVector.clear(); //empty this vector
 		}
 	}
+}
 
 
 
@@ -985,36 +854,27 @@ void* insertToDb(void *thread_arg)
 				
 		 		unsigned long g = PQescapeStringConn(Conn, escapeBuffer, (char *)s.c_str(), strlen(s.c_str()),error);  
 				cout << "Escaped String " << escapeBuffer << endl;
-								
-	   				try
-	    			{
-	  					// (Queries)
-	  					string Query = "INSERT INTO ";
-	  					Query = Query + "\""+ table + "\"" + " (" + col + ") " + "VALUES('";	
-	  					Query = Query + escapeBuffer;
-	  					Query = Query +"');";
-	  					//cout << Query << endl;
-	    				result = PQexec(Conn,Query.c_str());
-						if (PQresultStatus(result) != PGRES_COMMAND_OK) 
-						{
 							
-				    		fprintf(stderr,"BEGIN command failed");
-							
-				        	PQclear(result);
-				    	}
-						else
-						{
-							PQclear(result);
-						}
-						memset(escapeBuffer, '\0', sizeof(escapeBuffer) );
-					}
-	    			catch (...)
-	    			{
-	    			}
+	  			// (Queries)
+	  			string Query = "INSERT INTO ";
+	  			Query = Query + "\""+ table + "\"" + " (" + col + ") " + "VALUES('";	
+	  			Query = Query + escapeBuffer;
+	  			Query = Query +"');";
+	  			//cout << Query << endl;
+	    		result = PQexec(Conn,Query.c_str());
+				if (PQresultStatus(result) != PGRES_COMMAND_OK) 
+				{		
+				   	fprintf(stderr,"BEGIN command failed");	
+			        PQclear(result);
+			    }
+				else
+				{
+					PQclear(result);
+				}
+				memset(escapeBuffer, '\0', sizeof(escapeBuffer) );	
 			}
-
 		}
-		//PQfinish(Conn);
+		PQfinish(Conn);
 	}
 
 	if(database == "mysql")
@@ -1044,7 +904,6 @@ void* insertToDb(void *thread_arg)
     
     	while(1)
  		{
-		
  			if(sproutFeed.empty())
  			{
 				if(usleep(1000) == -1)
@@ -1085,6 +944,27 @@ void* insertToDb(void *thread_arg)
    
    
 
+/*
+trim function will trim eaither whitespace or tabs from the beginning and ends of a string
+*/
+void trim(string& str)
+{
+  string::size_type pos = str.find_last_not_of(' ');
+  if(pos != string::npos) {
+    str.erase(pos + 1);
+    pos = str.find_first_not_of(' ');
+    if(pos != string::npos) str.erase(0, pos);
+  }
+  else str.erase(str.begin(), str.end());
+
+  pos = str.find_last_not_of('\t');
+  if(pos != string::npos) {
+    str.erase(pos + 1);
+    pos = str.find_first_not_of('\t');
+    if(pos != string::npos) str.erase(0, pos);
+  }
+  else str.erase(str.begin(), str.end());
+}
    
 /*
 ReadConfig function, Goes through the 2sprout.conf file and reads in all the appropriate information 
@@ -1092,7 +972,7 @@ used to create a connection with a database.
 */
 
 
-
+#warning : Rewrite readConfig to accept spaces and trim input
 int readConfig(string path)
 {
 	string line;
@@ -1109,93 +989,95 @@ int readConfig(string path)
 			getline(sproutConfig,line);
 			if(!line.empty())
 			{
+				trim(line);
+				cout << "LINE: " << line << endl;
+				
 				//find the first occurance of an '=' sign
 				found = line.find("=");
 				if(found!=string::npos)
 				{
 					foundPos = (int)found;
 					firstSub = line.substr(0,found);
-					secoundSub = line.substr(foundPos+1);				
+					secoundSub = line.substr(foundPos+1);
+					trim(firstSub);
+					trim(secoundSub);
+					cout << "FIRST SUB: " << firstSub << endl;
+					cout << "SECOUND SUB " << secoundSub << endl;				
 					
-						if(firstSub == "usedb" && secoundSub == "false")
-						{
-							useDatabase = false;	
-						}
-						else if(firstSub == "usedb" && secoundSub == "true")
-						{
-							numOfArgsFound++;
-						}
+					if(firstSub == "usedb" && secoundSub == "false")
+					{
+						useDatabase = false;	
+					}
+					else if(firstSub == "usedb" && secoundSub == "true")
+					{
+						numOfArgsFound++;
+					}
 						
-						if(firstSub == "dbtype" && secoundSub != "")
+					if(firstSub == "dbtype" && secoundSub != "")
+					{
+						database = secoundSub;
+						numOfArgsFound++;
+					}
+					if(firstSub == "dbhost" && secoundSub != "") 
+					{
+						host = secoundSub;
+						numOfArgsFound++;
+					}
+					if(firstSub == "dbport" && secoundSub != "") 
+					{
+						port = secoundSub;
+						numOfArgsFound++;
+					}
+					if(firstSub == "dbname" && secoundSub != "") 
+					{
+						dbname = secoundSub;
+						numOfArgsFound++;
+					}
+					if(firstSub == "dbuser" && secoundSub != "") 
+					{
+						user = secoundSub;
+						numOfArgsFound++;
+					}
+					if(firstSub == "dbpassword" && secoundSub != "") 
+					{
+						pass = secoundSub;
+						numOfArgsFound++;
+					}
+					if(firstSub == "dbtable" && secoundSub != "") 
+					{
+						table = secoundSub;
+						numOfArgsFound++;
+					}
+					if(firstSub == "dbcol" && secoundSub != "") 
+					{
+						col = secoundSub;	
+						numOfArgsFound++;
+					}
+					if(firstSub == "upnp" && secoundSub != "")
+					{
+						useUPNP = secoundSub;
+						numOfArgsFound++;
+					}
+					if(firstSub == "apiKey" && secoundSub != "")
+					{
+						apiKey = secoundSub;	
+						int i;
+						for (i = 0; i < apiKey.length(); i++)
 						{
-							database = secoundSub;
-							numOfArgsFound++;
-						}
-						if(firstSub == "dbhost" && secoundSub != "") 
-						{
-							host = secoundSub;
-							numOfArgsFound++;
-						}
-						if(firstSub == "dbport" && secoundSub != "") 
-						{
-							port = secoundSub;
-							numOfArgsFound++;
-						}
-						if(firstSub == "dbname" && secoundSub != "") 
-						{
-							dbname = secoundSub;
-							numOfArgsFound++;
-						}
-						if(firstSub == "dbuser" && secoundSub != "") 
-						{
-							user = secoundSub;
-							numOfArgsFound++;
-						}
-						if(firstSub == "dbpassword" && secoundSub != "") 
-						{
-							pass = secoundSub;
-							numOfArgsFound++;
-						}
-						if(firstSub == "dbtable" && secoundSub != "") 
-						{
-							table = secoundSub;
-							numOfArgsFound++;
-						
-						}
-						if(firstSub == "dbcol" && secoundSub != "") 
-						{
-							col = secoundSub;	
-							numOfArgsFound++;
-						}
-						if(firstSub == "upnp" && secoundSub != "")
-						{
-							useUPNP = secoundSub;
-							numOfArgsFound++;
-						}
-						if(firstSub == "apiKey" && secoundSub != "")
-						{
-							apiKey = secoundSub;
-							
-							int i;
-							for (i = 0; i < apiKey.length(); i++)
+							if(isalnum(apiKey[i]) == 0)
 							{
-								if(isalnum(apiKey[i]) == 0)
-								{
-									cout << "API Key has invalid character, Check configuration file." << endl;
-									exit(0);
-									
-								}
+								cout << "API Key has invalid character, Check configuration file." << endl;
+								exit(0);	
+							}
 								
-							}
-							
-							if(apiKey.length() != 10)
-							{
-								cout << "API Key is not a valid length, Check configuration file." << endl;
-								exit(0);
-							}
-							numOfArgsFound++;
-							
+						}	
+						if(apiKey.length() != 10)
+						{
+							cout << "API Key is not a valid length, Check configuration file." << endl;
+							exit(0);
 						}
+						numOfArgsFound++;	
+					}
 				}	
 			}	
 		}
@@ -1205,13 +1087,11 @@ int readConfig(string path)
 			return 0;
 		}
 		
-		if(numOfArgsFound != 11 )
+		else if(numOfArgsFound != 11 )
 		{
 			printf("Configuration File is not Formatted Correctly...Exiting\n");
-			exit(0);
-			
+			exit(0);	
 		}
-	
 	}
 	else
 	{
@@ -1254,9 +1134,6 @@ the API.
         perror("msgget");
         exit(1);
     }
-    else 
-     //(void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
-
 
 
 	while(1)
@@ -1269,11 +1146,9 @@ the API.
 		
 		  	sbuf.mtype = 1;
 
-		   // (void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
 
 		    (void) strcpy(sbuf.mtext, s.c_str());
 
-		   // (void) fprintf(stderr,"msgget: msgget succeeded: msqid = %d\n", msqid);
 
 		    buf_length = strlen(sbuf.mtext) + 1;
 
@@ -1282,19 +1157,15 @@ the API.
 		     * Send a message.
 		     */
 	
-		    	if (msgsnd(msqid, &sbuf, buf_length, false) < 0) 
-				{
-		      // 		printf ("%d, %d, %s, %d\n", msqid, sbuf.mtype, sbuf.mtext, buf_length);
-		        	perror("msgsnd");
-		        	exit(1);
-		    	}
-
-		    	else
-				{ 
-		      	//	printf("Message: \"%s\" Sent\n", sbuf.mtext);
-			  		sproutFeed.pop();		
-				}
-			
+		    if (msgsnd(msqid, &sbuf, buf_length, false) < 0) 
+			{
+		       	perror("msgsnd");
+		       	exit(1);
+		    }
+		    else
+			{ 
+		 		sproutFeed.pop();		
+			}	
 		}
 		else
 		{
@@ -1314,6 +1185,7 @@ the API.
  createAndReadPipe creates the pipe and then constantly reads
  waiting for calls from the API's
  */
+#warning Rewrite createAndReadPipe to use sys4 Message Queue
  void* createAndReadPipe(void *thread_arg)
 {
 
@@ -1330,8 +1202,6 @@ the API.
 		exit(1);
 	}
 	
-	
-	
 	while(1)
 	{
 		fd = open(sproutPipe, O_RDONLY); //open the pipe for reading
@@ -1341,9 +1211,7 @@ the API.
 		if(numread > 1)
 		{
 			bufpipe[numread] = '\0';
-
-			string temp = bufpipe;
-			
+			string temp = bufpipe;	
 			memset(bufpipe,'\0',4);
 			int pos = temp.find("^");
 			if(pos != string::npos)
@@ -1352,7 +1220,6 @@ the API.
 			}
 					
 			int sizeOfString = atoi(temp.c_str());
-			
 			char feedWord[sizeOfString];
 			int numRead1 = read(fd, feedWord, sizeOfString);
 			
@@ -1363,7 +1230,6 @@ the API.
 			}
 
 			close(fd);
-			
 			
 			/*
 			Find the number of spaces in the command to figure out how large to set the command[] buffer

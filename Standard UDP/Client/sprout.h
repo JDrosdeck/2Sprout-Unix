@@ -60,6 +60,69 @@ Includes for mysql C library
 #define MSGSZ     50000
 #define version "1.0.1"
 
+
+int MYPORT = 0;		//port which the client is bound to 
+
+bool useDatabase = true;
+
+/*
+Declarations for networking code
+*/
+char *ipAdd;
+int sockfd;
+struct sockaddr_in my_addr;    // my address information
+struct sockaddr_in their_addr; // connector's address information
+socklen_t addr_len;
+int numbytes;
+char buf[maxPipe];
+
+
+queue<string> sproutFeed; //this is the queue where the approved data is located
+queue<string> unprocessedData; //this is the queue for data that has yet been tested
+vector<int> packetsRecieved;	//Stores any new packet number that comes in
+vector<int> packetsRecievedDay2;
+vector<int> packetsMissed;	//Stores the numbers of missed packets
+vector<int> packetsMissedDay2;
+vector<int> reSentMissedPackets;	//Stores the packet numbers of packets that have been sent to replace missed packets
+vector<int> reSentMissedPacketsDay2;
+
+bool dateRecieved = false;
+
+
+/*
+variables for holding data read in from the configuration files
+*/
+string apiKey;
+string useUPNP;
+string database;
+string host;
+string port; 
+string dbname;
+string user;
+string pass;
+string table;
+string col;
+string connectionString;
+
+	
+/*
+strings used to keep track of the current date and the date of the next day
+*/
+string currentDate = "";
+string nextDate = "";
+
+
+string cipher; //used to decode the message
+string updatedPassword;
+int sleeptime = 0;
+
+
+
+static char errorBuffer[CURL_ERROR_SIZE];
+static string buffer;
+pthread_mutex_t mylock = PTHREAD_MUTEX_INITIALIZER;
+
+
 using namespace std;
 
 void getData();

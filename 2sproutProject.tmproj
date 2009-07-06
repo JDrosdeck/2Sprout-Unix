@@ -25,13 +25,13 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/sprout.h</string>
 					<key>lastUsed</key>
-					<date>2009-06-25T21:26:07Z</date>
+					<date>2009-07-04T02:12:12Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-06-29T18:30:36Z</date>
+					<date>2009-07-04T21:16:23Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -283,14 +283,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>19</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>1850</integer>
+				<integer>1161</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1814</integer>
+			<integer>1099</integer>
+		</dict>
+		<key>Standard UDP/Client/sprout.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>23</integer>
+				<key>line</key>
+				<integer>115</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>32</integer>
 		</dict>
 		<key>pysock.py</key>
 		<dict>
@@ -311,6 +325,7 @@
 	<array>
 		<string>2sprout API/sprout.cpp</string>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
+		<string>Standard UDP/Client/sprout.h</string>
 		<string>Standard UDP/Client/2sprout.conf</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
