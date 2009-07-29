@@ -178,11 +178,15 @@ int closeAnnounce()
 {
 	CURL *curl;
 	CURLcode res;
+	char Portbuffer[10];
+	sprintf(Portbuffer, "%i", MYPORT);
+	string port = Portbuffer;
+	string url = "http://2sprout.com/disconnect/" + port + "/" + apiKey + "/";
+	port.clear();
+	bzero(Portbuffer, sizeof(Portbuffer));
 	curl = curl_easy_init();
 	if(curl)
 	{
-		string url = "http://2sprout.com/client/close/?port=";
-		url += MYPORT;
 		curl_easy_setopt(curl,CURLOPT_URL, url.c_str());
 		res = curl_easy_perform(curl);
 		curl_easy_cleanup(curl);
@@ -1291,76 +1295,9 @@ void catch_int(int sig_num)
 	unlink(sproutPipe);
 	printf("Cleaning Files\n");
     fflush(stdout);
-	disconnect();
+	closeAnnounce();
 	exit(0);
 }
-
-
-
-
-bool disconnect()
-{
-	
-	CURL *curl;
-	CURLcode res;
-	char Portbuffer[10];
-	sprintf(Portbuffer, "%i", MYPORT);
-	string port = Portbuffer;
-	string url = "http://2sprout.com/disconnect/" + port + "/" + apiKey + "/";
-	port.clear();
-	bzero(Portbuffer, sizeof(Portbuffer));
-	
-	curl = curl_easy_init();
-	if (curl == NULL)
-	{
-		fprintf(stderr, "Failed to create CURL connection\n");
-		exit(EXIT_FAILURE);
-	}
-
-	res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-	if (res != CURLE_OK)
-	{
-		fprintf(stderr, "Failed to set error buffer [%d]\n", res);
-		return false;
-	}
-
-	res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-	if (res != CURLE_OK)
-	{
-		fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
-		return false;
-	}
-
-	res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-	if (res != CURLE_OK)
-	{
-		fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
-		return false;
-	}
-
-	res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
-	if (res != CURLE_OK)
-	{
-		fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
-		return false;
-	}
-
-	res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
-	if (res != CURLE_OK)
-	{
-		fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
-		return false;
-	}
-
-	res = curl_easy_perform(curl);
-	curl_easy_cleanup(curl);
-	return true;
-	
-}
-
-
-
-
 
 
 
