@@ -1292,6 +1292,7 @@ void catch_int(int sig_num)
 {
     /* re-set the signal handler again to catch_int, for next time */
     signal(SIGINT, catch_int);
+	signal(SIGTERM, catch_int);
 	unlink(sproutPipe);
 	printf("Cleaning Files\n");
     fflush(stdout);
@@ -1551,6 +1552,7 @@ void showVersion()
 int main(int argc, char *argv[])
 {
 	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
+	signal(SIGTERM, catch_int);
 	
 	string path = "2sprout.conf";
 
