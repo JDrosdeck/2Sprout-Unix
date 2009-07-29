@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'database.ui'
 **
-** Created: Mon Jul 27 13:24:06 2009
+** Created: Mon Jul 27 13:19:29 2009
 **      by: Qt User Interface Compiler version 4.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!

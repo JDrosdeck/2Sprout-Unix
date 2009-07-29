@@ -154,7 +154,11 @@ void MainWindow::on_pushButton_clicked()
     QStringList args;
     if(sproutPort != 4950)
     {
-        portArg = "-p" + sproutPort;
+        char Portbuffer[10];
+        sprintf(Portbuffer, "%i", sproutPort);
+        QString port = Portbuffer;
+        portArg = "-p" + port;
+
     }
     else
     {
@@ -206,6 +210,7 @@ void MainWindow::on_pushButton_2_clicked()
 {
         if(processStarted == true)
     {
+
         client->terminate();
         ui->textEdit->append("Client Stopped.");
     }
