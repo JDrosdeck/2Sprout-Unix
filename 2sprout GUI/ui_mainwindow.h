@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'mainwindow.ui'
 **
-** Created: Mon Jun 29 14:35:28 2009
+** Created: Mon Jul 27 13:24:06 2009
 **      by: Qt User Interface Compiler version 4.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -15,15 +15,14 @@
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
 #include <QtGui/QGroupBox>
+#include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
-#include <QtGui/QStatusBar>
+#include <QtGui/QSpacerItem>
 #include <QtGui/QTextEdit>
-#include <QtGui/QToolBar>
 #include <QtGui/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -37,23 +36,24 @@ public:
     QAction *actionAbout;
     QAction *actionDeveloper_Key;
     QWidget *centralWidget;
+    QWidget *horizontalLayoutWidget;
+    QHBoxLayout *horizontalLayout;
+    QSpacerItem *horizontalSpacer;
+    QPushButton *pushButton;
+    QSpacerItem *horizontalSpacer_2;
+    QPushButton *pushButton_2;
     QGroupBox *groupBox;
     QTextEdit *textEdit;
-    QPushButton *pushButton;
-    QPushButton *pushButton_2;
-    QLabel *label;
     QMenuBar *menuBar;
     QMenu *menuSetUp;
-    QToolBar *mainToolBar;
-    QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindowClass)
     {
         if (MainWindowClass->objectName().isEmpty())
             MainWindowClass->setObjectName(QString::fromUtf8("MainWindowClass"));
-        MainWindowClass->resize(474, 392);
-        MainWindowClass->setMinimumSize(QSize(474, 392));
-        MainWindowClass->setMaximumSize(QSize(474, 392));
+        MainWindowClass->resize(501, 314);
+        MainWindowClass->setMinimumSize(QSize(501, 314));
+        MainWindowClass->setMaximumSize(QSize(501, 314));
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/icons/2sprout.png"), QSize(), QIcon::Normal, QIcon::Off);
         MainWindowClass->setWindowIcon(icon);
@@ -78,53 +78,52 @@ public:
         actionDeveloper_Key->setIcon(icon3);
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
-        groupBox = new QGroupBox(centralWidget);
-        groupBox->setObjectName(QString::fromUtf8("groupBox"));
-        groupBox->setGeometry(QRect(10, 0, 451, 301));
-        groupBox->setMaximumSize(QSize(451, 301));
-        textEdit = new QTextEdit(groupBox);
-        textEdit->setObjectName(QString::fromUtf8("textEdit"));
-        textEdit->setGeometry(QRect(10, 30, 431, 261));
-        textEdit->setStyleSheet(QString::fromUtf8("QTextEdit { \n"
-"border-width: 5px; \n"
-"border-style: inset; \n"
-"border-color: #535353; \n"
-"border-radius: 9px; \n"
-"background: #ffffff; \n"
-"color: #000000; \n"
-"}"));
-        pushButton = new QPushButton(centralWidget);
+        horizontalLayoutWidget = new QWidget(centralWidget);
+        horizontalLayoutWidget->setObjectName(QString::fromUtf8("horizontalLayoutWidget"));
+        horizontalLayoutWidget->setGeometry(QRect(10, 270, 481, 41));
+        horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setMargin(11);
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setContentsMargins(0, 0, 0, 0);
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer);
+
+        pushButton = new QPushButton(horizontalLayoutWidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(260, 310, 91, 32));
         QIcon icon4;
         icon4.addFile(QString::fromUtf8(":/icons/control_play_blue.png"), QSize(), QIcon::Normal, QIcon::Off);
         pushButton->setIcon(icon4);
-        pushButton_2 = new QPushButton(centralWidget);
+
+        horizontalLayout->addWidget(pushButton);
+
+        horizontalSpacer_2 = new QSpacerItem(5, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer_2);
+
+        pushButton_2 = new QPushButton(horizontalLayoutWidget);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(360, 310, 91, 32));
         QIcon icon5;
         icon5.addFile(QString::fromUtf8(":/icons/control_pause_blue.png"), QSize(), QIcon::Normal, QIcon::Off);
         pushButton_2->setIcon(icon5);
-        label = new QLabel(centralWidget);
-        label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(10, 320, 211, 17));
-        label->setMinimumSize(QSize(211, 17));
-        QFont font;
-        font.setPointSize(9);
-        label->setFont(font);
+
+        horizontalLayout->addWidget(pushButton_2);
+
+        groupBox = new QGroupBox(centralWidget);
+        groupBox->setObjectName(QString::fromUtf8("groupBox"));
+        groupBox->setGeometry(QRect(10, 0, 481, 261));
+        groupBox->setMaximumSize(QSize(481, 261));
+        textEdit = new QTextEdit(groupBox);
+        textEdit->setObjectName(QString::fromUtf8("textEdit"));
+        textEdit->setGeometry(QRect(10, 30, 461, 221));
         MainWindowClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindowClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 474, 22));
+        menuBar->setGeometry(QRect(0, 0, 501, 22));
         menuSetUp = new QMenu(menuBar);
         menuSetUp->setObjectName(QString::fromUtf8("menuSetUp"));
         MainWindowClass->setMenuBar(menuBar);
-        mainToolBar = new QToolBar(MainWindowClass);
-        mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
-        MainWindowClass->addToolBar(Qt::TopToolBarArea, mainToolBar);
-        statusBar = new QStatusBar(MainWindowClass);
-        statusBar->setObjectName(QString::fromUtf8("statusBar"));
-        MainWindowClass->setStatusBar(statusBar);
 
         menuBar->addAction(menuSetUp->menuAction());
         menuSetUp->addAction(actionNetwork);
@@ -148,10 +147,9 @@ public:
         actionAbout->setText(QApplication::translate("MainWindowClass", "About", 0, QApplication::UnicodeUTF8));
         actionDeveloper_Key->setText(QApplication::translate("MainWindowClass", "Developer Key", 0, QApplication::UnicodeUTF8));
         actionDeveloper_Key->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+K", 0, QApplication::UnicodeUTF8));
-        groupBox->setTitle(QApplication::translate("MainWindowClass", "2sprout Status", 0, QApplication::UnicodeUTF8));
         pushButton->setText(QApplication::translate("MainWindowClass", "Start", 0, QApplication::UnicodeUTF8));
         pushButton_2->setText(QApplication::translate("MainWindowClass", "Pause", 0, QApplication::UnicodeUTF8));
-        label->setText(QString());
+        groupBox->setTitle(QApplication::translate("MainWindowClass", "Status", 0, QApplication::UnicodeUTF8));
         menuSetUp->setTitle(QApplication::translate("MainWindowClass", "Setup", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 

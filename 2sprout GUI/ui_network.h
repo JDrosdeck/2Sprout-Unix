@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'network.ui'
 **
-** Created: Mon Jun 29 14:35:28 2009
+** Created: Mon Jul 27 13:24:06 2009
 **      by: Qt User Interface Compiler version 4.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -39,7 +39,9 @@ public:
     {
         if (Network->objectName().isEmpty())
             Network->setObjectName(QString::fromUtf8("Network"));
-        Network->resize(417, 136);
+        Network->resize(410, 135);
+        Network->setMinimumSize(QSize(410, 135));
+        Network->setMaximumSize(QSize(410, 135));
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/icons/bullet_wrench.png"), QSize(), QIcon::Normal, QIcon::Off);
         Network->setWindowIcon(icon);

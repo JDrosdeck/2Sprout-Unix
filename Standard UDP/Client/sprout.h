@@ -146,3 +146,4 @@ bool registerClient();
 void showHelp();
 void showVersion();
 static int writer(char *data, size_t size, size_t nmemb,std::string *writerData);
+bool disconnect();

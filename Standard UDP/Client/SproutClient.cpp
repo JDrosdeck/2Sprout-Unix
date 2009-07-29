@@ -64,7 +64,7 @@ void* announce(void *thread_arg)
 		sprintf(Portbuffer, "%i", MYPORT);
 		string port = Portbuffer;
 	
-		string url = "http://2sprout.com/u/" + port + "/" + apiKey + "/";
+		string url = "http://2sprout.com/refresh/" + port + "/" + apiKey + "/";
 		port.clear();
 		bzero(Portbuffer, sizeof(Portbuffer));
 		//cout << url << endl;
@@ -224,7 +224,7 @@ void* castListener(void *thread_arg)
     }
 
 	cout << "Waiting for updates.." << endl;
-	
+	int x = 1;
  	while(1)
  	{
     	addr_len = sizeof their_addr;   		
@@ -251,7 +251,9 @@ void* castListener(void *thread_arg)
 			input.clear();
 			if(value.substr(0,10) == updatedPassword)
 			{
-				unprocessedData.push(value.substr(10,value.length()));				
+				unprocessedData.push(value.substr(10,value.length()));
+				cout << x << endl;
+				x++;				
 			}
 			value.clear();
 		}
@@ -972,7 +974,6 @@ used to create a connection with a database.
 */
 
 
-#warning : Rewrite readConfig to accept spaces and trim input
 int readConfig(string path)
 {
 	string line;
@@ -990,7 +991,6 @@ int readConfig(string path)
 			if(!line.empty())
 			{
 				trim(line);
-				cout << "LINE: " << line << endl;
 				
 				//find the first occurance of an '=' sign
 				found = line.find("=");
@@ -1001,8 +1001,6 @@ int readConfig(string path)
 					secoundSub = line.substr(foundPos+1);
 					trim(firstSub);
 					trim(secoundSub);
-					cout << "FIRST SUB: " << firstSub << endl;
-					cout << "SECOUND SUB " << secoundSub << endl;				
 					
 					if(firstSub == "usedb" && secoundSub == "false")
 					{
@@ -1147,7 +1145,7 @@ the API.
 		  	sbuf.mtype = 1;
 
 
-		    (void) strcpy(sbuf.mtext, s.c_str());
+		    (void) strncpy(sbuf.mtext, s.c_str(), strlen(s.c_str()));
 
 
 		    buf_length = strlen(sbuf.mtext) + 1;
@@ -1293,8 +1291,77 @@ void catch_int(int sig_num)
 	unlink(sproutPipe);
 	printf("Cleaning Files\n");
     fflush(stdout);
+	disconnect();
 	exit(0);
 }
+
+
+
+
+bool disconnect()
+{
+	
+	CURL *curl;
+	CURLcode res;
+	char Portbuffer[10];
+	sprintf(Portbuffer, "%i", MYPORT);
+	string port = Portbuffer;
+	string url = "http://2sprout.com/disconnect/" + port + "/" + apiKey + "/";
+	port.clear();
+	bzero(Portbuffer, sizeof(Portbuffer));
+	
+	curl = curl_easy_init();
+	if (curl == NULL)
+	{
+		fprintf(stderr, "Failed to create CURL connection\n");
+		exit(EXIT_FAILURE);
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set error buffer [%d]\n", res);
+		return false;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
+		return false;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
+		return false;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
+		return false;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
+		return false;
+	}
+
+	res = curl_easy_perform(curl);
+	curl_easy_cleanup(curl);
+	return true;
+	
+}
+
+
+
+
+
 
 
 
@@ -1420,7 +1487,7 @@ bool registerClient()
 		char Portbuffer[10];
 		sprintf(Portbuffer, "%i", MYPORT);
 		string port = Portbuffer;
-		string url = "http://2sprout.com/r/" + port + "/" + apiKey + "/";
+		string url = "http://2sprout.com/connect/" + port + "/" + apiKey + "/";
 		port.clear();
 		bzero(Portbuffer, sizeof(Portbuffer));
 		
@@ -1719,6 +1786,8 @@ int main(int argc, char *argv[])
 		pthread_t threads[9];	
 		cout << "Starting 2Sprout Client" << endl;	
 		pthread_create(&threads[0], NULL, announce, NULL);
+
+	
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		pthread_create(&threads[2], NULL, createAndReadPipe, NULL);
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
