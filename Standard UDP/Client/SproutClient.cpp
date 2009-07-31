@@ -67,9 +67,11 @@ void* announce(void *thread_arg)
 		string url = "http://2sprout.com/refresh/" + port + "/" + apiKey + "/";
 		port.clear();
 		bzero(Portbuffer, sizeof(Portbuffer));
-		//cout << url << endl;
+		
+		
 		while(1)
 		{
+			
 			buffer.clear();
 			memset(errorBuffer, '\0', sizeof(errorBuffer));
 			sleep(sleeptime);	
@@ -152,7 +154,6 @@ void* announce(void *thread_arg)
 			while(getline(iss,token,'^'))
 			{
 				section[count1] = token;
-				cout << token << endl;
 				count1++;
 			}
 
@@ -161,8 +162,14 @@ void* announce(void *thread_arg)
 				cipher = section[0];
 				updatedPassword = section[1];
 				
+			
 				#warning todo: Check The Return value of atoi
 				sleeptime = atoi(section[2].c_str());
+				
+			}
+			else 
+			{
+				cout << "Incorrect return" << endl;
 			}
 		}
 }
@@ -228,7 +235,7 @@ void* castListener(void *thread_arg)
     }
 
 	cout << "Waiting for updates.." << endl;
-	int x = 1;
+
  	while(1)
  	{
     	addr_len = sizeof their_addr;   		
@@ -256,8 +263,6 @@ void* castListener(void *thread_arg)
 			if(value.substr(0,10) == updatedPassword)
 			{
 				unprocessedData.push(value.substr(10,value.length()));
-				cout << x << endl;
-				x++;				
 			}
 			value.clear();
 		}
@@ -859,7 +864,7 @@ void* insertToDb(void *thread_arg)
 				char escapeBuffer[(s.length() * 2)+1];
 				
 		 		unsigned long g = PQescapeStringConn(Conn, escapeBuffer, (char *)s.c_str(), strlen(s.c_str()),error);  
-				cout << "Escaped String " << escapeBuffer << endl;
+				//cout << "Escaped String " << escapeBuffer << endl;
 							
 	  			// (Queries)
 	  			string Query = "INSERT INTO ";
@@ -1149,6 +1154,7 @@ the API.
 		  	sbuf.mtype = 1;
 
 
+			bzero(sbuf.mtext, sizeof(sbuf.mtext));
 		    (void) strncpy(sbuf.mtext, s.c_str(), strlen(s.c_str()));
 
 
@@ -1473,7 +1479,7 @@ bool registerClient()
 
   		res = curl_easy_perform(curl);
   		curl_easy_cleanup(curl);
-  		//cout << buffer << endl;
+  		
 		if (buffer == "0000")
 		{
 			cout << "Client already registered" << endl;
@@ -1484,12 +1490,10 @@ bool registerClient()
 		}
 	
 		string decoded = base64_decode(buffer);
-	  	//cout << "Decoded: " <<  decoded << endl;
 	  	//XOR with the secret cypher
 		string value(decoded);
 		string key("2#sPr0uT5!");
 		value = XOR(decoded,key);
-		//cout << "Decrypted: " << value << endl;
 
 
 		//find the number of "^"
@@ -1517,7 +1521,6 @@ bool registerClient()
 		while(getline(iss,token,'^'))
 		{
 			section[count1] = token;
-		//	cout << token << endl;
 			count1++;
 		}
 
@@ -1526,9 +1529,10 @@ bool registerClient()
 			cipher = section[0];
 			updatedPassword = section[1];
 		
-			//cout << "CIPHER: " << cipher << endl;
-			//cout <<"PASS: " << updatedPassword << endl;
+
 			sleeptime = atoi(section[2].c_str());
+		       
+			
 		}
 }
 
