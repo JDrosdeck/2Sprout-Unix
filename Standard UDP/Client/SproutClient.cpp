@@ -58,8 +58,7 @@ Announce uses CURL in order to contact the 2sprout server and requests an update
 */
 void* announce(void *thread_arg)
 {	
-		CURL *curl;
-		CURLcode res;
+	
 		char Portbuffer[10];
 		sprintf(Portbuffer, "%i", MYPORT);
 		string port = Portbuffer;
@@ -67,61 +66,18 @@ void* announce(void *thread_arg)
 		string url = "http://2sprout.com/refresh/" + port + "/" + apiKey + "/";
 		port.clear();
 		bzero(Portbuffer, sizeof(Portbuffer));
-		
+		string html;
 		
 		while(1)
 		{
 			
-			buffer.clear();
+			html.clear();
 			memset(errorBuffer, '\0', sizeof(errorBuffer));
 			sleep(sleeptime);	
-			curl = curl_easy_init();
-    		if (curl == NULL)
-    		{
-    			fprintf(stderr, "Failed to create CURL connection\n");
-    			exit(EXIT_FAILURE);
-  			}
-
-  			res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-  			if (res != CURLE_OK)
-  			{
-    			fprintf(stderr, "Failed to set error buffer [%d]\n", res);
-    			return false;
-  			}
-
-  			res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-  			if (res != CURLE_OK)
-  			{
-    			fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
-    			return false;
-  			}
-
- 			res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-  			if (res != CURLE_OK)
-  			{
-    			fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
-    			return false;
-  			}
-
-  			res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
-  			if (res != CURLE_OK)
-  			{
-    			fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
-    			return false;
-  			}
-
-  			res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
-  			if (res != CURLE_OK)
-  			{
-    			fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
-    			return false;
-  			}
-
-  			res = curl_easy_perform(curl);
-  			curl_easy_cleanup(curl);
+			html = getHtml(url);
 
 			//Convert the buffer from base64
-  			string decoded = base64_decode(buffer);
+  			string decoded = base64_decode(html);
   			//XOR with the secret cypher
 			string value(decoded);
 			string key(cipher);
@@ -215,7 +171,7 @@ void* castListener(void *thread_arg)
 	struct sockaddr_in their_addr; // connector's address information
 	socklen_t addr_len;
 	int numbytes;
-	string rawPacket;
+	char rawPacket[10000];
 	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) 
     {
         perror("Unable to set socket\n");
@@ -239,7 +195,7 @@ void* castListener(void *thread_arg)
  	while(1)
  	{
     	addr_len = sizeof their_addr;   		
-    	if ((numbytes = recvfrom(sockfd, (void *) rawPacket.c_str(), 50000 , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
+    	if ((numbytes = recvfrom(sockfd, (void *) rawPacket, sizeof(rawPacket) , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
     	{
         	perror("recvfrom\n");
         	exit(1);
@@ -251,8 +207,8 @@ void* castListener(void *thread_arg)
 
 		if(numbytes < 5000 && unprocessedData.size() < 50000)
 		{
-   	    	string input = rawPacket.c_str();
-			rawPacket.clear();
+   	    	string input = rawPacket;
+			bzero(rawPacket, sizeof(rawPacket));
 			numbytes = 0;
 			string decoded = base64_decode(input);
 			string value(decoded);
@@ -1422,65 +1378,78 @@ void setUPNP(char* port)
 
 
 
+string getHtml(string url)
+{
+	char errorBuffer[CURL_ERROR_SIZE];
+	string buffer;
+	
+	CURL *curl;
+	CURLcode res;
+
+	buffer.clear();
+	curl = curl_easy_init();
+	if (curl == NULL)
+	{
+		fprintf(stderr, "Failed to create CURL connection\n");
+		exit(EXIT_FAILURE);
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set error buffer [%d]\n", res);
+		return false;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
+		return false;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
+		return false;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
+		return false;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
+		return false;
+	}
+
+	res = curl_easy_perform(curl);
+	curl_easy_cleanup(curl);
+	
+	return buffer;
+}
+
 
 
 bool registerClient()
 {
-		CURL *curl;
-		CURLcode res;
-		char Portbuffer[10];
+
+  		char Portbuffer[10];
 		sprintf(Portbuffer, "%i", MYPORT);
 		string port = Portbuffer;
 		string url = "http://2sprout.com/connect/" + port + "/" + apiKey + "/";
 		port.clear();
 		bzero(Portbuffer, sizeof(Portbuffer));
 		
-		curl = curl_easy_init();
-    	if (curl == NULL)
-    	{
-    		fprintf(stderr, "Failed to create CURL connection\n");
-    		exit(EXIT_FAILURE);
-  		}
-
-  		res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-  		if (res != CURLE_OK)
-  		{
-    		fprintf(stderr, "Failed to set error buffer [%d]\n", res);
-    		return false;
-  		}
-
-  		res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-  		if (res != CURLE_OK)
-  		{
-    		fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
-    		return false;
-  		}
-
- 		res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-  		if (res != CURLE_OK)
-  		{
-    		fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
-    		return false;
-  		}
-
-  		res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
-  		if (res != CURLE_OK)
-  		{
-    		fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
-    		return false;
-  		}
-
-  		res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
-  		if (res != CURLE_OK)
-  		{
-    		fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
-    		return false;
-  		}
-
-  		res = curl_easy_perform(curl);
-  		curl_easy_cleanup(curl);
-  		
-		if (buffer == "0000")
+		string html = getHtml(url);
+		
+		if (html == "0000")
 		{
 			cout << "Client already registered" << endl;
 		}
@@ -1489,7 +1458,8 @@ bool registerClient()
 			cout << "Client successfully registered" << endl;
 		}
 	
-		string decoded = base64_decode(buffer);
+	
+		string decoded = base64_decode(html);
 	  	//XOR with the secret cypher
 		string value(decoded);
 		string key("2#sPr0uT5!");
@@ -1512,7 +1482,6 @@ bool registerClient()
 			NumSpacesCount = 1;
 		}
 
-
 		string token;
 		string section[NumSpacesCount];	
 		istringstream iss(value);
@@ -1528,11 +1497,7 @@ bool registerClient()
 		{
 			cipher = section[0];
 			updatedPassword = section[1];
-		
-
-			sleeptime = atoi(section[2].c_str());
-		       
-			
+			sleeptime = atoi(section[2].c_str());	       
 		}
 }
 

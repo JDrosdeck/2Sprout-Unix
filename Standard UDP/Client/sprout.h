@@ -118,8 +118,7 @@ int sleeptime = 0;
 
 
 
-static char errorBuffer[CURL_ERROR_SIZE];
-static string buffer;
+
 pthread_mutex_t mylock = PTHREAD_MUTEX_INITIALIZER;
 
 
@@ -147,3 +146,4 @@ void showHelp();
 void showVersion();
 static int writer(char *data, size_t size, size_t nmemb,std::string *writerData);
 bool disconnect();
+string getHtml(string url);

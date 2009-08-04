@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Standard UDP/Client/SproutClient.cpp</string>
+	<string>Standard UDP/Client/sprout.h</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -25,15 +25,15 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/sprout.h</string>
 					<key>lastUsed</key>
-					<date>2009-07-30T19:20:09Z</date>
+					<date>2009-08-04T17:47:02Z</date>
+					<key>selected</key>
+					<true/>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-07-30T20:36:11Z</date>
-					<key>selected</key>
-					<true/>
+					<date>2009-08-04T17:47:02Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -283,28 +283,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>156</integer>
+				<integer>1382</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>130</integer>
+			<integer>1149</integer>
 		</dict>
 		<key>Standard UDP/Client/sprout.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>18</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>148</integer>
+				<integer>120</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>99</integer>
+			<integer>95</integer>
 		</dict>
 		<key>pysock.py</key>
 		<dict>
@@ -330,8 +330,8 @@
 		<string>Standard UDP/Client/2sprout.conf</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
-	<true/>
+	<false/>
 	<key>windowFrame</key>
-	<string>{{403, 0}, {956, 878}}</string>
+	<string>{{197, 0}, {956, 878}}</string>
 </dict>
 </plist>
