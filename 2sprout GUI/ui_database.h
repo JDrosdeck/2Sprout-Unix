@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'database.ui'
 **
-** Created: Mon Jul 27 13:19:29 2009
+** Created: Wed Aug 12 14:56:26 2009
 **      by: Qt User Interface Compiler version 4.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -196,6 +196,7 @@ public:
         label_8->setText(QApplication::translate("Database", "Engine", 0, QApplication::UnicodeUTF8));
         comboBox_2->clear();
         comboBox_2->insertItems(0, QStringList()
+         << QApplication::translate("Database", "None", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("Database", "PostgreSQL", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("Database", "MySQL", 0, QApplication::UnicodeUTF8)
         );

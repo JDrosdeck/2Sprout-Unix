@@ -39,13 +39,21 @@ void Database::on_pushButton_2_clicked()
 
     if(!m_ui->lineEdit_6->text().isEmpty() && !m_ui->lineEdit_7->text().isEmpty() && !m_ui->lineEdit_8->text().isEmpty() && !m_ui->lineEdit_9->text().isEmpty())
     {
-        if(m_ui->comboBox_2->currentIndex() == 0)
+        if(m_ui->comboBox_2->currentIndex() == 1)
         {
             dbtype = "postgres";
+            useDatabase = true;
+
+        }
+        else if(m_ui->comboBox_2->currentIndex() == 2)
+        {
+            dbtype = "mysql";
+            useDatabase = true;
         }
         else
         {
-            dbtype = "mysql";
+            dbtype = "none";
+            useDatabase = false;
         }
 
         dbhost = m_ui->lineEdit_9->text();
@@ -60,8 +68,17 @@ void Database::on_pushButton_2_clicked()
     }
     else
     {
-        m_ui->label->clear();
-        m_ui->label->setText("Invalid Configuration");
+        if(m_ui->comboBox_2->currentIndex() != 0)
+        {
+            m_ui->label->clear();
+            m_ui->label->setText("Invalid Configuration");
+        }
+        else
+        {
+            dbtype = "none";
+            useDatabase = false;
+            this->close();
+        }
     }
 
 }

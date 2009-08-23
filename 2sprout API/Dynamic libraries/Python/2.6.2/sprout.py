@@ -48,8 +48,6 @@ except AttributeError:
 del types
 
 
-jsonGetMember = _sprout.jsonGetMember
-jsonHasKey = _sprout.jsonHasKey
 getSproutItem = _sprout.getSproutItem
 
 

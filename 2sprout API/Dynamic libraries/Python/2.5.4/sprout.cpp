@@ -31,17 +31,6 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <cstdlib>
 
 
-/*JSON CPP PARSING INCLUDES*/
-
-#include "json.h"
-#include "reader.h"
-#include "value.h"
-#include "writer.h"
-
-
-#define sproutPipe "/tmp/2sprout"
-#define feedPipe "/tmp/2sproutAPI"
-
 
 using namespace std;
 
@@ -54,53 +43,6 @@ typedef struct msgbuf1{
 
 
 message_buf1  rbuf;
-
-
-
-
-
-bool jsonHasKey(char * json, char * key)
-{
-    Json::Value root;
-    Json::Reader reader;
-
-    bool parseSuccessful = reader.parse(json,root);
-    if(!parseSuccessful)
-    {
-        cout << "Failed to parse\n " << reader.getFormatedErrorMessages();
-        return false;
-    }
-
-    string hasValue = root.get(key, "FALSE").asString();
-    if(hasValue == "FALSE")
-    {
-        return false;
-    }
-    else
-        return true;
-
-}
-
-
-
-
-
-char * jsonGetMember(char *json, char *key)
-{
-    Json::Value root;
-    Json::Reader reader;
-    bool parseSuccessful = reader.parse(json,root);
-    if(!parseSuccessful)
-    {
-        cout << "Failed to parse\n " << reader.getFormatedErrorMessages();
-     }
-
-    string memberValue = root.get(key, "NONE").asString();
-
-    return const_cast<char *>(memberValue.c_str());
-
-}
-
 
 
 

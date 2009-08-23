@@ -3,14 +3,14 @@
 THIS IS AN UNPUBLISHED WORK CONTAINING 2SPROUT INC CONFIDENTIAL AND PROPRIETARY INFORMATION. 
 DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTLY PROHIBITED.
 */
-#include "sprout.h"
+#include "SproutClient.h"
 
 
 
 
 /*
 Used for created a message for SYS V Message Queues, which is used for passing data from the client into the 
-API for passing into a user made function
+API for passing into a user made application
 */
 typedef struct msgbuf1 {
          long    mtype;
@@ -18,116 +18,83 @@ typedef struct msgbuf1 {
          } message_buf1;
 
 
-/*
-Libcurl callback which will write the html recieved into memory instead of passing it to stdout
-*/
-static int writer(char *data, size_t size, size_t nmemb,
-                  std::string *writerData)
-{
-  if (writerData == NULL)
-    return 0;
-
-  writerData->append(data, size*nmemb);
-  return size * nmemb;
-}
 
 
 
-/*
-Performs XOR operation on a string given a key
-*/
-string XOR(string value,string key)
-{
-    string retval(value);
 
-    short unsigned int klen=key.length();
-    short unsigned int vlen=value.length();
-    short unsigned int k=0;
-    short unsigned int v=0;
-    
-    for(v;v<vlen;v++)
-    {
-        retval[v]=value[v]^key[k];
-        k=(++k < klen ? k : 0);
-    }
-    
-    return retval;
-}
 /*
 Announce uses CURL in order to contact the 2sprout server and requests an updated cipher,password,update triple
 */
 void* announce(void *thread_arg)
 {	
 	
-		char Portbuffer[10];
-		sprintf(Portbuffer, "%i", MYPORT);
-		string port = Portbuffer;
+	char Portbuffer[10];
+	sprintf(Portbuffer, "%i", MYPORT);
+	string port = Portbuffer;
 	
-		string url = "http://2sprout.com/refresh/" + port + "/" + apiKey + "/";
-		port.clear();
-		bzero(Portbuffer, sizeof(Portbuffer));
-		string html;
+	string url = "http://2sprout.com/refresh/" + port + "/" + apiKey + "/";
+	port.clear();
+	bzero(Portbuffer, sizeof(Portbuffer));
+	string html;
+	
+	while(1)
+	{
 		
-		while(1)
+		html.clear();
+		sleep(sleeptime);	
+		html = getHtml(url);
+		//Convert the buffer from base64
+ 		string decoded = base64_decode(html);
+ 		//XOR with the secret cypher
+		string value(decoded);
+		string key(cipher);
+		value = XOR(decoded,key);
+		cout << value << endl;
+		//parse the buffer Password^sleepTime
+
+		//find the number of "^"
+		int NumSpacesCount = 0;
+		int loop;
+		for(loop =0; loop < value.length(); loop++)
 		{
-			
-			html.clear();
-			memset(errorBuffer, '\0', sizeof(errorBuffer));
-			sleep(sleeptime);	
-			html = getHtml(url);
-
-			//Convert the buffer from base64
-  			string decoded = base64_decode(html);
-  			//XOR with the secret cypher
-			string value(decoded);
-			string key(cipher);
-			value = XOR(decoded,key);
-
-			//parse the buffer Password^sleepTime
-
-			//find the number of "^"
-			int NumSpacesCount = 0;
-			int loop;
-			for(loop =0; loop < value.length(); loop++)
+			string::size_type loc = value.find('^', loop);
+			if(loc != string::npos)
 			{
-				string::size_type loc = value.find('^', loop);
-				if(loc != string::npos)
-				{
-					NumSpacesCount +=1;
-				}	
-			}		
-			if(NumSpacesCount == 0)
-			{
-				NumSpacesCount = 1;
-			}
+				NumSpacesCount +=1;
+			}	
+		}		
+		if(NumSpacesCount == 0)
+		{
+			NumSpacesCount = 1;
+		}
 
 		
-			string token;
-			string section[NumSpacesCount];	
-			istringstream iss(value);
-			int count1 = 0;
+		string token;
+		string section[NumSpacesCount];	
+		istringstream iss(value);
+		int count1 = 0;
 
-			while(getline(iss,token,'^'))
-			{
-				section[count1] = token;
-				count1++;
-			}
-
-			if(section[0] != "" && section[1] != "" && section[2] != "")
-			{
-				cipher = section[0];
-				updatedPassword = section[1];
-				
-			
-				#warning todo: Check The Return value of atoi
-				sleeptime = atoi(section[2].c_str());
-				
-			}
-			else 
-			{
-				cout << "Incorrect return" << endl;
-			}
+		while(getline(iss,token,'^'))
+		{
+			section[count1] = token;
+			count1++;
 		}
+
+		if(section[0] != "" && section[1] != "" && section[2] != "")
+		{
+			cipher = section[0];
+			updatedPassword = section[1];
+			
+			
+			#warning todo: Check The Return value of atoi
+			sleeptime = atoi(section[2].c_str());
+				
+		}
+		else 
+		{
+		cout << "Incorrect return" << endl;
+		}
+	}
 }
 
 
@@ -213,33 +180,19 @@ void* castListener(void *thread_arg)
 			string decoded = base64_decode(input);
 			string value(decoded);
 			string key(cipher);
+			
 			value = XOR(decoded,key);
 			decoded.clear();	
 			input.clear();
 			if(value.substr(0,10) == updatedPassword)
 			{
 				unprocessedData.push(value.substr(10,value.length()));
+				cout << "PUSHED" << endl;
 			}
 			value.clear();
 		}
    }
 	close(sockfd);
-}
-
-
-/*
-calcCheckSum calculates the total sum of the ASCII characters recieved in the string
-*/
-
-int calcCheckSum(string str)
-{
-        int a; //Number of letters
-		int ASCII = 0;
-        for(a = 0; a!=str.length(); ++a) /*Prints out each letter converted into a int value.*/
-        {
-			ASCII += int(str[a]);
-		}
-		return ASCII;
 }
 
 
@@ -301,40 +254,32 @@ void* checkPacketReliability(void *thread_arg)
 			
 				int CheckSum = calcCheckSum(CastMinusChecksum);
 				
-			//	cout << "Calculated CheckSum: " << CheckSum << " Recieved Checksum: " << section[0].c_str() << endl;
+				cout << "Calculated CheckSum: " << CheckSum << " Recieved Checksum: " << section[0].c_str() << endl;
 				
 				if(CheckSum == atoi(section[0].c_str())) //The MD5 Sum is the same so data integrety is OK
 				{
 					CastMinusChecksum.clear();
 					if(currentDate == "")
 					{
-				//		printf("Current Day initially set\n");
+						printf("Current Day initially set\n");
 						currentDate = section[1];
 					}						
 					if(section[1] != currentDate && nextDate == "")
 					{
-				//		printf("next Date initially set\n");
+						printf("next Date initially set\n");
 						nextDate = section[1];
 					}	
-					if(section[1] == currentDate && section[3] != "0")
-					{
-				//		printf("CurrentDate has been matched Pushing...\n");
-						reSentMissedPackets.push_back(atoi(section[2].c_str()));
-					}
-					if(section[1] == currentDate && section[3] == "0")
+
+					if(section[1] == currentDate)
 					{
 						packetsRecieved.push_back(atoi(section[2].c_str()));
-				//		printf("NOT REPLACING PACKET pusing back packet number\n");				
+						printf("NOT REPLACING PACKET pusing back packet number\n");				
 					}
-					if(section[1] == nextDate && section[3] != "0")
+			
+					if(section[1] == nextDate)
 					{
-						reSentMissedPacketsDay2.push_back(atoi(section[2].c_str()));
-					}	
-					if(section[1] == nextDate && section[2] == "0")
-					{
-				//		printf("NextDate has been matched Pushing...\n");
 						packetsRecievedDay2.push_back(atoi(section[2].c_str()));
-				//		printf("NOT REPLACING PACKET pusing back packet number\n");	
+						printf("NOT REPLACING PACKET pusing back packet number\n");	
 					}	
 					if(section[1] != currentDate && section[1] != nextDate && dateRecieved == false)
 					{
@@ -346,7 +291,7 @@ void* checkPacketReliability(void *thread_arg)
 						{
 							packetsRecieved.clear();
 						}	
-				//		printf("new date found, current date being overwritten\n");
+						printf("new date found, current date being overwritten\n");
 						currentDate = section[1];
 						packetsRecieved.push_back(atoi(section[2].c_str()));
 						dateRecieved = true;	
@@ -527,56 +472,7 @@ void* replaceLostPacketsDay2(void *thread_arg)
 	{
 		sleep(20);
 	
-		if(!packetsMissedDay2.empty() && !reSentMissedPacketsDay2.empty()) //there have been missed packets
-		{
-		//	printf("******************************\n");	
-		//	printf("There have been missing packets\n");
-		//	printf("******************************\n");
-			//search for missed packets for anything new that may have come in
-		    vector<int>::iterator searchMissingPackets;
-					int sizeOfVector = (int) packetsMissed.size();
-					
-		   	int loop;
 		
-			for(loop = 0; loop < sizeOfVector; loop++)
-			{
-				int match[] = {packetsMissedDay2[loop]};
-				
-		//		cout << "looking for match: " << match[0] << endl;
-				
-
-		//		printf("Searching for missing packet in newley recived packets\n");
-		//		cout << "before Search " << reSentMissedPacketsDay2.size() << endl;
-				
-
-				if(reSentMissedPacketsDay2.empty() == false)
-				{
-					
-					searchMissingPackets = reSentMissedPacketsDay2.begin();
-					while(searchMissingPackets != reSentMissedPacketsDay2.end())
-					{
-		//				cout << "missingPacket: " << *searchMissingPackets << " Loop: " << *match << endl;
-						if(*searchMissingPackets == *match)
-						{
-		//					printf("Found missing packet\n");
-							reSentMissedPacketsDay2.erase(find( packetsMissedDay2.begin(), packetsMissedDay2.end(), *match) );
-							packetsMissedDay2.erase(find( packetsMissedDay2.begin(), packetsMissedDay2.end(), *match) ); 						
-							--loop;
-							break;
-						}
-						else
-						{
-							++searchMissingPackets;
-						}
-					}
-					
-				}		
-			}
-			reSentMissedPacketsDay2.clear();
-		
-		}
-		
-		//pthread_mutex_unlock(&mylock);
 		if(!packetsMissedDay2.empty())
 		{
 				//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
@@ -624,7 +520,7 @@ void* checkLostPackets(void *thread_arg)
 	vector<int> tempVector;
 	while(1)
 	{
-		sleep(15);
+		sleep(2);
 		int sizeOfRecieved = (int) packetsRecieved.size();
 		if(sizeOfRecieved > 1)
 		{
@@ -655,6 +551,7 @@ void* checkLostPackets(void *thread_arg)
 			//Check the recieved packets against what was missing
 			//Figure out which are the missing packets
 			int sizeOfNewPackets = (int) tempVector.size();
+			cout << sizeOfNewPackets << endl;
 			int i;
 			int remainder;
 			for (i = 0; i < sizeOfNewPackets-1; i++)
@@ -684,95 +581,67 @@ void* replaceLostPackets(void *thread_arg)
 		
 	while(1)
 	{
-		sleep(20);
-		//pthread_mutex_lock(&mylock);
+		sleep(10);
 	
-		if(!packetsMissed.empty() && !reSentMissedPackets.empty()) //there have been missed packets
-		{
-			//search for missed packets for anything new that may have come in
-		    vector<int>::iterator searchMissingPackets;
-			int sizeOfVector = (int) packetsMissed.size();
-		   	int loop;
-			for(loop = 0; loop < sizeOfVector; loop++)
-			{
-				int match[] = {packetsMissed[loop]};
-				//cout << "looking for match: " << match[0] << endl;
-				//printf("Searching for missing packet in newley recived packets\n");
-				//cout << "Size of reSent Packets before Search " << reSentMissedPackets.size() << endl;
-				
-
-				if(reSentMissedPackets.empty() == false)
-				{
-					
-					searchMissingPackets = reSentMissedPackets.begin();
-					while(searchMissingPackets != reSentMissedPackets.end())
-					{
-						//cout << "Packet To Replace: " << *searchMissingPackets << " Replacing: " << *match << endl;
-						if(*searchMissingPackets == *match)
-						{
-							//printf("Found missing packet\n");
-							 reSentMissedPackets.erase(find( reSentMissedPackets.begin(), reSentMissedPackets.end(), *match));
-							//cout << "SIZE" << reSentMissedPackets.size() << endl;
-							packetsMissed.erase(find( packetsMissed.begin(), packetsMissed.end(), *match) ); 						
-							--loop;
-							break;
-						}
-						else
-						{
-							++searchMissingPackets;
-						}
-					}
-					
-				}		
-			}
-			reSentMissedPackets.clear();
-		
-		}
 		//pthread_mutex_unlock(&mylock);
 		if(!packetsMissed.empty())
 		{
 			
-	//		printf("NOTIFYING SERVER OF MISSED PACKETS\n");
-				//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
-
-				/*
-				int sizeOfLostPackets = (int)packetsMissed.size();	
-				curl = curl_easy_init(); //initialize curl
-				int lostPacket;
-				int l;
-				for(l = 0; l < sizeOfLostPackets; l++)
-				{
-					lostPacket = packetsMissed[l];
-					if(curl) 
-					{	
-	    				url = "http://2sprout.com/lostPacket/?port="; //access this webpage to be added to the database
-	    				url += lostPacket;
-	   					curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-	    				// Perform the request, res will get the return code/
-	    				res = curl_easy_perform(curl);
-	    				if(usleep(100000) == -1)
-						{
-							printf("Sleeping Error");
-						}	
-	    			}
-	    			curl_easy_cleanup(curl);
-				}
-				*/
+				printf("NOTIFYING SERVER OF MISSED PACKETS\n");
+				int numLostPackets = (int)packetsMissed.size();	
+				string url = "http://www.2sprout.com/missing/";
 			
+				int x;
+				stringstream out;
+				if (numLostPackets < 10)
+				{
+					for(x = 0; x < numLostPackets; x++)
+					{
+					
+						out.clear();
+						out << packetsMissed[x];
+						url.append(out.str());
+						if(x != (numLostPackets - 1))
+						{
+							url.append("^");	
+						}
+					}
+				
+				}
+				
+				else
+				{
+					int maxLost = 0;
+					
+					for(x = 0; x < numLostPackets; x++)
+					{
+						if(maxLost == 10)
+						{
+							maxLost = 0;
+							string html = getHtml(url);	
+							#warning automatically tokenize and put data into proper queue 
+						}
+						else
+						{
+							out.clear();
+							out << packetsMissed[x];
+							url.append(out.str());
+							if(x != (numLostPackets -1))
+							{
+								url.append("^");
+							}
+							maxLost++;
+						}	
+					}				
+				}
+		}
+		
+		else
+		{
+
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -878,8 +747,6 @@ void* insertToDb(void *thread_arg)
 					printf("Sleeping Error");
 				}
 			}
-	
-		
 			else//while the queue has items
 			{
 				//start of critical section
@@ -911,28 +778,7 @@ void* insertToDb(void *thread_arg)
    
    
 
-/*
-trim function will trim eaither whitespace or tabs from the beginning and ends of a string
-*/
-void trim(string& str)
-{
-  string::size_type pos = str.find_last_not_of(' ');
-  if(pos != string::npos) {
-    str.erase(pos + 1);
-    pos = str.find_first_not_of(' ');
-    if(pos != string::npos) str.erase(0, pos);
-  }
-  else str.erase(str.begin(), str.end());
 
-  pos = str.find_last_not_of('\t');
-  if(pos != string::npos) {
-    str.erase(pos + 1);
-    pos = str.find_first_not_of('\t');
-    if(pos != string::npos) str.erase(0, pos);
-  }
-  else str.erase(str.begin(), str.end());
-}
-   
 /*
 ReadConfig function, Goes through the 2sprout.conf file and reads in all the appropriate information 
 used to create a connection with a database.
@@ -1265,240 +1111,71 @@ void catch_int(int sig_num)
 
 
 
-static void forwardPort(struct UPNPUrls * urls,struct IGDdatas * data, const char * iaddr,const char * iport,const char * eport,const char * proto)
-{
- 
-int r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
-	                        eport, iport, iaddr, 0, proto, 0);
-if(r!=UPNPCOMMAND_SUCCESS)
-{
-	//printf("AddPortMapping(%s, %s, %s) failed with code %d\n",eport, iport, iaddr, r);
-	switch(r)
-	{
-		case 402:
-			printf("Invalid arguments\n");
-			break;
-		case 501:
-			printf("Action Failed\n");
-			break;
-		case 715:
-			printf("Wildcard Not Permitted In Source IP\n");
-			break;
-		case 716:
-			printf("Wildcard Not Permitted In External Port\n");
-			break;
-		case 718:
-			printf("Mapping Assigned to Another User\n");
-			break;
-		case 724:
-			printf("Internal And External Port Values Must Be The Same\n");
-			break;
-		case 725:
-			printf("NAT Implementation Only Supports Permanent least Times On Port Mappings\n");
-			break;
-		case 726:
-			printf("Remote Host Must Be A Wildcard And Cannot Be A Specific IP Address Or DNS Name\n");
-			break;
-		case 727:
-			printf("External Port Must Be A Wildcard And Connot Be A Specific Port Value\n");
-			break;
-			
-		default:
-			printf("Unknown UPNP Error Ocurred\n");
-			break;
-		
-		
-	}
-	printf("Unable To Set Port Forwarding. Please Check Configuration File, Or Turn Off Support For UPNP\n");
-	exit(1);
-}
-	
-else
-	printf("Port added successfully\n");
 
-}
-
-
-void setUPNP(char* port)
-{
-	struct UPNPDev *devlist;
-	char lanaddr[16];
-	int i;
-	const char * rootdescurl = 0;
-	const char * multicastif = 0;
-	const char * minissdpdpath = 0; 
-
-	if( rootdescurl
-	  || (devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0)))
-	{
-		struct UPNPDev * device;
-		struct UPNPUrls urls;
-		struct IGDdatas data;
-		i = 1;
-		if( (rootdescurl && UPNP_GetIGDFromUrl(rootdescurl, &urls, &data, lanaddr, sizeof(lanaddr)))
-		  || (i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))))
-		{
-			switch(i) 
-			{
-			case 1:
-				//printf("Found valid IGD : %s\n", urls.controlURL);
-				break;
-			case 2:
-				printf("Internet Gateway Not Connected : %s\n", urls.controlURL);
-				printf("continuing...\n");
-				break;
-			case 3:
-				printf("UPnP device found. Checking for Internet Gateway : %s\n", urls.controlURL);
-				printf("continuing...\n");
-				break;
-			default:
-				printf("Found A Device : %s\n", urls.controlURL);
-				printf("continuing...\n");
-			}
-			//printf("Local LAN ip address : %s\n", lanaddr);
-			
-			forwardPort(&urls, &data, lanaddr,port,port,"UDP");
-
-			FreeUPNPUrls(&urls);
-		}
-		else
-		{
-			fprintf(stderr, "No valid UPNP gateway found\n");
-		}
-		freeUPNPDevlist(devlist); devlist = 0;
-	}
-	else
-	{
-		fprintf(stderr, "Unable To Set Port Forwarding. Please Check Configuration File, Or Turn Off Support For UPNP\n");
-		exit(1);
-	}
-
-
-}
-
-
-
-string getHtml(string url)
-{
-	char errorBuffer[CURL_ERROR_SIZE];
-	string buffer;
-	
-	CURL *curl;
-	CURLcode res;
-
-	buffer.clear();
-	curl = curl_easy_init();
-	if (curl == NULL)
-	{
-		fprintf(stderr, "Failed to create CURL connection\n");
-		exit(EXIT_FAILURE);
-	}
-
-	res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-	if (res != CURLE_OK)
-	{
-		fprintf(stderr, "Failed to set error buffer [%d]\n", res);
-		return false;
-	}
-
-	res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-	if (res != CURLE_OK)
-	{
-		fprintf(stderr, "Failed to set URL [%s]\n", errorBuffer);
-		return false;
-	}
-
-	res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-	if (res != CURLE_OK)
-	{
-		fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);
-		return false;
-	}
-
-	res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
-	if (res != CURLE_OK)
-	{
-		fprintf(stderr, "Failed to set writer [%s]\n", errorBuffer);
-		return false;
-	}
-
-	res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
-	if (res != CURLE_OK)
-	{
-		fprintf(stderr, "Failed to set write data [%s]\n", errorBuffer);
-		return false;
-	}
-
-	res = curl_easy_perform(curl);
-	curl_easy_cleanup(curl);
-	
-	return buffer;
-}
 
 
 
 bool registerClient()
 {
 
-  		char Portbuffer[10];
-		sprintf(Portbuffer, "%i", MYPORT);
-		string port = Portbuffer;
-		string url = "http://2sprout.com/connect/" + port + "/" + apiKey + "/";
-		port.clear();
-		bzero(Portbuffer, sizeof(Portbuffer));
+  	char Portbuffer[10];
+	sprintf(Portbuffer, "%i", MYPORT);
+	string port = Portbuffer;
+	string url = "http://2sprout.com/connect/" + port + "/" + apiKey + "/";
+	port.clear();
+	bzero(Portbuffer, sizeof(Portbuffer));
+	string html = getHtml(url);		
 		
-		string html = getHtml(url);
-		
-		if (html == "0000")
-		{
-			cout << "Client already registered" << endl;
-		}
-		else
-		{
-			cout << "Client successfully registered" << endl;
-		}
+	if (html == "0000")
+	{
+		cout << "Client already registered" << endl;
+	}
+	else
+	{
+		cout << "Client successfully registered" << endl;
+	}
 	
 	
-		string decoded = base64_decode(html);
-	  	//XOR with the secret cypher
-		string value(decoded);
-		string key("2#sPr0uT5!");
-		value = XOR(decoded,key);
+	string decoded = base64_decode(html);
+  	//XOR with the secret cypher
+	string value(decoded);
+	string key("2#sPr0uT5!");
+	value = XOR(decoded,key);
 
 
-		//find the number of "^"
-		int NumSpacesCount = 0;
-		int loop;
-		for(loop =0; loop < value.length(); loop++)
+	//find the number of "^"
+	int NumSpacesCount = 0;
+	int loop;
+	for(loop =0; loop < value.length(); loop++)
+	{
+		string::size_type loc = value.find('^', loop);
+		if(loc != string::npos)
 		{
-			string::size_type loc = value.find('^', loop);
-			if(loc != string::npos)
-			{
-				NumSpacesCount +=1;
-			}	
-		}		
-		if(NumSpacesCount == 0)
-		{
-			NumSpacesCount = 1;
-		}
+			NumSpacesCount +=1;
+		}	
+	}		
+	if(NumSpacesCount == 0)
+	{
+		NumSpacesCount = 1;
+	}
 
-		string token;
-		string section[NumSpacesCount];	
-		istringstream iss(value);
-		int count1 = 0;
+	string token;
+	string section[NumSpacesCount];	
+	istringstream iss(value);
+	int count1 = 0;
 
-		while(getline(iss,token,'^'))
-		{
-			section[count1] = token;
-			count1++;
-		}
+	while(getline(iss,token,'^'))
+	{
+		section[count1] = token;
+		count1++;
+	}
 
-		if(section[0] != "" && section[1] != "" && section[2] != "")
-		{
-			cipher = section[0];
-			updatedPassword = section[1];
-			sleeptime = atoi(section[2].c_str());	       
-		}
+	if(section[0] != "" && section[1] != "" && section[2] != "")
+	{
+		cipher = section[0];
+		updatedPassword = section[1];
+		sleeptime = atoi(section[2].c_str());	       
+	}
 }
 
 /*

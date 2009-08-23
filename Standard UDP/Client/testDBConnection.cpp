@@ -40,8 +40,7 @@ bool testConnection(string databaseType, string host, string port, string dbname
 		{
 			PQfinish(Conn);
 			return true;
-		}
-	
+		}	
 	}
 	else if(databaseType == "mysql")
 	{
@@ -66,6 +65,4 @@ bool testConnection(string databaseType, string host, string port, string dbname
 		
 		return true;	
 	}
-	
-	
 }

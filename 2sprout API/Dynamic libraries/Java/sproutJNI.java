@@ -8,7 +8,5 @@
 
 
 class sproutJNI {
-  public final static native String jsonGetMember(String jarg1, String jarg2);
-  public final static native boolean jsonHasKey(String jarg1, String jarg2);
   public final static native String getSproutItem();
 }

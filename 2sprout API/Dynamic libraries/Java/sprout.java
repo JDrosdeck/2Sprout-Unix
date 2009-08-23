@@ -8,14 +8,6 @@
 
 
 public class sprout {
-  public static String jsonGetMember(String json, String key) {
-    return sproutJNI.jsonGetMember(json, key);
-  }
-
-  public static boolean jsonHasKey(String json, String key) {
-    return sproutJNI.jsonHasKey(json, key);
-  }
-
   public static String getSproutItem() {
     return sproutJNI.getSproutItem();
   }

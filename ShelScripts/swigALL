@@ -9,16 +9,6 @@ cp sprout.cpp sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ librarie
 cp sprout.cpp sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Ruby/
 cp sprout.cpp sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/C++/
 
-cd ~/Desktop/2sprout/2sprout\ API/jsoncpp
-cp *.cpp *.h *.inl ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/2.5.4/
-cp *.cpp *.h *.inl ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/2.6.2/
-cp *.cpp *.h *.inl ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/3.0
-cp *.cpp *.h *.inl ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/C#/
-cp *.cpp *.h *.inl ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Java/
-cp *.cpp *.h *.inl ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Ruby/
-cp *.cpp *.h *.inl ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/C++/
-
-
 
 
 

@@ -23,17 +23,19 @@ extern int dbport;
 extern bool enableUPNP;
 extern bool manualPort;
 extern int sproutPort;
+extern bool useDatabase;
 
 //External declaration for API Key
 extern QString apiKey;
 
-QString dbtype = "postgres";
+QString dbtype = "none";
 QString dbhost = "";
 QString dbuser = "";
 QString dbpass = "";
 QString dbdefault = "";
 int dbport = 0;
 
+bool useDatabase = false;
 bool enableUPNP = false;
 bool manualPort = false;
 int sproutPort = 4950;
@@ -104,7 +106,7 @@ void MainWindow::writeFile()
             {
                 out << "upnp=false" << endl;
             }
-            if(dbpass != "")
+            if(useDatabase == true)
             {
                 out << "usedb=true" << endl;
                 out << "dbtype=" << dbtype << endl;

@@ -1,0 +1,17 @@
+The 2Sprout API is composed of one simple function
+
+char * getSproutItem()
+
+All it will do is return the most recent json string recieved. getSproutItem() will block until there is a new piece of data to return.
+
+Example code:
+
+
+Python:
+
+	import sprout
+	
+	while 1:
+		data = sprout.getSproutItem()
+	
+ 

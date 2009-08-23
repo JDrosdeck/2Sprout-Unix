@@ -11,16 +11,6 @@ using System;
 using System.Runtime.InteropServices;
 
 public class sprout {
-  public static string jsonGetMember(string json, string key) {
-    string ret = sproutPINVOKE.jsonGetMember(json, key);
-    return ret;
-  }
-
-  public static bool jsonHasKey(string json, string key) {
-    bool ret = sproutPINVOKE.jsonHasKey(json, key);
-    return ret;
-  }
-
   public static string getSproutItem() {
     string ret = sproutPINVOKE.getSproutItem();
     return ret;

@@ -12,5 +12,3 @@
 #include <unistd.h>
 
 char * getSproutItem();
-char * jsonGetMember(char *json, char *key);
-bool jsonHasKey(char * json, char * key);
