@@ -968,8 +968,7 @@ the API.
 void catch_int(int sig_num)
 {
     /* re-set the signal handler again to catch_int, for next time */
-    signal(SIGINT, catch_int);
-	signal(SIGTERM, catch_int);
+	void registerSignals();
 	unlink(sproutPipe);
 	printf("Cleaning Files\n");
     fflush(stdout);
@@ -1066,18 +1065,24 @@ void showVersion()
 	printf("Client Version: %s\n", version);
 }
 
+void registerSignals()
+{
+	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
+	signal(SIGTERM, catch_int);
+	signal(SIGKILL, catch_int);
+	signal(SIGUSR1, catch_int);
+	signal(SIGUSR2, catch_int);	
+	signal(SIGHUP, catch_int);
+}
 
 /*
 2sproutClient takes in two arguments in the following form [-p port_number] [-c configuration_path]
 */
 int main(int argc, char *argv[])
 {
-	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
-	signal(SIGTERM, catch_int);
+	registerSignals();
 	
 	string path = "2sprout.conf";
-
-
 	/*
 	This will loop through the array of command line arguments searching for the preFix which is the -* and the 
 	postFix which is anything after that preFix. It sets the arguments appropriatly.
