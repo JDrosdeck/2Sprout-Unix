@@ -87,6 +87,7 @@ void* announce(void *thread_arg)
 			
 			
 			#warning todo: Check The Return value of atoi
+			
 			sleeptime = atoi(section[2].c_str());
 				
 		}
@@ -159,6 +160,7 @@ void* castListener(void *thread_arg)
 
 	cout << "Waiting for updates.." << endl;
 
+	int counter = 0;
  	while(1)
  	{
     	addr_len = sizeof their_addr;   		
@@ -182,15 +184,36 @@ void* castListener(void *thread_arg)
 			string key(cipher);
 			
 			value = XOR(decoded,key);
-			decoded.clear();	
-			input.clear();
 			if(value.substr(0,10) == updatedPassword)
 			{
 				unprocessedData.push(value.substr(10,value.length()));
 				cout << "PUSHED" << endl;
+				counter++;
 			}
+			else
+			{
+				counter++;
+				value.clear();
+				key.clear();
+				key = oldCipher;
+				value = XOR(decoded, key);
+				if(value.substr(0,10) == oldPassword)
+				{
+					unprocessedData.push(value.substr(10,value.length()));
+					cout << "Old Value Pushed" << endl;
+				}
+				
+			}
+			
+			
+			
+			input.clear();
 			value.clear();
+			decoded.clear();	
+			
 		}
+		cout << counter << endl;
+		
    }
 	close(sockfd);
 }
@@ -261,25 +284,25 @@ void* checkPacketReliability(void *thread_arg)
 					CastMinusChecksum.clear();
 					if(currentDate == "")
 					{
-						printf("Current Day initially set\n");
+						//printf("Current Day initially set\n");
 						currentDate = section[1];
 					}						
 					if(section[1] != currentDate && nextDate == "")
 					{
-						printf("next Date initially set\n");
+						//printf("next Date initially set\n");
 						nextDate = section[1];
 					}	
 
 					if(section[1] == currentDate)
 					{
 						packetsRecieved.push_back(atoi(section[2].c_str()));
-						printf("NOT REPLACING PACKET pusing back packet number\n");				
+						//printf("NOT REPLACING PACKET pusing back packet number\n");				
 					}
 			
 					if(section[1] == nextDate)
 					{
 						packetsRecievedDay2.push_back(atoi(section[2].c_str()));
-						printf("NOT REPLACING PACKET pusing back packet number\n");	
+						//printf("NOT REPLACING PACKET pusing back packet number\n");	
 					}	
 					if(section[1] != currentDate && section[1] != nextDate && dateRecieved == false)
 					{
@@ -291,7 +314,7 @@ void* checkPacketReliability(void *thread_arg)
 						{
 							packetsRecieved.clear();
 						}	
-						printf("new date found, current date being overwritten\n");
+						//printf("new date found, current date being overwritten\n");
 						currentDate = section[1];
 						packetsRecieved.push_back(atoi(section[2].c_str()));
 						dateRecieved = true;	
@@ -340,127 +363,59 @@ void* checkPacketReliability(void *thread_arg)
 void* checkLostPacketsDay2(void *thread_arg)
 {
 	vector<int> tempVector;
-	//vector<int> brandNewPacket; //this stores packets #'s that we have not been searching for and need to check missing packets based on
-	
-	
 	while(1)
 	{
-		//	printf("******************************\n");	
-				
-			sleep(15);
-			int sizeOfRecievedDay2 = (int) packetsRecievedDay2.size();
-
-					//if(!packetsRecieved.empty())
-
-			if(sizeOfRecievedDay2 > 1)
-			{
-		//	printf("******************************\n");	
-		//	printf("Getting Ready to check packets\n");
-		//	printf("******************************\n");	
-			
+		sleep(2);
+		int sizeOfRecieved = (int) packetsRecievedDay2.size();
+		if(sizeOfRecieved > 1)
+		{
 			//start of critical section
 			pthread_mutex_lock(&mylock);
 			tempVector = packetsRecievedDay2;
 			//end critial section
-		//	printf("******************************\n");	
-		//	printf("Clearing old Vector\n");
-		//	printf("******************************\n");	
 			packetsRecievedDay2.clear();		
 			pthread_mutex_unlock(&mylock);
-			
 			//sort the tempVector
-		//	printf("******************************\n");	
-		//	printf("Sorting the Vector\n");
-		//	printf("******************************\n");
 			sort(tempVector.begin(),tempVector.end());
-			
 			int sizeOfTempVector = (int) tempVector.size();
-
 
 			/*
 				The Next two lines are for in in between recieving one section of packets
 				and recieving the next section some packets may be lost
 				say you recieved packets..1,2,3,4,7 and the missing packets were calculated
 				and then the next set came in as 9,10,11. This will catch the missing packets
-				between 7 and 9. I'm so awesome.
+				between 7 and 9.
 			*/
 
 			int lastPacket = tempVector[sizeOfTempVector-1];
+			pthread_mutex_lock(&mylock);
 			packetsRecievedDay2.push_back(lastPacket);
-			
+			pthread_mutex_unlock(&mylock);
 			int sizeOfVector = (int) packetsMissedDay2.size();
-					
+
 			//Check the recieved packets against what was missing
-					
-			
 			//Figure out which are the missing packets
 			int sizeOfNewPackets = (int) tempVector.size();
-					
+			cout << sizeOfNewPackets << endl;
 			int i;
-		//	printf("******************************\n");	
-		//	printf("Calculating lost packets\n");
-		//	printf("******************************\n");
-			
-		//	cout << "size of new packets: " << sizeOfNewPackets << endl;
 			int remainder;
 			for (i = 0; i < sizeOfNewPackets-1; i++)
 			{
-		//		cout << "packets: " <<  tempVector[i+1] << " " << tempVector[i] << endl;
 				remainder = tempVector[i+1] - tempVector[i];
-		
-				
 				if(( remainder != 1)) //if they are not sequential
 				{
-		//			printf("******************************\n");	
-		//			printf("There are missing packets\n");
-		//			printf("******************************\n");
-					
-		//			cout << "remainder: " << remainder << endl;
 					int j;
 					for(j = 1; j < remainder; j ++)
 					{
 						//add these values to the missing packet vector
-		//				cout << "pushing packet " << tempVector[i] + j <<endl;
+						pthread_mutex_lock(&mylock);
 					 	packetsMissedDay2.push_back(tempVector[i] + j);
-					
+						pthread_mutex_unlock(&mylock);	
 					}
-							
 				}
-		//		cout << i << endl;
-						
 			}
 			tempVector.clear(); //empty this vector
-						
 		}
-		
-
-			//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
-		
-			/*
-			int sizeOfLostPackets = (int)packetsMissed.size();	
-			curl = curl_easy_init(); //initialize curl
-			int lostPacket;
-			int l;
-			for(l = 0; l < sizeOfLostPackets; l++)
-			{
-				lostPacket = packetsMissed[l];
-				if(curl) 
-				{	
-    				url = "http://2sprout.com/lostPacket/?port="; //access this webpage to be added to the database
-    				url += lostPacket;
-   					curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    				// Perform the request, res will get the return code/
-    				res = curl_easy_perform(curl);
-    				if(usleep(100000) == -1)
-					{
-						printf("Sleeping Error");
-					}	
-    			}
-    			curl_easy_cleanup(curl);
-			}
-			*/	
-		
-						
 	}
 	
 }
@@ -470,39 +425,65 @@ void* replaceLostPacketsDay2(void *thread_arg)
 {
 	while(1)
 	{
-		sleep(20);
-	
-		
+		sleep(10);
 		if(!packetsMissedDay2.empty())
 		{
-				//even if we havent recieved any new packets, every 15 secounds go back and request the old ones
-
-				/*
-				int sizeOfLostPackets = (int)packetsMissedDay2.size();	
-				curl = curl_easy_init(); //initialize curl
-				int lostPacket;
-				int l;
-				for(l = 0; l < sizeOfLostPackets; l++)
-				{
-					lostPacket = packetsMissedDay2[l];
-					if(curl) 
-					{	
-	    				url = "http://2sprout.com/lostPacket/?port="; //access this webpage to be added to the database
-	    				url += lostPacket;
-	   					curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-	    				// Perform the request, res will get the return code/
-	    				res = curl_easy_perform(curl);
-	    				if(usleep(100000) == -1)
-						{
-							printf("Sleeping Error");
-						}	
-	    			}
-	    			curl_easy_cleanup(curl);
-				}
-				*/
 			
+				printf("NOTIFYING SERVER OF MISSED PACKETS\n");
+				int numLostPackets = (int)packetsMissedDay2.size();	
+				string url = "http://www.2sprout.com/missing/";
+			
+				int x;
+				stringstream out;
+				if (numLostPackets < 10)
+				{
+					for(x = 0; x < numLostPackets; x++)
+					{
+					
+						out.clear();
+						out << packetsMissed[x];
+						url.append(out.str());
+						if(x != (numLostPackets - 1))
+						{
+							url.append("^");	
+						}
+					}
+				
+				}
+				
+				else
+				{
+					int maxLost = 0;
+					
+					for(x = 0; x < numLostPackets; x++)
+					{
+						if(maxLost == 10)
+						{
+							maxLost = 0;
+							string html = getHtml(url);	
+							#warning automatically tokenize and put data into proper queue 
+						}
+						else
+						{
+							out.clear();
+							out << packetsMissedDay2[x];
+							url.append(out.str());
+							if(x != (numLostPackets -1))
+							{
+								url.append("^");
+							}
+							maxLost++;
+						}	
+					}				
+				}
 		}
-}
+		
+		else
+		{
+
+		}
+	}
+
 }
 
 
@@ -583,7 +564,6 @@ void* replaceLostPackets(void *thread_arg)
 	{
 		sleep(10);
 	
-		//pthread_mutex_unlock(&mylock);
 		if(!packetsMissed.empty())
 		{
 			
@@ -923,7 +903,6 @@ the API.
  void* getFeed(void *thread_arg)
 {
 
-	int msqid;
     int msgflg = IPC_CREAT | 0666;
     key_t key;
     message_buf1 sbuf;
@@ -1105,6 +1084,14 @@ void catch_int(int sig_num)
 	printf("Cleaning Files\n");
     fflush(stdout);
 	closeAnnounce();
+	if(useDatabase == false)
+	{
+		if(msgctl(msqid, IPC_RMID, NULL) == 1)
+		{
+			perror("Error closing message queue msgctl");
+		}
+	}
+	
 	exit(0);
 }
 
