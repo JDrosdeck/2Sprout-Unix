@@ -39,6 +39,20 @@ string getHtml(string url)
 		exit(EXIT_FAILURE);
 	}
 
+	res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    if (res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set ssl verify peer [%d]\n", res);
+		return false;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    if(res != CURLE_OK)
+	{
+		fprintf(stderr, "Failed to set ssl verify host [%d]\n", res);
+		return false;
+	}
+
 	res = curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
 	if (res != CURLE_OK)
 	{

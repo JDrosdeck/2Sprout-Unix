@@ -132,7 +132,6 @@ void* checkLostPackets(void *thread_arg);
 void* insertToDb(void *thread_arg);
 int readConfig(string path);
 void* getFeed(void *thread_arg);
-void* createAndReadPipe(void *thread_arg);
 void catch_int(int sig_num);
 bool registerClient();
 void showHelp();

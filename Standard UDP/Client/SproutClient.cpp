@@ -35,7 +35,7 @@ void* announce(void *thread_arg)
 	string url = "http://2sprout.com/refresh/" + port + "/" + apiKey + "/";
 	port.clear();
 	bzero(Portbuffer, sizeof(Portbuffer));
-	string html;
+	string html = "";
 	
 	while(1)
 	{
@@ -43,6 +43,7 @@ void* announce(void *thread_arg)
 		html.clear();
 		sleep(sleeptime);	
 		html = getHtml(url);
+
 		//Convert the buffer from base64
  		string decoded = base64_decode(html);
  		//XOR with the secret cypher
@@ -51,51 +52,42 @@ void* announce(void *thread_arg)
 		value = XOR(decoded,key);
 		cout << value << endl;
 		//parse the buffer Password^sleepTime
-
 		//find the number of "^"
 		int NumSpacesCount = 0;
 		int loop;
 		for(loop =0; loop < value.length(); loop++)
 		{
-			string::size_type loc = value.find('^', loop);
-			if(loc != string::npos)
+			if(value[loop] == '^')
 			{
-				NumSpacesCount +=1;
-			}	
+				NumSpacesCount++;
+			}
 		}		
-		if(NumSpacesCount == 0)
+		if(NumSpacesCount != 2)
 		{
-			NumSpacesCount = 1;
+			printf("Unable to retrieve update\n");
+			sleeptime = 2;
 		}
-
-		
-		string token;
-		string section[NumSpacesCount];	
-		istringstream iss(value);
-		int count1 = 0;
-
-		while(getline(iss,token,'^'))
-		{
-			section[count1] = token;
-			count1++;
-		}
-
-		if(section[0] != "" && section[1] != "" && section[2] != "")
-		{
-			cipher = section[0];
-			updatedPassword = section[1];
-			
-			
-			#warning todo: Check The Return value of atoi
-			
-			sleeptime = atoi(section[2].c_str());
-				
-		}
-		else 
-		{
-		cout << "Incorrect return" << endl;
+		else
+		{		
+			string token;
+			string section[3];	
+			istringstream iss(value);
+			int count1 = 0;
+			while(getline(iss,token,'^'))
+			{
+				section[count1] = token;
+				count1++;
+			}
+			if(section[0] != "" && section[1] != "" && section[2] != "")
+			{
+				cipher = section[0];
+				updatedPassword = section[1];
+				#warning todo: Check The Return value of atoi
+				sleeptime = atoi(section[2].c_str());	
+			}
 		}
 	}
+	
 }
 
 
@@ -970,108 +962,6 @@ the API.
 
  
  
- /*
- createAndReadPipe creates the pipe and then constantly reads
- waiting for calls from the API's
- */
-#warning Rewrite createAndReadPipe to use sys4 Message Queue
- void* createAndReadPipe(void *thread_arg)
-{
-
-	int fd, ret_val, count, numread;
-	string word;
-	char bufpipe[4];
-	
-	
-	ret_val = mkfifo(sproutPipe, 0777); //make the sprout pipe
-	
-	if (( ret_val == -1) && (errno != EEXIST)) 
-	{
-		perror("Error creating named pipe");
-		exit(1);
-	}
-	
-	while(1)
-	{
-		fd = open(sproutPipe, O_RDONLY); //open the pipe for reading
-		
-		numread = read(fd,bufpipe, 4);
-		
-		if(numread > 1)
-		{
-			bufpipe[numread] = '\0';
-			string temp = bufpipe;	
-			memset(bufpipe,'\0',4);
-			int pos = temp.find("^");
-			if(pos != string::npos)
-			{
-				temp = temp.substr(0, pos);
-			}
-					
-			int sizeOfString = atoi(temp.c_str());
-			char feedWord[sizeOfString];
-			int numRead1 = read(fd, feedWord, sizeOfString);
-			
-			if(numRead1 > 1)
-			{					
-				feedWord[sizeOfString] = '\0';
-				word = feedWord;
-			}
-
-			close(fd);
-			
-			/*
-			Find the number of spaces in the command to figure out how large to set the command[] buffer
-			*/
-			int NumSpacesCount = 0;
-			int loop;
-			for(loop =0; loop < word.length(); loop++)
-			{
-				string::size_type loc = word.find(' ', loop);
-				if(loc != string::npos)
-				{
-					NumSpacesCount +=1;
-				}	
-			}		
-			string token;
-			if(NumSpacesCount == 0)
-			{
-				NumSpacesCount = 1;
-			}
-			string parsWord = word;
-			string command[NumSpacesCount];	//messages passed through can have a maximum of 10 arguments. (should never be more then that)	
-			istringstream iss(parsWord);
-			int count1 = 0;
-			
-			/*
-			This will tokenize the string and figure out what commands and arguments have been passed through from the API
-			It will then call the specified functions with their arguments
-			*/
-			
-			while(getline(iss,token,' '))
-			{
-				command[count1] = token;
-				count1++;
-			}
-		
-					
-			if(command[0] == "stopFeed")
-			{
-				closeAnnounce();
-			}	
-	
-			if(command[0] == "startFeed")
-			{
-				//announce();
-			}
-	
-			if(command[0] == "getFeed")
-			{
-			}
-		}
-	}
-}
- 
 
  
 
@@ -1111,16 +1001,9 @@ bool registerClient()
 	string url = "http://2sprout.com/connect/" + port + "/" + apiKey + "/";
 	port.clear();
 	bzero(Portbuffer, sizeof(Portbuffer));
-	string html = getHtml(url);		
-		
-	if (html == "0000")
-	{
-		cout << "Client already registered" << endl;
-	}
-	else
-	{
-		cout << "Client successfully registered" << endl;
-	}
+	string html = "";
+
+	html = getHtml(url);
 	
 	
 	string decoded = base64_decode(html);
@@ -1128,29 +1011,28 @@ bool registerClient()
 	string value(decoded);
 	string key("2#sPr0uT5!");
 	value = XOR(decoded,key);
-
-
 	//find the number of "^"
 	int NumSpacesCount = 0;
 	int loop;
+	
 	for(loop =0; loop < value.length(); loop++)
 	{
-		string::size_type loc = value.find('^', loop);
-		if(loc != string::npos)
+		if(value[loop] == '^')
 		{
-			NumSpacesCount +=1;
-		}	
+			NumSpacesCount++;
+		}
 	}		
-	if(NumSpacesCount == 0)
+		
+	if(NumSpacesCount != 2) //The number of ^'s that we recieved was not correct, It should try to re-register.
 	{
-		NumSpacesCount = 1;
+		sleep(2);
+		registerClient();
 	}
-
+		
 	string token;
-	string section[NumSpacesCount];	
+	string section[3];	
 	istringstream iss(value);
 	int count1 = 0;
-
 	while(getline(iss,token,'^'))
 	{
 		section[count1] = token;
@@ -1161,7 +1043,13 @@ bool registerClient()
 	{
 		cipher = section[0];
 		updatedPassword = section[1];
-		sleeptime = atoi(section[2].c_str());	       
+		sleeptime = atoi(section[2].c_str());
+		cout << "Client Sucessfully registered" << endl;	       
+	}
+	else //just put in as a failsafe. It should never reach this point.
+	{
+		sleep(2);
+		registerClient();
 	}
 }
 
@@ -1355,21 +1243,18 @@ int main(int argc, char *argv[])
 	{
 		registerClient();
 		int rc, i , status;
-		pthread_t threads[9];	
+		pthread_t threads[8];	
 		cout << "Starting 2Sprout Client" << endl;	
 		pthread_create(&threads[0], NULL, announce, NULL);
-
-	
 		pthread_create(&threads[1], NULL, castListener, NULL);
-		pthread_create(&threads[2], NULL, createAndReadPipe, NULL);
-		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
-		pthread_create(&threads[4], NULL, checkLostPackets, NULL);
-		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
-		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);
-		pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);
-		pthread_create(&threads[8], NULL, getFeed, NULL);
+		pthread_create(&threads[2], NULL, checkPacketReliability, NULL);	
+		pthread_create(&threads[3], NULL, checkLostPackets, NULL);
+		pthread_create(&threads[4], NULL, checkLostPacketsDay2, NULL);
+		pthread_create(&threads[5], NULL, replaceLostPackets, NULL);
+		pthread_create(&threads[6], NULL, replaceLostPacketsDay2, NULL);
+		pthread_create(&threads[7], NULL, getFeed, NULL);
 		
-		for(i =0; i < 9; i++)
+		for(i =0; i < 8; i++)
 		{
 			rc = pthread_join(threads[i], (void **) &status); 
 		}
