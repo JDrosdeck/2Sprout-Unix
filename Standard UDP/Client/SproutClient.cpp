@@ -661,7 +661,8 @@ void* insertToDb(void *thread_arg)
 				char escapeBuffer[(s.length() * 2)+1];
 				
 		 		unsigned long g = PQescapeStringConn(Conn, escapeBuffer, (char *)s.c_str(), strlen(s.c_str()),error);  
-				//cout << "Escaped String " << escapeBuffer << endl;
+				s.clear();
+				cout << "Escaped String " << escapeBuffer << endl;
 							
 	  			// (Queries)
 	  			string Query = "INSERT INTO ";
@@ -671,12 +672,14 @@ void* insertToDb(void *thread_arg)
 	  			//cout << Query << endl;
 	    		result = PQexec(Conn,Query.c_str());
 				if (PQresultStatus(result) != PGRES_COMMAND_OK) 
-				{		
+				{	
+					Query.clear();		
 				   	fprintf(stderr,"BEGIN command failed");	
 			        PQclear(result);
 			    }
 				else
 				{
+					Query.clear();
 					PQclear(result);
 				}
 				memset(escapeBuffer, '\0', sizeof(escapeBuffer) );	
@@ -721,23 +724,21 @@ void* insertToDb(void *thread_arg)
 			}
 			else//while the queue has items
 			{
-				//start of critical section
 				string s = sproutFeed.front();
 				printf("read in: %s\n", s.c_str());
-								
-				
-				//pthread_mutex_unlock(&mylock);
-				//end of critical section
 		 		string escapedString;    
     			string mysqlQuery;
 		   
 		  		unsigned long to_len = mysql_real_escape_string (conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()));	//use the built in mysql function to put in escape characters...if ther are any	
+				s.clear();
 				mysqlQuery = "INSERT INTO " + table + " ("+ col +") VALUES (\"" + escapedString.c_str() + "\");"; //actual creation of the sql statment
  				if(mysql_query(conn, mysqlQuery.c_str()) != 0)
  		  		{
+					mysqlQuery.clear();
  		   			cout << "error query failed" << endl;
           		}
-          
+          		
+				mysqlQuery.clear();
           		sproutFeed.pop();
 			}
  
@@ -892,7 +893,7 @@ GetFeed uses Sys V Message Queues in order to transfer data from the Client into
 the API.
 */
   
- void* getFeed(void *thread_arg)
+void* getFeed(void *thread_arg)
 {
 
     int msgflg = IPC_CREAT | 0666;
@@ -959,13 +960,12 @@ the API.
 }
  
  
-
- 
- 
-
+//adfdad
  
 
-void catch_int(int sig_num)
+ 
+
+void cleanup(int sig_num)
 {
     /* re-set the signal handler again to catch_int, for next time */
 	void registerSignals();
@@ -975,7 +975,7 @@ void catch_int(int sig_num)
 	closeAnnounce();
 	if(useDatabase == false)
 	{
-		if(msgctl(msqid, IPC_RMID, NULL) == 1)
+		if(msgctl(msqid, IPC_RMID, NULL) == 1) //Delete the Message Queue
 		{
 			perror("Error closing message queue msgctl");
 		}
@@ -990,6 +990,10 @@ void catch_int(int sig_num)
 
 
 
+/*
+registerClient: Notifies 2sprout that the client wants to recieve messages. On success it will be returned the 
+cipher, secretkey and wait time until it should refresh the keys
+*/
 
 bool registerClient()
 {
@@ -1008,6 +1012,8 @@ bool registerClient()
 	string decoded = base64_decode(html);
   	//XOR with the secret cypher
 	string value(decoded);
+	
+	#warning "This Cipher should not be hardcoded, take out when ssl is implemented"
 	string key("2#sPr0uT5!");
 	value = XOR(decoded,key);
 	//find the number of "^"
@@ -1067,12 +1073,12 @@ void showVersion()
 
 void registerSignals()
 {
-	signal(SIGINT, catch_int); //redirect the signal so that when you press ctrl+c it deletes the named pipes
-	signal(SIGTERM, catch_int);
-	signal(SIGKILL, catch_int);
-	signal(SIGUSR1, catch_int);
-	signal(SIGUSR2, catch_int);	
-	signal(SIGHUP, catch_int);
+	signal(SIGINT, cleanup); //redirect the signal so that when you press ctrl+c it deletes the named pipes
+	signal(SIGTERM, cleanup);
+	signal(SIGKILL, cleanup);
+	signal(SIGUSR1, cleanup);
+	signal(SIGUSR2, cleanup);	
+	signal(SIGHUP, cleanup);
 }
 
 /*

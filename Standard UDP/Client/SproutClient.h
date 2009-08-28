@@ -1,32 +1,23 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <string.h>
 #include <unistd.h>
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <pthread.h>
+#include <fstream>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/un.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
-#include <netdb.h>
-#include <iostream>
 #include <curl/curl.h>
-#include <ctype.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <queue>
-#include <vector>
-#include <algorithm>
-#include <pthread.h>
-#include <fstream>
-#include <sstream>
-#include <signal.h>
-#include <stdexcept>
-#include <string.h>
-#include <cstdlib>
+
 #include "testDBConnection.h"
 #include "htmlGrabber.h"
 #include "UPnP.h"
@@ -49,8 +40,8 @@ Includes for mysql C library
 
 
 #define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
-#define maxPipe		50000			
-#define MSGSZ     50000
+#define maxPipe		5000			
+#define MSGSZ     5000
 #define version "1.0.1"
 
 

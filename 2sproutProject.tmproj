@@ -85,7 +85,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-08-27T22:12:49Z</date>
+					<date>2009-08-28T02:53:36Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -93,7 +93,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.h</string>
 					<key>lastUsed</key>
-					<date>2009-08-27T22:12:49Z</date>
+					<date>2009-08-27T22:39:35Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -248,28 +248,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>68</integer>
+				<integer>28</integer>
 				<key>line</key>
-				<integer>1048</integer>
+				<integer>667</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1008</integer>
+			<integer>647</integer>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>12</integer>
 				<key>line</key>
 				<integer>134</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>92</integer>
+			<integer>93</integer>
 		</dict>
 		<key>Standard UDP/Client/UPnP.h</key>
 		<dict>
@@ -307,7 +307,7 @@
 		<string>Standard UDP/Client/htmlGrabber.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
-	<true/>
+	<false/>
 	<key>windowFrame</key>
 	<string>{{228, 20}, {1127, 858}}</string>
 </dict>
