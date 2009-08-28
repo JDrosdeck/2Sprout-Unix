@@ -80,7 +80,9 @@ void* announce(void *thread_arg)
 			}
 			if(section[0] != "" && section[1] != "" && section[2] != "")
 			{
-				cipher = section[0];
+				oldCipher = cipher; //swap the new cipher with the old cipher
+				cipher = section[0];//set the new cipher
+
 				updatedPassword = section[1];
 				#warning todo: Check The Return value of atoi
 				sleeptime = atoi(section[2].c_str());	
@@ -172,10 +174,15 @@ void* castListener(void *thread_arg)
 			bzero(rawPacket, sizeof(rawPacket));
 			numbytes = 0;
 			string decoded = base64_decode(input);
+			
+			pthread_mutex_lock(&mylock);
+			
 			string value(decoded);
 			string key(cipher);
 			
 			value = XOR(decoded,key);
+			pthread_mutex_unlock(&mylock);
+			
 			if(value.substr(0,10) == updatedPassword)
 			{
 				unprocessedData.push(value.substr(10,value.length()));
@@ -187,17 +194,19 @@ void* castListener(void *thread_arg)
 				counter++;
 				value.clear();
 				key.clear();
+				pthread_mutex_lock(&mylock);
 				key = oldCipher;
 				value = XOR(decoded, key);
+				pthread_mutex_unlock(&mylock);
+				
 				if(value.substr(0,10) == oldPassword)
 				{
 					unprocessedData.push(value.substr(10,value.length()));
 					cout << "Old Value Pushed" << endl;
-				}
-				
+				}	
 			}
 			
-			
+			cout << "Value: " << value << endl;
 			
 			input.clear();
 			value.clear();
@@ -658,10 +667,12 @@ void* insertToDb(void *thread_arg)
 				string escapedString;
 				int *error;
 				
-				char escapeBuffer[(s.length() * 2)+1];
+				int size = (s.length() * 2) + 1;
+				char* escapeBuffer = (char *) malloc (size * sizeof(char));
+				
+				
 				
 		 		unsigned long g = PQescapeStringConn(Conn, escapeBuffer, (char *)s.c_str(), strlen(s.c_str()),error);  
-				s.clear();
 				cout << "Escaped String " << escapeBuffer << endl;
 							
 	  			// (Queries)
@@ -682,7 +693,8 @@ void* insertToDb(void *thread_arg)
 					Query.clear();
 					PQclear(result);
 				}
-				memset(escapeBuffer, '\0', sizeof(escapeBuffer) );	
+				s.clear();
+				free(escapeBuffer);
 			}
 		}
 		PQfinish(Conn);
@@ -729,6 +741,7 @@ void* insertToDb(void *thread_arg)
 		 		string escapedString;    
     			string mysqlQuery;
 		   
+				
 		  		unsigned long to_len = mysql_real_escape_string (conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()));	//use the built in mysql function to put in escape characters...if ther are any	
 				s.clear();
 				mysqlQuery = "INSERT INTO " + table + " ("+ col +") VALUES (\"" + escapedString.c_str() + "\");"; //actual creation of the sql statment
@@ -1272,8 +1285,6 @@ int main(int argc, char *argv[])
 	}
 }
 
-
-   
    
 
 

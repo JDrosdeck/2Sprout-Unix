@@ -97,7 +97,7 @@ string nextDate = "";
 string cipher; //used to decode the message
 string updatedPassword;
 
-string oldCipher;
+string oldCipher = "";
 string oldPassword;
 
 int sleeptime = 0;

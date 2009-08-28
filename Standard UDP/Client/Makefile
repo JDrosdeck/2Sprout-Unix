@@ -4,7 +4,7 @@
 	
 
 SproutClient.o : SproutClient.cpp
-	g++ -I/usr/local/pgsql/include -I/usr/local/include/mysql -c SproutClient.cpp
+	g++ -O1 -I/usr/local/pgsql/include -I/usr/local/include/mysql -c SproutClient.cpp
 	
 base64.o : base64.cpp
 	g++ -c base64.cpp

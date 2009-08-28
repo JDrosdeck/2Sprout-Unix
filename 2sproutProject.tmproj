@@ -13,7 +13,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/Makefile</string>
 					<key>lastUsed</key>
-					<date>2009-08-22T02:15:37Z</date>
+					<date>2009-08-28T15:59:44Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -85,7 +85,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-08-28T02:53:36Z</date>
+					<date>2009-08-28T20:36:05Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -93,13 +93,13 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.h</string>
 					<key>lastUsed</key>
-					<date>2009-08-27T22:39:35Z</date>
+					<date>2009-08-28T20:36:05Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>pysock.py</string>
 					<key>lastUsed</key>
-					<date>2009-08-22T02:11:25Z</date>
+					<date>2009-08-28T15:20:27Z</date>
 				</dict>
 			</array>
 			<key>expanded</key>
@@ -243,33 +243,47 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>Standard UDP/Client/Makefile</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>8</integer>
+				<key>line</key>
+				<integer>6</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>Standard UDP/Client/SproutClient.cpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>28</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>667</integer>
+				<integer>51</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>647</integer>
+			<integer>46</integer>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>12</integer>
+				<integer>21</integer>
 				<key>line</key>
-				<integer>134</integer>
+				<integer>99</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>93</integer>
+			<integer>76</integer>
 		</dict>
 		<key>Standard UDP/Client/UPnP.h</key>
 		<dict>
@@ -299,16 +313,32 @@
 			<key>firstVisibleLine</key>
 			<integer>16</integer>
 		</dict>
+		<key>pysock.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>Standard UDP/Client/SproutClient.h</string>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
+		<string>pysock.py</string>
+		<string>Standard UDP/Client/Makefile</string>
 		<string>Standard UDP/Client/htmlGrabber.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{228, 20}, {1127, 858}}</string>
+	<string>{{422, 41}, {1043, 837}}</string>
 </dict>
 </plist>
