@@ -28,7 +28,7 @@ Announce uses CURL in order to contact the 2sprout server and requests an update
 void* announce(void *thread_arg)
 {	
 	
-	char Portbuffer[10];
+	char Portbuffer[5];
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
 	
@@ -80,10 +80,19 @@ void* announce(void *thread_arg)
 			}
 			if(section[0] != "" && section[1] != "" && section[2] != "")
 			{
+				pthread_mutex_lock(&mylock);
+				
+				oldCipher.clear();
 				oldCipher = cipher; //swap the new cipher with the old cipher
+				cipher.clear();
 				cipher = section[0];//set the new cipher
-
+				
+				oldPassword.clear();
+				oldPassword = updatedPassword; //swap the passwords
+				updatedPassword.clear();
 				updatedPassword = section[1];
+				pthread_mutex_unlock(&mylock);
+				
 				#warning todo: Check The Return value of atoi
 				sleeptime = atoi(section[2].c_str());	
 			}
@@ -92,7 +101,7 @@ void* announce(void *thread_arg)
 	
 }
 
-
+//was
 
 
 /*
@@ -133,7 +142,7 @@ void* castListener(void *thread_arg)
 	struct sockaddr_in their_addr; // connector's address information
 	socklen_t addr_len;
 	int numbytes;
-	char rawPacket[10000];
+	char rawPacket[5000];
 	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) 
     {
         perror("Unable to set socket\n");
@@ -155,6 +164,8 @@ void* castListener(void *thread_arg)
 	cout << "Waiting for updates.." << endl;
 
 	int counter = 0;
+	int passedKeys = 0;
+	int failedKeys =0;
  	while(1)
  	{
     	addr_len = sizeof their_addr;   		
@@ -180,17 +191,28 @@ void* castListener(void *thread_arg)
 			string value(decoded);
 			string key(cipher);
 			
-			value = XOR(decoded,key);
+			//value = XOR(decoded,key);
+			value = XOR(decoded, "gjfnrughtj");
+			
 			pthread_mutex_unlock(&mylock);
 			
-			if(value.substr(0,10) == updatedPassword)
+			
+			//if(value.substr(0,10) == updatedPassword)
+			if(value.substr(0,10) == "oeirovigft")
 			{
+				pthread_mutex_lock(&mylock);
 				unprocessedData.push(value.substr(10,value.length()));
-				cout << "PUSHED" << endl;
+				pthread_mutex_unlock(&mylock);
+				
+				passedKeys++;
+				
+				cout << "Secret Key Passed " << passedKeys << endl;
+				
 				counter++;
 			}
 			else
 			{
+				
 				counter++;
 				value.clear();
 				key.clear();
@@ -203,14 +225,23 @@ void* castListener(void *thread_arg)
 				{
 					unprocessedData.push(value.substr(10,value.length()));
 					cout << "Old Value Pushed" << endl;
+					passedKeys++;
+					cout << "Secret Key Passed " << passedKeys << endl;
+				}
+				else
+				{
+					failedKeys++;
+					cout << "Secret Key Failed " << failedKeys << endl;
 				}	
 			}
-			
-			cout << "Value: " << value << endl;
-			
+						
 			input.clear();
 			value.clear();
 			decoded.clear();	
+			cout << "Passes: " << passedKeys << endl;
+			cout << "Fails: " << failedKeys << endl;
+			
+			
 			
 		}
 		cout << counter << endl;
@@ -228,37 +259,28 @@ checkPacketReliablity() will check the validity of each packet and make sure tha
 */
 void* checkPacketReliability(void *thread_arg)
 {
-
+	string token;
+	string s = "";
+	string section[50];
 	while(1)
 	{
-		if(unprocessedData.empty())
- 		{
-		
- 				if(usleep(1000) == -1)
-				{
-					printf("Sleeping Error");
-				}
-		}
-		else
-		{
-		}
-		
-		if(!unprocessedData.empty()) //while the queue has items
+		pthread_mutex_lock(&mylock);
+		if(!unprocessedData.empty())
 		{
 
+			s.clear();
 			//start of critical section
-			string s = unprocessedData.front();
+		    s = unprocessedData.front();
+			cout << "PACKER RELIABILITY: " << s << endl;
 			unprocessedData.pop();
+			pthread_mutex_unlock(&mylock);
 			
 			//end of critial section
 			
 			//Tokenize the string
-			
-			string token;
-			string section[50]; //a standard sproutcast should be made up of only 6 distince sections	
 			istringstream iss(s);
 			int count1 = 0;
-
+			
 			
 			while(getline(iss,token,'^'))
 			{
@@ -266,6 +288,8 @@ void* checkPacketReliability(void *thread_arg)
 				count1++;
 			}
 		
+			iss.clear();
+			cout << "here1" << endl;
 			
 			if((section[0]  != "") && section[1] != "" && section[2] != "" && section[3] != "" && section[4] != "" ) //make sure we have all the parts
 			{	
@@ -282,28 +306,38 @@ void* checkPacketReliability(void *thread_arg)
 				
 				if(CheckSum == atoi(section[0].c_str())) //The MD5 Sum is the same so data integrety is OK
 				{
-					CastMinusChecksum.clear();
 					if(currentDate == "")
 					{
-						//printf("Current Day initially set\n");
+						printf("what\n");
+						currentDate.clear();
 						currentDate = section[1];
 					}						
 					if(section[1] != currentDate && nextDate == "")
 					{
-						//printf("next Date initially set\n");
+						printf("what1\n");
+						
+						nextDate.clear();
 						nextDate = section[1];
 					}	
 
 					if(section[1] == currentDate)
 					{
+						printf("what2\n");
+						
+						pthread_mutex_lock(&mylock);
 						packetsRecieved.push_back(atoi(section[2].c_str()));
-						//printf("NOT REPLACING PACKET pusing back packet number\n");				
+						pthread_mutex_unlock(&mylock);
+						
 					}
 			
 					if(section[1] == nextDate)
 					{
+						printf("what3\n");
+						
+						pthread_mutex_lock(&mylock);
 						packetsRecievedDay2.push_back(atoi(section[2].c_str()));
-						//printf("NOT REPLACING PACKET pusing back packet number\n");	
+						pthread_mutex_unlock(&mylock);
+						
 					}	
 					if(section[1] != currentDate && section[1] != nextDate && dateRecieved == false)
 					{
@@ -316,9 +350,13 @@ void* checkPacketReliability(void *thread_arg)
 							packetsRecieved.clear();
 						}	
 						//printf("new date found, current date being overwritten\n");
+						pthread_mutex_lock(&mylock);
+						currentDate.clear();
 						currentDate = section[1];
 						packetsRecieved.push_back(atoi(section[2].c_str()));
 						dateRecieved = true;	
+						pthread_mutex_unlock(&mylock);
+						
 					}
 					else if(section[1] != currentDate && section[1] != nextDate && dateRecieved == true)
 					{
@@ -330,30 +368,36 @@ void* checkPacketReliability(void *thread_arg)
 						{
 							packetsRecievedDay2.clear();
 						}	
-				//		printf("new date found next date being overwritten\n");	
+						pthread_mutex_lock(&mylock);
+						currentDate.clear();
 						currentDate = section[1];
 						packetsRecieved.push_back(atoi(section[2].c_str()));
-						dateRecieved = false;							
+						dateRecieved = false;
+						pthread_mutex_unlock(&mylock);							
 					}
 										
 					//if this passes add the packet number to the array of recieved packet numbers
 					//Add only the message to the sproutQueue
 				
+					pthread_mutex_lock(&mylock);
 		 			sproutFeed.push(section[4]);
+					pthread_mutex_unlock(&mylock);
 			
 				}
-				else
-				{
-					CastMinusChecksum.clear();
-				}
-			}
-			else
-			{
-		
+			
+				
+				CastMinusChecksum.clear();
+				
 			}
 		}
 		else
 		{
+			pthread_mutex_unlock(&mylock);
+			
+			if(usleep(1000) == -1)
+			{
+				printf("sleep failed\n");
+			}
 		}		
 	}		
 }
@@ -490,11 +534,6 @@ void* replaceLostPacketsDay2(void *thread_arg)
 
 
 
-
-
-/*
-Number will come in looking like month/day/year/packetNumber
-*/
 
 
 void* checkLostPackets(void *thread_arg)
@@ -636,9 +675,16 @@ void* insertToDb(void *thread_arg)
 {
 	if(database == "postgres")
 	{
+	
+	
+	
 		connectionString = "host=" + host + " port=" + port + " dbname=" + dbname + " user=" + user + " password=" + pass;
 		PGconn *Conn = PQconnectdb(connectionString.c_str());
 		PGresult* result;
+		int *error;
+		string Query;
+		int size;
+		string s = "";
 		
 		if (PQstatus(Conn) == CONNECTION_BAD)
     	{
@@ -650,54 +696,64 @@ void* insertToDb(void *thread_arg)
 
  		while(1)
  		{
- 			if(sproutFeed.empty())
+			pthread_mutex_lock(&mylock);
+ 			if(!sproutFeed.empty())
 	 		{
-				if(usleep(1000) == -1)
-				{
-					printf("Sleeping Error");
-				}	
-			}
-
-			
-			else //while the queue has items
-			{
-				string s = sproutFeed.front();
+				s.clear();
+			    s = sproutFeed.front();
+				cout << "S: " << s << endl;
 				sproutFeed.pop();
+				pthread_mutex_unlock(&mylock);
 				
-				string escapedString;
-				int *error;
 				
-				int size = (s.length() * 2) + 1;
+			
+				
+			    size = (s.length() * 2) + 1;
 				char* escapeBuffer = (char *) malloc (size * sizeof(char));
 				
 				
 				
-		 		unsigned long g = PQescapeStringConn(Conn, escapeBuffer, (char *)s.c_str(), strlen(s.c_str()),error);  
-				cout << "Escaped String " << escapeBuffer << endl;
-							
+				pthread_mutex_lock(&mylock);
+		 		unsigned long g = PQescapeStringConn(Conn, escapeBuffer, s.c_str(), strlen(s.c_str()),error);  
+				pthread_mutex_unlock(&mylock);
 	  			// (Queries)
-	  			string Query = "INSERT INTO ";
+	  		    Query = "INSERT INTO ";
 	  			Query = Query + "\""+ table + "\"" + " (" + col + ") " + "VALUES('";	
 	  			Query = Query + escapeBuffer;
 	  			Query = Query +"');";
-	  			//cout << Query << endl;
+	  			cout << Query << endl;
 	    		result = PQexec(Conn,Query.c_str());
 				if (PQresultStatus(result) != PGRES_COMMAND_OK) 
 				{	
-					Query.clear();		
 				   	fprintf(stderr,"BEGIN command failed");	
-			        PQclear(result);
 			    }
 				else
 				{
-					Query.clear();
-					PQclear(result);
+					cout << "Inserted" << endl;
 				}
-				s.clear();
+				
+								
+				Query.clear();
+				PQclear(result);
 				free(escapeBuffer);
+				cout << "freed" << endl;
+			
+				
 			}
+			
+			else
+			{
+				pthread_mutex_unlock(&mylock);
+				if(usleep(1000) == -1)
+				{
+					printf("sleep failed\n");
+				}
+			}
+			
+			
 		}
 		PQfinish(Conn);
+		
 	}
 
 	if(database == "mysql")
@@ -971,10 +1027,7 @@ void* getFeed(void *thread_arg)
 		}
 	}
 }
- 
- 
-//adfdad
- 
+  
 
  
 

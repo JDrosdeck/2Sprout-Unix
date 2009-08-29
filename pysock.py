@@ -33,10 +33,11 @@ host = socket.gethostbyname(hostname)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)	
 
 
-
+g = 0
 for x in xrange(10000):
 	sendMessage(x)
-	
+	g = g + 1 
+	print g
 	
 	
 
