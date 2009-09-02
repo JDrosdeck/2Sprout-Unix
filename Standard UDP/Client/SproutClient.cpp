@@ -1153,7 +1153,7 @@ int main(int argc, char *argv[])
 {
 	registerSignals();
 	
-	string path = "2sprout.conf";
+	string path = "/usr/local/etc/2sprout.conf";
 	/*
 	This will loop through the array of command line arguments searching for the preFix which is the -* and the 
 	postFix which is anything after that preFix. It sets the arguments appropriatly.
