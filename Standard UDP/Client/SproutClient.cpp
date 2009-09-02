@@ -51,6 +51,7 @@ void* announce(void *thread_arg)
 		string key(cipher);
 		value = XOR(decoded,key);
 		cout << value << endl;
+		
 		//parse the buffer Password^sleepTime
 		//find the number of "^"
 		int NumSpacesCount = 0;
@@ -191,14 +192,12 @@ void* castListener(void *thread_arg)
 			string value(decoded);
 			string key(cipher);
 			
-			//value = XOR(decoded,key);
-			value = XOR(decoded, "gjfnrughtj");
+			value = XOR(decoded,key);
 			
 			pthread_mutex_unlock(&mylock);
 			
 			
-			//if(value.substr(0,10) == updatedPassword)
-			if(value.substr(0,10) == "oeirovigft")
+			if(value.substr(0,10) == updatedPassword)
 			{
 				pthread_mutex_lock(&mylock);
 				unprocessedData.push(value.substr(10,value.length()));

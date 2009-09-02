@@ -13,7 +13,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/Makefile</string>
 					<key>lastUsed</key>
-					<date>2009-08-29T15:12:17Z</date>
+					<date>2009-08-31T04:37:30Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -49,13 +49,13 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/htmlGrabber.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-08-27T20:57:40Z</date>
+					<date>2009-08-31T04:47:59Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/htmlGrabber.h</string>
 					<key>lastUsed</key>
-					<date>2009-08-22T21:15:20Z</date>
+					<date>2009-08-31T12:24:42Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -67,25 +67,25 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/testDBConnection.h</string>
 					<key>lastUsed</key>
-					<date>2009-08-22T21:15:23Z</date>
+					<date>2009-08-31T04:37:33Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/strOperations.h</string>
 					<key>lastUsed</key>
-					<date>2009-08-22T21:15:20Z</date>
+					<date>2009-08-29T18:57:05Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/strOperations.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-08-22T21:15:20Z</date>
+					<date>2009-08-31T04:37:36Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-08-29T18:20:41Z</date>
+					<date>2009-09-01T19:13:44Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -93,7 +93,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.h</string>
 					<key>lastUsed</key>
-					<date>2009-08-29T18:20:41Z</date>
+					<date>2009-09-01T17:48:28Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -262,28 +262,60 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>17</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>1301</integer>
+				<integer>1151</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1296</integer>
+			<integer>1297</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>1</integer>
+				<key>line</key>
+				<integer>1152</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>1151</integer>
+			</dict>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>21</integer>
+				<integer>38</integer>
 				<key>line</key>
-				<integer>99</integer>
+				<integer>108</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>76</integer>
+			<integer>88</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>108</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>109</integer>
+			</dict>
 		</dict>
 		<key>Standard UDP/Client/UPnP.h</key>
 		<dict>
@@ -311,7 +343,63 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>16</integer>
+			<integer>0</integer>
+		</dict>
+		<key>Standard UDP/Client/htmlGrabber.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>7</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Standard UDP/Client/strOperations.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Standard UDP/Client/strOperations.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>23</integer>
+				<key>line</key>
+				<integer>4</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Standard UDP/Client/testDBConnection.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>20</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>pysock.py</key>
 		<dict>
@@ -332,13 +420,17 @@
 	<array>
 		<string>Standard UDP/Client/SproutClient.h</string>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
+		<string>Standard UDP/Client/htmlGrabber.h</string>
+		<string>Standard UDP/Client/strOperations.h</string>
+		<string>Standard UDP/Client/strOperations.cpp</string>
 		<string>pysock.py</string>
 		<string>Standard UDP/Client/Makefile</string>
+		<string>Standard UDP/Client/testDBConnection.h</string>
 		<string>Standard UDP/Client/htmlGrabber.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
-	<false/>
+	<true/>
 	<key>windowFrame</key>
-	<string>{{515, 0}, {1355, 878}}</string>
+	<string>{{36, 41}, {793, 837}}</string>
 </dict>
 </plist>

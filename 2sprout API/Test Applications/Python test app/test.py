@@ -1,17 +1,12 @@
-import threading
+from multiprocessing import Process 
 import sprout, time
 
 
-class get2sproutFeed(threading.Thread):
-	def run(self):
-		sprout.getFeed()
-		x = 0
-		while 1:
-			data = sprout.getSproutItem()
-			x = x + 1
-			print data.upper()
-			print x
-
-
-
-get2sproutFeed().start()
+def getItem():
+	while 1:
+		json = sprout.getSproutItem()
+		print json
+	
+p = Process(target=getItem, args=(,))
+p.start()
+p.join()
