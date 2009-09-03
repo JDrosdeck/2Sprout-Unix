@@ -260,7 +260,8 @@ void* checkPacketReliability(void *thread_arg)
 {
 	string token;
 	string s = "";
-	string section[50];
+	string section[5];
+	
 	while(1)
 	{
 		pthread_mutex_lock(&mylock);
@@ -283,12 +284,15 @@ void* checkPacketReliability(void *thread_arg)
 			
 			while(getline(iss,token,'^'))
 			{
-				section[count1] = token;
+				if(count1 < 5)
+				{
+					section[count1] = token;
+				}
+				
 				count1++;
 			}
 		
 			iss.clear();
-			cout << "here1" << endl;
 			
 			if((section[0]  != "") && section[1] != "" && section[2] != "" && section[3] != "" && section[4] != "" ) //make sure we have all the parts
 			{	

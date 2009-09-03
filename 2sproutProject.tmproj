@@ -85,7 +85,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-09-01T19:13:44Z</date>
+					<date>2009-09-02T23:59:41Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -93,7 +93,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.h</string>
 					<key>lastUsed</key>
-					<date>2009-09-01T17:48:28Z</date>
+					<date>2009-09-02T23:59:41Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -262,29 +262,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>31</integer>
 				<key>line</key>
-				<integer>1151</integer>
+				<integer>963</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1297</integer>
+			<integer>837</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>1152</integer>
+				<integer>963</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>1151</integer>
+				<integer>964</integer>
 			</dict>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
@@ -301,7 +301,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>88</integer>
+			<integer>53</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
