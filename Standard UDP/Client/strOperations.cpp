@@ -13,7 +13,7 @@ string XOR(string value,string key)
     short unsigned int klen=key.length();
     short unsigned int vlen=value.length();
     short unsigned int k=0;
-    short unsgned int v=0;
+    short unsigned int v=0;
     
     for(v;v<vlen;v++)
     {

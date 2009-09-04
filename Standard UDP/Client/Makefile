@@ -1,22 +1,16 @@
+CC = g++
+CFLAGS = -Wall -O2
+INCLUDE = -I/usr/local/pgsql/include -I/usr/local/include/mysql 
+DLIBS = -static-libgcc -lstdc++-static -lssl -lcrypto -lz
+SLIBS = /usr/local/lib/libcurl.a /usr/local/pgsql/lib/libpq.a /usr/local/lib/mysql/libmysqlclient.a /usr/lib/libminiupnpc.a
+PROG = 2Sprout
 
-2sproutClient : SproutClient.o 
-	gcc -I/opt/local/include/postgresql83 -I/usr/local/include/mysql -lm -o 2sproutClient SproutClient.o base64.o testDBConnection.o htmlGrabber.o UPnP.o strOperations.o -static-libgcc -lstdc++-static -lssl -lcrypto -lz /usr/local/lib/libcurl.a /usr/local/pgsql/lib/libpq.a /usr/local/lib/mysql/libmysqlclient.a /usr/lib/libminiupnpc.a
-	
+SRCS = strOperations.cpp UPnP.cpp htmlGrabber.cpp testDBConnection.cpp base64.cpp SproutClient.cpp
 
-SproutClient.o : SproutClient.cpp
-	g++ -O1 -I/usr/local/pgsql/include -I/usr/local/include/mysql -c SproutClient.cpp
-	
-base64.o : base64.cpp
-	g++ -c base64.cpp
+all: $(PROG)
 
-testDBConnection.o : testDBConnection.cpp
-	g++ -I/usr/local/pgsql/include -I/usr/local/include/mysql -c testDBConnection.cpp
-	
-htmlGrabber.o : htmlGrabber.cpp
-	g++ -c htmlGrabber.cpp
-	
-UPnP.o : UPnP.cpp
-	g++ -c UPnP.cpp
-	
-strOperations.o : strOperations.cpp
-	g++ -c strOperations.cpp
+$(PROG):	$(SRCS)
+	$(CC) $(CFLAGS) -o $(PROG) $(INCLUDE) $(SRCS) $(DLIBS) $(SLIBS)
+
+clean:
+	rm -f $(PROG) *.o

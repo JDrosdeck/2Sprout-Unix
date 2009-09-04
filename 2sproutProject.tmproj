@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Standard UDP/Client/SproutClient.cpp</string>
+	<string>Standard UDP/Client/Makefile</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -13,7 +13,9 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/Makefile</string>
 					<key>lastUsed</key>
-					<date>2009-08-31T04:37:30Z</date>
+					<date>2009-09-04T18:10:52Z</date>
+					<key>selected</key>
+					<true/>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -79,21 +81,19 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/strOperations.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-08-31T04:37:36Z</date>
+					<date>2009-09-04T18:05:37Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-09-03T16:57:43Z</date>
-					<key>selected</key>
-					<true/>
+					<date>2009-09-04T18:10:52Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.h</string>
 					<key>lastUsed</key>
-					<date>2009-09-02T23:59:41Z</date>
+					<date>2009-09-04T15:26:11Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -248,9 +248,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>9</integer>
+				<integer>8</integer>
 				<key>line</key>
-				<integer>6</integer>
+				<integer>15</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -262,44 +262,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>4</integer>
 				<key>line</key>
-				<integer>112</integer>
+				<integer>833</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1290</integer>
+			<integer>805</integer>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>38</integer>
+				<integer>2</integer>
 				<key>line</key>
-				<integer>108</integer>
+				<integer>64</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>53</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>108</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>109</integer>
-			</dict>
+			<integer>49</integer>
 		</dict>
 		<key>Standard UDP/Client/UPnP.h</key>
 		<dict>
@@ -348,14 +332,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>16</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>17</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>9</integer>
 		</dict>
 		<key>Standard UDP/Client/strOperations.h</key>
 		<dict>
@@ -413,8 +397,8 @@
 		<string>Standard UDP/Client/htmlGrabber.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
-	<true/>
+	<false/>
 	<key>windowFrame</key>
-	<string>{{273, 21}, {1019, 857}}</string>
+	<string>{{629, 21}, {1019, 857}}</string>
 </dict>
 </plist>

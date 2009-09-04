@@ -55,7 +55,7 @@ void* announce(void *thread_arg)
 		//parse the buffer Password^sleepTime
 		//find the number of "^"
 		int NumSpacesCount = 0;
-		int loop;
+		unsigned int loop;
 		for(loop =0; loop < value.length(); loop++)
 		{
 			if(value[loop] == '^')
@@ -156,7 +156,6 @@ void* castListener(void *thread_arg)
 	struct sockaddr_storage their_addr;
 	char rawPacket[5000];
 	socklen_t addr_len;
-	char s[INET6_ADDRSTRLEN];
 	char Portbuffer[5];
 	sprintf(Portbuffer, "%i", MYPORT);
 	
@@ -342,13 +341,11 @@ void* checkPacketReliability(void *thread_arg)
 				{
 					if(currentDate == "")
 					{
-						printf("what\n");
 						currentDate.clear();
 						currentDate = section[1];
 					}						
 					if(section[1] != currentDate && nextDate == "")
 					{
-						printf("what1\n");
 						
 						nextDate.clear();
 						nextDate = section[1];
@@ -356,7 +353,6 @@ void* checkPacketReliability(void *thread_arg)
 
 					if(section[1] == currentDate)
 					{
-						printf("what2\n");
 						
 						pthread_mutex_lock(&mylock);
 						packetsRecieved.push_back(atoi(section[2].c_str()));
@@ -366,7 +362,6 @@ void* checkPacketReliability(void *thread_arg)
 			
 					if(section[1] == nextDate)
 					{
-						printf("what3\n");
 						
 						pthread_mutex_lock(&mylock);
 						packetsRecievedDay2.push_back(atoi(section[2].c_str()));
@@ -735,7 +730,6 @@ void* insertToDb(void *thread_arg)
 	 		{
 				s.clear();
 			    s = sproutFeed.front();
-				cout << "S: " << s << endl;
 				sproutFeed.pop();
 				pthread_mutex_unlock(&mylock);
 				
@@ -748,7 +742,7 @@ void* insertToDb(void *thread_arg)
 				
 				
 				pthread_mutex_lock(&mylock);
-		 		unsigned long g = PQescapeStringConn(Conn, escapeBuffer, s.c_str(), strlen(s.c_str()),error);  
+		 	 	PQescapeStringConn(Conn, escapeBuffer, s.c_str(), strlen(s.c_str()),error);
 				pthread_mutex_unlock(&mylock);
 	  			// (Queries)
 	  		    Query = "INSERT INTO ";

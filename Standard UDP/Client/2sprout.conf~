@@ -4,7 +4,7 @@ just set usedb to false
 
 apiKey	=	2ddgtsrufa
 upnp	=	false
-usedb	=	true
+usedb	=	false
 dbtype	=	postgres
 dbhost	=	localhost
 dbport	=	5432
