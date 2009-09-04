@@ -130,6 +130,17 @@ int closeAnnounce()
 	return 1;
 }
 
+
+// get sockaddr, IPv4 or IPv6:
+void *get_in_addr(struct sockaddr *sa)
+{
+    if (sa->sa_family == AF_INET) {
+        return &(((struct sockaddr_in*)sa)->sin_addr);
+    }
+
+    return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}
+
 /*
 castListner binds to the port specified, and waits for packets to come in from the server
 */
@@ -137,31 +148,53 @@ castListner binds to the port specified, and waits for packets to come in from t
 void* castListener(void *thread_arg)
 { 	
 	
-	char *ipAdd;
+	
 	int sockfd;
-	struct sockaddr_in my_addr;    // my address information
-	struct sockaddr_in their_addr; // connector's address information
-	socklen_t addr_len;
+	struct addrinfo hints, *servinfo, *p;
+	int rv;
 	int numbytes;
+	struct sockaddr_storage their_addr;
 	char rawPacket[5000];
-	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) 
-    {
-        perror("Unable to set socket\n");
+	socklen_t addr_len;
+	char s[INET6_ADDRSTRLEN];
+	char Portbuffer[5];
+	sprintf(Portbuffer, "%i", MYPORT);
+	
+	
+	
+	memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC; // set to AF_INET to force IPv4
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_PASSIVE; // use my IP
+
+    if ((rv = getaddrinfo(NULL, Portbuffer, &hints, &servinfo)) != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
         exit(1);
     }
 
-    my_addr.sin_family = AF_INET;         // host byte order
-    my_addr.sin_port = htons(MYPORT);     // short, network byte order
-    my_addr.sin_addr.s_addr = INADDR_ANY; // automatically fill with my IP
-    memset(my_addr.sin_zero, '\0', sizeof my_addr.sin_zero);
+    // loop through all the results and bind to the first we can
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            perror("listener: socket");
+            continue;
+        }
 
+        if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            close(sockfd);
+            perror("listener: bind");
+            continue;
+        }
 
-    if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof my_addr) == -1) 
-    {
-        perror("Unable to bind to socket\n");
-        exit(1);
+        break;
     }
 
+    if (p == NULL) {
+        fprintf(stderr, "listener: failed to bind socket\n");
+        exit(1);
+    }
+	
+	
 	cout << "Waiting for updates.." << endl;
 
 	int counter = 0;
@@ -175,10 +208,8 @@ void* castListener(void *thread_arg)
         	perror("recvfrom\n");
         	exit(1);
    		}
-	
-        ipAdd = inet_ntoa(their_addr.sin_addr);
-         
-    	buf[numbytes] = '\0';
+	         
+    	rawPacket[numbytes] = '\0';
 
 		if(numbytes < 5000 && unprocessedData.size() < 50000)
 		{

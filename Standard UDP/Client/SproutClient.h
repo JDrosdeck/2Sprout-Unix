@@ -17,6 +17,7 @@
 #include <sys/msg.h>
 #include <arpa/inet.h>
 #include <curl/curl.h>
+#include <netdb.h>
 
 #include "testDBConnection.h"
 #include "htmlGrabber.h"
@@ -52,6 +53,8 @@ bool useDatabase = true;
 /*
 Declarations for networking code
 */
+
+/*
 char *ipAdd;
 int sockfd;
 struct sockaddr_in my_addr;    // my address information
@@ -59,7 +62,7 @@ struct sockaddr_in their_addr; // connector's address information
 socklen_t addr_len;
 int numbytes;
 char buf[maxPipe];
-
+*/
 
 queue<string> sproutFeed; //this is the queue where the approved data is located
 queue<string> unprocessedData; //this is the queue for data that has yet been tested
