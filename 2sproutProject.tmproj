@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Standard UDP/Client/Makefile</string>
+	<string>Standard UDP/Client/SproutClient.cpp</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -13,15 +13,13 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/Makefile</string>
 					<key>lastUsed</key>
-					<date>2009-09-04T18:10:52Z</date>
-					<key>selected</key>
-					<true/>
+					<date>2009-09-07T23:37:37Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/2sprout.conf</string>
 					<key>lastUsed</key>
-					<date>2009-08-22T02:11:28Z</date>
+					<date>2009-10-13T21:47:38Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -81,13 +79,15 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/strOperations.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-09-04T18:05:37Z</date>
+					<date>2009-10-13T20:22:27Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-09-04T18:10:52Z</date>
+					<date>2009-10-14T00:09:26Z</date>
+					<key>selected</key>
+					<true/>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -234,23 +234,39 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>11</integer>
 				<key>line</key>
-				<integer>88</integer>
+				<integer>66</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>44</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>10</integer>
+				<key>line</key>
+				<integer>66</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>14</integer>
+				<key>line</key>
+				<integer>66</integer>
+			</dict>
 		</dict>
-		<key>Standard UDP/Client/Makefile</key>
+		<key>Standard UDP/Client/2sprout.conf</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>8</integer>
+				<integer>12</integer>
 				<key>line</key>
-				<integer>15</integer>
+				<integer>6</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -262,14 +278,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>4</integer>
+				<integer>8</integer>
 				<key>line</key>
-				<integer>833</integer>
+				<integer>729</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>805</integer>
+			<integer>696</integer>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
 		<dict>
@@ -386,19 +402,14 @@
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>Standard UDP/Client/SproutClient.h</string>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
-		<string>Standard UDP/Client/htmlGrabber.h</string>
-		<string>Standard UDP/Client/strOperations.h</string>
+		<string>Standard UDP/Client/2sprout.conf</string>
 		<string>Standard UDP/Client/strOperations.cpp</string>
-		<string>pysock.py</string>
-		<string>Standard UDP/Client/Makefile</string>
-		<string>Standard UDP/Client/testDBConnection.h</string>
-		<string>Standard UDP/Client/htmlGrabber.cpp</string>
+		<string>2sprout API/sprout.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{629, 21}, {1019, 857}}</string>
+	<string>{{234, -128}, {1019, 857}}</string>
 </dict>
 </plist>

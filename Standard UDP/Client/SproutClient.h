@@ -18,6 +18,7 @@
 #include <arpa/inet.h>
 #include <curl/curl.h>
 #include <netdb.h>
+#include <algorithm>
 
 #include "testDBConnection.h"
 #include "htmlGrabber.h"

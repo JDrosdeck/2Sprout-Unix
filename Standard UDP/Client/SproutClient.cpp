@@ -213,6 +213,7 @@ void* castListener(void *thread_arg)
 		if(numbytes < 5000 && unprocessedData.size() < 50000)
 		{
    	    	string input = rawPacket;
+			cout << "recieved: " << input << endl;
 			bzero(rawPacket, sizeof(rawPacket));
 			numbytes = 0;
 			string decoded = base64_decode(input);
@@ -230,7 +231,7 @@ void* castListener(void *thread_arg)
 			if(value.substr(0,10) == updatedPassword)
 			{
 				pthread_mutex_lock(&mylock);
-				unprocessedData.push(value.substr(10,value.length()));
+				unprocessedData.push(value.substr(11,value.length()));
 				pthread_mutex_unlock(&mylock);
 				
 				passedKeys++;
@@ -252,7 +253,7 @@ void* castListener(void *thread_arg)
 				
 				if(value.substr(0,10) == oldPassword)
 				{
-					unprocessedData.push(value.substr(10,value.length()));
+					unprocessedData.push(value.substr(11,value.length()));
 					cout << "Old Value Pushed" << endl;
 					passedKeys++;
 					cout << "Secret Key Passed " << passedKeys << endl;
@@ -290,7 +291,7 @@ void* checkPacketReliability(void *thread_arg)
 {
 	string token;
 	string s = "";
-	string section[5];
+	string section[3];
 	
 	while(1)
 	{
@@ -314,7 +315,7 @@ void* checkPacketReliability(void *thread_arg)
 			
 			while(getline(iss,token,'^'))
 			{
-				if(count1 < 5)
+				if(count1 < 3)
 				{
 					section[count1] = token;
 				}
@@ -324,105 +325,86 @@ void* checkPacketReliability(void *thread_arg)
 		
 			iss.clear();
 			
-			if((section[0]  != "") && section[1] != "" && section[2] != "" && section[3] != "" && section[4] != "" ) //make sure we have all the parts
+			if((section[0]  != "") && section[1] != "" && section[2] != "") //make sure we have all the parts
 			{	
-				string CastMinusChecksum = "^" + section[1] + "^" + section[2] + "^" + section[3] + "^" + section[4]; //generate the origional string to grab the checksum sum from					
-			
-				
-				
-				//string checkMd5 = MD5String(CastMinusMD5); //get the value of the MD5 string
-				//printf("MD5 SUM IS: %s", checkMd5.c_str());
-			
-				int CheckSum = calcCheckSum(CastMinusChecksum);
-				
-				cout << "Calculated CheckSum: " << CheckSum << " Recieved Checksum: " << section[0].c_str() << endl;
-				
-				if(CheckSum == atoi(section[0].c_str())) //The MD5 Sum is the same so data integrety is OK
+							
+				if(currentDate == "")
 				{
-					if(currentDate == "")
-					{
-						currentDate.clear();
-						currentDate = section[1];
-					}						
-					if(section[1] != currentDate && nextDate == "")
-					{
-						
-						nextDate.clear();
-						nextDate = section[1];
-					}	
+					currentDate.clear();
+					currentDate = section[0];
+				}						
+				if(section[0] != currentDate && nextDate == "")
+				{
+					
+					nextDate.clear();
+					nextDate = section[0];
+				}	
 
-					if(section[1] == currentDate)
-					{
-						
-						pthread_mutex_lock(&mylock);
-						packetsRecieved.push_back(atoi(section[2].c_str()));
-						pthread_mutex_unlock(&mylock);
-						
-					}
-			
-					if(section[1] == nextDate)
-					{
-						
-						pthread_mutex_lock(&mylock);
-						packetsRecievedDay2.push_back(atoi(section[2].c_str()));
-						pthread_mutex_unlock(&mylock);
-						
-					}	
-					if(section[1] != currentDate && section[1] != nextDate && dateRecieved == false)
-					{
-						if(!packetsMissed.empty())
-						{
-							packetsMissed.clear();
-						}
-						if(!packetsRecieved.empty())
-						{
-							packetsRecieved.clear();
-						}	
-						//printf("new date found, current date being overwritten\n");
-						pthread_mutex_lock(&mylock);
-						currentDate.clear();
-						currentDate = section[1];
-						packetsRecieved.push_back(atoi(section[2].c_str()));
-						dateRecieved = true;	
-						pthread_mutex_unlock(&mylock);
-						
-					}
-					else if(section[1] != currentDate && section[1] != nextDate && dateRecieved == true)
-					{
-						if(!packetsMissedDay2.empty())
-						{
-							packetsMissedDay2.clear();
-						}
-						if(!packetsRecievedDay2.empty())
-						{
-							packetsRecievedDay2.clear();
-						}	
-						pthread_mutex_lock(&mylock);
-						currentDate.clear();
-						currentDate = section[1];
-						packetsRecieved.push_back(atoi(section[2].c_str()));
-						dateRecieved = false;
-						pthread_mutex_unlock(&mylock);							
-					}
-										
-					//if this passes add the packet number to the array of recieved packet numbers
-					//Add only the message to the sproutQueue
-				
+				if(section[0] == currentDate)
+				{		
 					pthread_mutex_lock(&mylock);
-		 			sproutFeed.push(section[4]);
+					packetsRecieved.push_back(atoi(section[1].c_str()));
 					pthread_mutex_unlock(&mylock);
-			
+						
 				}
 			
+				if(section[0] == nextDate)
+				{
+						
+					pthread_mutex_lock(&mylock);
+					packetsRecievedDay2.push_back(atoi(section[1].c_str()));
+					pthread_mutex_unlock(&mylock);
+					
+				}	
+				if(section[0] != currentDate && section[0] != nextDate && dateRecieved == false)
+				{	
+					if(!packetsMissed.empty())
+					{
+						packetsMissed.clear();
+					}
+					if(!packetsRecieved.empty())
+					{
+						packetsRecieved.clear();
+					}	
+					//printf("new date found, current date being overwritten\n");
+					pthread_mutex_lock(&mylock);
+					currentDate.clear();
+					currentDate = section[0];
+					packetsRecieved.push_back(atoi(section[1].c_str()));
+					dateRecieved = true;	
+					pthread_mutex_unlock(&mylock);
+						
+				}
+				else if(section[0] != currentDate && section[0] != nextDate && dateRecieved == true)
+				{
+					if(!packetsMissedDay2.empty())
+					{
+						packetsMissedDay2.clear();
+					}
+					if(!packetsRecievedDay2.empty())
+					{
+						packetsRecievedDay2.clear();
+					}	
+					pthread_mutex_lock(&mylock);
+					currentDate.clear();
+					currentDate = section[0];
+					packetsRecieved.push_back(atoi(section[1].c_str()));
+					dateRecieved = false;
+					pthread_mutex_unlock(&mylock);							
+				}
+										
+				//if this passes add the packet number to the array of recieved packet numbers
+				//Add only the message to the sproutQueue
 				
-				CastMinusChecksum.clear();
-				
+				pthread_mutex_lock(&mylock);
+		 		sproutFeed.push(section[2]);
+				pthread_mutex_unlock(&mylock);
+			
 			}
 		}
 		else
 		{
 			pthread_mutex_unlock(&mylock);
-			
 			if(usleep(1000) == -1)
 			{
 				printf("sleep failed\n");
@@ -704,9 +686,7 @@ void* insertToDb(void *thread_arg)
 {
 	if(database == "postgres")
 	{
-	
-	
-	
+		const char *paramValues[3];
 		connectionString = "host=" + host + " port=" + port + " dbname=" + dbname + " user=" + user + " password=" + pass;
 		PGconn *Conn = PQconnectdb(connectionString.c_str());
 		PGresult* result;
@@ -730,43 +710,29 @@ void* insertToDb(void *thread_arg)
 	 		{
 				s.clear();
 			    s = sproutFeed.front();
+				cout << "SproutFeed " << s << endl;
 				sproutFeed.pop();
 				pthread_mutex_unlock(&mylock);
 				
-				
-			
-				
-			    size = (s.length() * 2) + 1;
-				char* escapeBuffer = (char *) malloc (size * sizeof(char));
-				
-				
-				
-				pthread_mutex_lock(&mylock);
-		 	 	PQescapeStringConn(Conn, escapeBuffer, s.c_str(), strlen(s.c_str()),error);
-				pthread_mutex_unlock(&mylock);
-	  			// (Queries)
-	  		    Query = "INSERT INTO ";
-	  			Query = Query + "\""+ table + "\"" + " (" + col + ") " + "VALUES('";	
-	  			Query = Query + escapeBuffer;
-	  			Query = Query +"');";
+				paramValues[0] = s.c_str();
+				Query = "INSERT INTO ";
+	  			Query = Query + "\""+ table + "\"" + " (" + col + ") " + "VALUES(";	
+	  			Query = Query + "$1";
+	  			Query = Query +");";
 	  			cout << Query << endl;
-	    		result = PQexec(Conn,Query.c_str());
+
+				result = PQexecParams(Conn, Query.c_str(), 1, NULL, paramValues,NULL, NULL, 0);
+				
 				if (PQresultStatus(result) != PGRES_COMMAND_OK) 
 				{	
-				   	fprintf(stderr,"BEGIN command failed");	
-			    }
+				    fprintf(stderr, "INSERT failed: %s", PQerrorMessage(Conn));			   
+				}
 				else
 				{
-					cout << "Inserted" << endl;
-				}
-				
-								
+					cout << "Data Inserted" << endl;
+				}	
 				Query.clear();
 				PQclear(result);
-				free(escapeBuffer);
-				cout << "freed" << endl;
-			
-				
 			}
 			
 			else
@@ -1003,7 +969,7 @@ void* getFeed(void *thread_arg)
      * "name" 1234, which was created by
      * the server.
      */
-    key = 1234;
+    key = 5121;
 
 	//(void) fprintf(stderr, "\nmsgget: Calling msgget(%#lx,%#o)\n",key, msgflg);
 

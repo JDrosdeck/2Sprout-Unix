@@ -64,7 +64,7 @@ char * getSproutItem()
      * "name" 1234, which was created by
      * the server.
      */
-    key = 1234;
+    key = 5121;
 
     if ((msqid = msgget(key, msgflg)) < 0) {
 		printf("Unable to interact with Client. Is the client running?\n");
