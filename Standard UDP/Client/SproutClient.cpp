@@ -291,7 +291,7 @@ void* checkPacketReliability(void *thread_arg)
 {
 	string token;
 	string s = "";
-	string section[3];
+	string section[4];
 	
 	while(1)
 	{
@@ -315,7 +315,7 @@ void* checkPacketReliability(void *thread_arg)
 			
 			while(getline(iss,token,'^'))
 			{
-				if(count1 < 3)
+				if(count1 < 4)
 				{
 					section[count1] = token;
 				}
@@ -325,9 +325,25 @@ void* checkPacketReliability(void *thread_arg)
 		
 			iss.clear();
 			
-			if((section[0]  != "") && section[1] != "" && section[2] != "") //make sure we have all the parts
+			if(section[0]  != "" && section[1] != "" && section[2] != "" && section[3] != "") //make sure we have all the parts
 			{	
-							
+				
+				if(BroadcastingServer == "") //this is the first update
+				{
+					cout << "Updating Broadcasting Server" << endl;
+					BroadcastingServer = section[2];
+				}
+				if(BroadcastingServer != section[2]) //we switched broadcasters, So contract 2sprout and retrieve all the missed packets for the previous broadcaster
+				{
+					/*
+					Contact the server and retrieve all lost updates
+					*/
+					BroadcastingServer = section[2];
+				}
+				
+				
+				
+				
 				if(currentDate == "")
 				{
 					currentDate.clear();
@@ -335,7 +351,6 @@ void* checkPacketReliability(void *thread_arg)
 				}						
 				if(section[0] != currentDate && nextDate == "")
 				{
-					
 					nextDate.clear();
 					nextDate = section[0];
 				}	
@@ -344,8 +359,7 @@ void* checkPacketReliability(void *thread_arg)
 				{		
 					pthread_mutex_lock(&mylock);
 					packetsRecieved.push_back(atoi(section[1].c_str()));
-					pthread_mutex_unlock(&mylock);
-						
+					pthread_mutex_unlock(&mylock);		
 				}
 			
 				if(section[0] == nextDate)
@@ -397,7 +411,7 @@ void* checkPacketReliability(void *thread_arg)
 				//Add only the message to the sproutQueue
 				
 				pthread_mutex_lock(&mylock);
-		 		sproutFeed.push(section[2]);
+		 		sproutFeed.push(section[3]);
 				pthread_mutex_unlock(&mylock);
 			
 			}

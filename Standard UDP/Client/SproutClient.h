@@ -74,6 +74,8 @@ vector<int> packetsMissedDay2;
 
 bool dateRecieved = false;
 
+string BroadcastingServer = "";
+
 
 /*
 variables for holding data read in from the configuration files
