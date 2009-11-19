@@ -43,7 +43,7 @@ Includes for mysql C library
 
 #define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
 #define maxPipe		5000			
-#define MSGSZ     5000
+#define MSGSZ     10
 #define version "1.0.1"
 
 

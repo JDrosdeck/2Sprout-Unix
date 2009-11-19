@@ -15,6 +15,7 @@ API for passing into a user made application
 typedef struct msgbuf1 {
          long    mtype;
          char    mtext[MSGSZ];
+		 bool 	 fullMsg;
          } message_buf1;
 
 
@@ -262,6 +263,7 @@ void* castListener(void *thread_arg)
 				{
 					failedKeys++;
 					cout << "Secret Key Failed " << failedKeys << endl;
+					cout << value.substr(0,10) << " " << oldPassword << endl;
 				}	
 			}
 						
@@ -1001,30 +1003,47 @@ void* getFeed(void *thread_arg)
 			string s;
 			s.clear();
 			s = sproutFeed.front();
-		
-		  	sbuf.mtype = 1;
 
-
-			bzero(sbuf.mtext, sizeof(sbuf.mtext));
-		    (void) strncpy(sbuf.mtext, s.c_str(), strlen(s.c_str()));
-
-
-		    buf_length = strlen(sbuf.mtext) + 1;
-
-
-		    /*
-		     * Send a message.
-		     */
-	
-		    if (msgsnd(msqid, &sbuf, buf_length, false) < 0) 
+			if(s.size() > 10)
 			{
-		       	perror("msgsnd");
-		       	exit(1);
-		    }
-		    else
-			{ 
-		 		sproutFeed.pop();		
-			}	
+				
+				while(s.size() > 10)
+				{
+					string toSend = s.substr(0,10);
+					cout << "toSend: " << toSend << endl;
+					s = s.substr(10,s.size());
+					cout << "s: " << s << endl;
+		  			sbuf.mtype = 1;
+					sbuf.fullMsg = false;
+					bzero(sbuf.mtext, sizeof(sbuf.mtext));
+		    		(void) strncpy(sbuf.mtext, toSend.c_str(), strlen(toSend.c_str()));
+		    		buf_length = strlen(sbuf.mtext) + 1;
+	
+		    		if (msgsnd(msqid, &sbuf, sizeof(sbuf), false) < 0) 
+					{
+		       			perror("msgsnd");
+		    		}
+	
+				}
+				if(s.size() < 10)
+				{
+		  			sbuf.mtype = 1;
+					sbuf.fullMsg = true;
+					cout << "TRYING TO SEND= " << s << endl;
+					bzero(sbuf.mtext, sizeof(sbuf.mtext));
+		    		(void) strncpy(sbuf.mtext, s.c_str(), strlen(s.c_str()));
+		    		buf_length = strlen(sbuf.mtext) + 1;
+	
+		    		if (msgsnd(msqid, &sbuf, sizeof(sbuf), false) < 0) 
+					{
+		       			perror("msgsnd");
+		    		}	
+					else
+					{
+						sproutFeed.pop();
+					}
+				}
+			}
 		}
 		else
 		{
@@ -1123,7 +1142,11 @@ bool registerClient()
 		cipher = section[0];
 		updatedPassword = section[1];
 		sleeptime = atoi(section[2].c_str());
-		cout << "Client Sucessfully registered" << endl;	       
+		cout << "Client Sucessfully registered" << endl;
+		cout << "cipher: " << cipher << endl;
+		cout << "updatedPassword" << updatedPassword << endl;
+		cout << sleeptime << endl;
+			       
 	}
 	else //just put in as a failsafe. It should never reach this point.
 	{

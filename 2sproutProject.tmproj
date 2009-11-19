@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Standard UDP/Client/SproutClient.cpp</string>
+	<string>2sprout API/sprout.cpp</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -85,15 +85,13 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-11-03T21:13:01Z</date>
-					<key>selected</key>
-					<true/>
+					<date>2009-11-19T20:59:13Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.h</string>
 					<key>lastUsed</key>
-					<date>2009-10-18T18:23:52Z</date>
+					<date>2009-11-19T20:56:19Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -168,7 +166,7 @@
 		</dict>
 	</array>
 	<key>fileHierarchyDrawerWidth</key>
-	<integer>215</integer>
+	<integer>217</integer>
 	<key>metaData</key>
 	<dict>
 		<key>2sprout API/Test Applications/C#/test.cs</key>
@@ -229,49 +227,47 @@
 				<integer>0</integer>
 			</dict>
 		</dict>
+		<key>2sprout API/sprout.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>2</integer>
+				<key>line</key>
+				<integer>97</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>60</integer>
+		</dict>
 		<key>Standard UDP/Client/SproutClient.cpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>30</integer>
+				<integer>20</integer>
 				<key>line</key>
-				<integer>413</integer>
+				<integer>1017</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>388</integer>
+			<integer>1021</integer>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>10</integer>
+				<integer>20</integer>
 				<key>line</key>
-				<integer>76</integer>
+				<integer>45</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>65</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>7</integer>
-				<key>line</key>
-				<integer>76</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>25</integer>
-				<key>line</key>
-				<integer>76</integer>
-			</dict>
+			<integer>63</integer>
 		</dict>
 		<key>Standard UDP/Client/UPnP.h</key>
 		<dict>
@@ -361,11 +357,12 @@
 	<key>openDocuments</key>
 	<array>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
+		<string>2sprout API/sprout.cpp</string>
 		<string>Standard UDP/Client/SproutClient.h</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{344, 21}, {1019, 857}}</string>
+	<string>{{340, 21}, {1019, 857}}</string>
 </dict>
 </plist>
