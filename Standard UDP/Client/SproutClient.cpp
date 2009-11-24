@@ -493,69 +493,87 @@ void* checkLostPacketsDay2(void *thread_arg)
 }
 
 
+//packetsMissedDay2.empty()
+
 void* replaceLostPacketsDay2(void *thread_arg)
 {
 	while(1)
 	{
 		sleep(10);
+		pthread_mutex_lock(&mylock);
 		if(!packetsMissedDay2.empty())
 		{
-			
-				printf("NOTIFYING SERVER OF MISSED PACKETS\n");
-				int numLostPackets = (int)packetsMissedDay2.size();	
-				string url = "http://www.2sprout.com/missing/";
-			
-				int x;
-				stringstream out;
-				if (numLostPackets < 10)
-				{
-					for(x = 0; x < numLostPackets; x++)
+			//Make a local copy of the vecotr
+			vector<int> packets = packetsMissedDay2;
+			printf("NOTIFYING SERVER OF MISSED PACKETS\n");
+			int numLostPackets = (int)packetsMissedDay2.size();	
+			packetsMissed.erase(packetsMissedDay2.begin(), packetsMissedDay2.begin()+numLostPackets); //clear out the vector
+			pthread_mutex_unlock(&mylock);
+			string url = "http://www.2sprout.com/missing/?ID=" + BroadcastingServer + "&date=" + nextDate + "&missed=";
+						
+			int x;
+			stringstream out;
+			if (numLostPackets < 10)
+			{
+				for(x = 0; x < numLostPackets; x++)
+				{	
+					out.clear();
+					out << packetsMissedDay2[x];
+					url.append(out.str());
+					if(x != (numLostPackets - 1))
 					{
-					
-						out.clear();
-						out << packetsMissed[x];
-						url.append(out.str());
-						if(x != (numLostPackets - 1))
-						{
-							url.append("^");	
-						}
+						url.append("^");	
 					}
-				
 				}
-				
-				else
-				{
-					int maxLost = 0;
 					
-					for(x = 0; x < numLostPackets; x++)
-					{
-						if(maxLost == 10)
-						{
-							maxLost = 0;
-							string html = getHtml(url);	
-							#warning automatically tokenize and put data into proper queue 
-						}
-						else
-						{
-							out.clear();
-							out << packetsMissedDay2[x];
-							url.append(out.str());
-							if(x != (numLostPackets -1))
-							{
-								url.append("^");
-							}
-							maxLost++;
-						}	
-					}				
+				//Call the url to get the missed packets
+				cout << "calling url: " << url << endl;
+				string html = getHtml(url);
+					
+				//Tokenize the string based on newlines, since they can't
+				//exist cause the json will bark
+				string token;
+				istringstream iss(html);
+				while(getline(iss,token,'\n'))
+				{
+					//push the token
+					sproutFeed.push(token);
 				}
+			}
+			else
+			{
+				int maxLost = 0;	
+				for(x = 0; x < numLostPackets; x++)
+				{
+					if(maxLost == 10)
+					{
+						maxLost = 0;
+						string html = getHtml(url);	
+						#warning automatically tokenize and put data into proper queue 
+						string token;
+						istringstream iss(html);
+						while(getline(iss,token,'\n'))
+						{
+							//push the token
+							sproutFeed.push(token);
+						}		
+						url = "http://www.2sprout.com/missing/?ID=" + BroadcastingServer + "&date=" + nextDate + "&missed="; //reset the url
+					}
+					else
+					{
+						out.clear();
+						out << packetsMissedDay2[x];
+						url.append(out.str());
+						if(x != (numLostPackets -1))
+						{
+							url.append("^");
+						}
+						maxLost++;
+					}	
+				}				
+			}
 		}
-		
-		else
-		{
-
-		}
-	}
-
+	}	
 }
 
 
@@ -630,62 +648,78 @@ void* replaceLostPackets(void *thread_arg)
 	while(1)
 	{
 		sleep(10);
-	
+		pthread_mutex_lock(&mylock);
 		if(!packetsMissed.empty())
 		{
-			
-				printf("NOTIFYING SERVER OF MISSED PACKETS\n");
-				int numLostPackets = (int)packetsMissed.size();	
-				string url = "http://www.2sprout.com/missing/";
-			
-				int x;
-				stringstream out;
-				if (numLostPackets < 10)
-				{
-					for(x = 0; x < numLostPackets; x++)
+			//Make a local copy of the vecotr
+			vector<int> packets = packetsMissed;
+			printf("NOTIFYING SERVER OF MISSED PACKETS\n");
+			int numLostPackets = (int)packetsMissed.size();	
+			packetsMissed.erase(packetsMissed.begin(), packetsMissed.begin()+numLostPackets); //clear out the vector
+			pthread_mutex_unlock(&mylock);
+			string url = "http://www.2sprout.com/missing/?ID=" + BroadcastingServer + "&date=" + currentDate + "&missed=";
+						
+			int x;
+			stringstream out;
+			if (numLostPackets < 10)
+			{
+				for(x = 0; x < numLostPackets; x++)
+				{	
+					out.clear();
+					out << packetsMissed[x];
+					url.append(out.str());
+					if(x != (numLostPackets - 1))
 					{
+						url.append("^");	
+					}
+				}
 					
+				//Call the url to get the missed packets
+				cout << "calling url: " << url << endl;
+				string html = getHtml(url);
+					
+				//Tokenize the string based on newlines, since they can't
+				//exist cause the json will bark
+				string token;
+				istringstream iss(html);
+				while(getline(iss,token,'\n'))
+				{
+					//push the token
+					sproutFeed.push(token);
+				}
+			}
+			else
+			{
+				int maxLost = 0;	
+				for(x = 0; x < numLostPackets; x++)
+				{
+					if(maxLost == 10)
+					{
+						maxLost = 0;
+						string html = getHtml(url);	
+						#warning automatically tokenize and put data into proper queue 
+						string token;
+						istringstream iss(html);
+						while(getline(iss,token,'\n'))
+						{
+							//push the token
+							sproutFeed.push(token);
+						}		
+						url = "http://www.2sprout.com/missing/?ID=" + BroadcastingServer + "&date=" + currentDate + "&missed="; //reset the url
+					}
+					else
+					{
 						out.clear();
 						out << packetsMissed[x];
 						url.append(out.str());
-						if(x != (numLostPackets - 1))
+						if(x != (numLostPackets -1))
 						{
-							url.append("^");	
+							url.append("^");
 						}
-					}
-				
-				}
-				
-				else
-				{
-					int maxLost = 0;
-					
-					for(x = 0; x < numLostPackets; x++)
-					{
-						if(maxLost == 10)
-						{
-							maxLost = 0;
-							string html = getHtml(url);	
-							#warning automatically tokenize and put data into proper queue 
-						}
-						else
-						{
-							out.clear();
-							out << packetsMissed[x];
-							url.append(out.str());
-							if(x != (numLostPackets -1))
-							{
-								url.append("^");
-							}
-							maxLost++;
-						}	
-					}				
-				}
-		}
-		
-		else
-		{
-
+						maxLost++;
+					}	
+				}				
+			}
 		}
 	}
 }
