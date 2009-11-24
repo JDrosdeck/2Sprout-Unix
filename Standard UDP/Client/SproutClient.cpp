@@ -218,8 +218,9 @@ void* castListener(void *thread_arg)
 			bzero(rawPacket, sizeof(rawPacket));
 			numbytes = 0;
 			string decoded = base64_decode(input);
-			
+			cout << "HERE" << endl;
 			pthread_mutex_lock(&mylock);
+			
 			
 			string value(decoded);
 			string key(cipher);
@@ -228,6 +229,7 @@ void* castListener(void *thread_arg)
 			
 			pthread_mutex_unlock(&mylock);
 			
+			cout << value << endl;
 			
 			if(value.substr(0,10) == updatedPassword)
 			{
@@ -573,6 +575,10 @@ void* replaceLostPacketsDay2(void *thread_arg)
 				}				
 			}
 		}
+		else
+		{
+			pthread_mutex_unlock(&mylock);
+		}
 	}	
 }
 
@@ -653,7 +659,7 @@ void* replaceLostPackets(void *thread_arg)
 		{
 			//Make a local copy of the vecotr
 			vector<int> packets = packetsMissed;
-			printf("NOTIFYING SERVER OF MISSED PACKETS\n");
+			printf("**********NOTIFYING SERVER OF MISSED PACKETS***********\n");
 			int numLostPackets = (int)packetsMissed.size();	
 			packetsMissed.erase(packetsMissed.begin(), packetsMissed.begin()+numLostPackets); //clear out the vector
 			pthread_mutex_unlock(&mylock);
@@ -677,6 +683,7 @@ void* replaceLostPackets(void *thread_arg)
 				//Call the url to get the missed packets
 				cout << "calling url: " << url << endl;
 				string html = getHtml(url);
+				cout << "recieved: " << html << endl;
 					
 				//Tokenize the string based on newlines, since they can't
 				//exist cause the json will bark
@@ -720,6 +727,11 @@ void* replaceLostPackets(void *thread_arg)
 					}	
 				}				
 			}
+		}
+		else
+		{
+			pthread_mutex_unlock(&mylock);
+			
 		}
 	}
 }
