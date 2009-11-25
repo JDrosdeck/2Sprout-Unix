@@ -20,6 +20,7 @@
 #include <netdb.h>
 #include <algorithm>
 
+#include "log.h"
 #include "testDBConnection.h"
 #include "htmlGrabber.h"
 #include "UPnP.h"
@@ -43,7 +44,7 @@ Includes for mysql C library
 
 #define sproutPipe "/tmp/2sprout"	//pipe that takes in api calls from the user made application
 #define maxPipe		5000			
-#define MSGSZ     10
+#define MSGSZ     1024
 #define version "1.0.1"
 
 

@@ -5,7 +5,7 @@ DLIBS = -static-libgcc -lstdc++-static -lssl -lcrypto -lz
 SLIBS = /usr/local/lib/libcurl.a /usr/local/pgsql/lib/libpq.a /usr/local/lib/mysql/libmysqlclient.a /usr/lib/libminiupnpc.a
 PROG = 2Sprout
 
-SRCS = strOperations.cpp UPnP.cpp htmlGrabber.cpp testDBConnection.cpp base64.cpp SproutClient.cpp
+SRCS = log.cpp strOperations.cpp UPnP.cpp htmlGrabber.cpp testDBConnection.cpp base64.cpp SproutClient.cpp
 
 all: $(PROG)
 
