@@ -685,8 +685,12 @@ void* replaceLostPackets(void *thread_arg)
 			int numLostPackets = (int)packets.size();	
 			packetsMissed.erase(packetsMissed.begin(), packetsMissed.begin()+numLostPackets); //clear out the vector
 			pthread_mutex_unlock(&mylock);
-			string url = "http://www.2sprout.com/missed/?ID=" + BroadcastingServer + "&date=" + currentDate + "&missed=";
-						
+			
+			string broadcastServerEncoded = base64_encode((const unsigned char*)BroadcastingServer.c_str(), strlen(BroadcastingServer.c_str()));
+			string dateEncoded = base64_encode((const unsigned char*) currentDate.c_str(), strlen(currentDate.c_str()));
+
+			string url = "http://www.2sprout.com/missed/?ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
+			string packetsMissedUrl;			
 			int x;
 			stringstream out;
 			if (numLostPackets < 10)
@@ -695,12 +699,20 @@ void* replaceLostPackets(void *thread_arg)
 				{	
 					out.clear();
 					out << packets[x];
-					url.append(out.str());
+					packetsMissedUrl.append(out.str());
 					if(x != (numLostPackets - 1))
 					{
-						url.append("^");	
+						packetsMissedUrl.append("^");	
 					}
 				}
+				
+				
+				string packetsEncoded = base64_encode((const unsigned char*) packetsMissedUrl.c_str(), strlen(packetsMissedUrl.c_str()));
+				url += packetsEncoded;
+				
+				cout << "Recieving missed packets via plaintext url: http://www.2sprout.com/missed/?ID=" << BroadcastingServer << "&date=" << currentDate << "&missed=" << packetsMissedUrl << endl;
+				cout << "Recieving missed packets via encoded url: " << url << endl;
+					
 					
 				//Call the url to get the missed packets
 				cout << "calling url: " << url << endl;
@@ -720,11 +732,18 @@ void* replaceLostPackets(void *thread_arg)
 			else
 			{
 				int maxLost = 0;	
+				string packetsMissedUrl;
+				
 				for(x = 0; x < numLostPackets; x++)
 				{
 					if(maxLost == 10)
 					{
 						maxLost = 0;
+						
+					
+						url += packetsMissedUrl;
+						packetsMissedUrl.clear();
+						
 						string html = getHtml(url);	
 						#warning automatically tokenize and put data into proper queue 
 						string token;
@@ -733,17 +752,20 @@ void* replaceLostPackets(void *thread_arg)
 						{
 							//push the token
 							sproutFeed.push(token);
-						}		
-						url = "http://www.2sprout.com/missing/?ID=" + BroadcastingServer + "&date=" + currentDate + "&missed="; //reset the url
+						}
+						string url = "http://www.2sprout.com/missed/?ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
+
+
+						
 					}
 					else
 					{
 						out.clear();
 						out << packetsMissed[x];
-						url.append(out.str());
+						packetsMissedUrl.append(out.str());
 						if(x != (numLostPackets -1))
 						{
-							url.append("^");
+							packetsMissedUrl.append("^");
 						}
 						maxLost++;
 					}	
