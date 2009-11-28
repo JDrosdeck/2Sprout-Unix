@@ -692,14 +692,16 @@ void* replaceLostPackets(void *thread_arg)
 			string url = "http://www.2sprout.com/missed/?ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
 			string packetsMissedUrl;			
 			int x;
-			stringstream out;
 			if (numLostPackets < 10)
 			{
 				for(x = 0; x < numLostPackets; x++)
 				{	
-					out.clear();
-					out << packets[x];
-					packetsMissedUrl.append(out.str());
+                                        char convertBuf[128];
+                                        snprintf(convertBuf, sizeof(convertBuf), "%d", packets[x]);
+                                        cout << convertBuf << endl;
+
+                                        packetsMissedUrl.append(convertBuf);
+                                        bzero(convertBuf, sizeof(convertBuf));
 					if(x != (numLostPackets - 1))
 					{
 						packetsMissedUrl.append("^");	
@@ -717,7 +719,7 @@ void* replaceLostPackets(void *thread_arg)
 				//Call the url to get the missed packets
 				cout << "calling url: " << url << endl;
 				string html = getHtml(url);
-				cout << "recieved: " << html << endl;
+                                cout << "recieved: " << html << endl;
 				logFile("Recieved Missing Packets");
 				//Tokenize the string based on newlines, since they can't
 				//exist cause the json will bark
@@ -760,7 +762,8 @@ void* replaceLostPackets(void *thread_arg)
 					}
 					else
 					{
-						out.clear();
+                                                /*
+                                                out.clear();
 						out << packetsMissed[x];
 						packetsMissedUrl.append(out.str());
 						if(x != (numLostPackets -1))
@@ -768,6 +771,7 @@ void* replaceLostPackets(void *thread_arg)
 							packetsMissedUrl.append("^");
 						}
 						maxLost++;
+                                                */
 					}	
 				}				
 			}
