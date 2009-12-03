@@ -21,7 +21,7 @@ static int writer(char *data, size_t size, size_t nmemb,
 
 
 
-string getHtml(string url)
+string getHtml(string url, string postFields)
 {
 	char errorBuffer[CURL_ERROR_SIZE];
 	string buffer;
@@ -67,6 +67,18 @@ string getHtml(string url)
 		return false;
 	}
 
+	if (postFields != "")
+	{
+		printf("POSTING\n");
+	  res = curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
+	  if (res != CURLE_OK)
+	  {
+	    fprintf(stderr, "Failed to set postField [%s]\n", errorBuffer);
+	    return false;
+	  }
+
+	}
+
 	res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 	if (res != CURLE_OK)
 	{
@@ -93,3 +105,5 @@ string getHtml(string url)
 	
 	return buffer;
 }
+
+

@@ -43,7 +43,7 @@ void* announce(void *thread_arg)
 		logFile("Announcing Client To Server");
 		html.clear();
 		sleep(sleeptime);	
-		html = getHtml(url);
+		html = getHtml(url, "");
 
 		//Convert the buffer from base64
  		string decoded = base64_decode(html);
@@ -478,7 +478,6 @@ void* checkLostPacketsDay2(void *thread_arg)
 			pthread_mutex_lock(&mylock);
 			packetsRecievedDay2.push_back(lastPacket);
 			pthread_mutex_unlock(&mylock);
-			int sizeOfVector = (int) packetsMissedDay2.size();
 
 			//Check the recieved packets against what was missing
 			//Figure out which are the missing packets
@@ -521,32 +520,51 @@ void* replaceLostPacketsDay2(void *thread_arg)
 			logFile("Replace Packets Day 2: Notifying server of missing packets");
 			//Make a local copy of the vecotr
 			vector<int> packets = packetsMissedDay2;
-			
-			printf("NOTIFYING SERVER OF MISSED PACKETS\n");
-			int numLostPackets = (int)packetsMissedDay2.size();	
-			packetsMissed.erase(packetsMissedDay2.begin(), packetsMissedDay2.begin()+numLostPackets); //clear out the vector
+			logFile("Notifying Server Of Missed Packets");
+			printf("**********NOTIFYING SERVER OF MISSED PACKETS***********\n");
+			int numLostPackets = (int)packets.size();	
+			packetsMissedDay2.erase(packetsMissedDay2.begin(), packetsMissedDay2.begin()+numLostPackets); //clear out the vector
 			pthread_mutex_unlock(&mylock);
-			string url = "http://www.2sprout.com/missing/?ID=" + BroadcastingServer + "&date=" + nextDate + "&missed=";
-						
+			
+			string broadcastServerEncoded = base64_encode((const unsigned char*)BroadcastingServer.c_str(), strlen(BroadcastingServer.c_str()));
+			string dateEncoded = base64_encode((const unsigned char*) currentDate.c_str(), strlen(currentDate.c_str()));
+
+			string url = "http://www.2sprout.com/missed/";
+			string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
+			string packetsToReplace;
+
 			int x;
-			stringstream out;
 			if (numLostPackets < 10)
 			{
 				for(x = 0; x < numLostPackets; x++)
 				{	
-					out.clear();
-					out << packetsMissedDay2[x];
-					url.append(out.str());
-					if(x != (numLostPackets - 1))
-					{
-						url.append("^");	
-					}
+				  char convertBuf[128];
+				  snprintf(convertBuf, sizeof(convertBuf), "%d", packets[x]);
+
+				  packetsToReplace.append(convertBuf);
+				  bzero(convertBuf, sizeof(convertBuf));
+				  if(x != (numLostPackets - 1))
+				  {
+			       		packetsToReplace.append("^");	
+				  }
 				}
+				
+				
+				//string packetsEncoded = base64_encode((const unsigned char*) post.c_str(), strlen(post.c_str()));
+				
+				
+				cout << "Recieving missed packets via plaintext url: http://www.2sprout.com/missed/?ID=" << BroadcastingServer << "&date=" << currentDate << "&missed=" << post << endl;
+				cout << "Recieving missed packets via encoded url: " << url << endl;
+					
 					
 				//Call the url to get the missed packets
 				cout << "calling url: " << url << endl;
-				string html = getHtml(url);
-					
+				string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
+				
+				post += packetsEncoded;
+				string html = getHtml(url, post);
+                                cout << "recieved: " << html << endl;
+				logFile("Recieved Missing Packets");
 				//Tokenize the string based on newlines, since they can't
 				//exist cause the json will bark
 				string token;
@@ -560,12 +578,18 @@ void* replaceLostPacketsDay2(void *thread_arg)
 			else
 			{
 				int maxLost = 0;	
+				string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";;
+				string packetsToReplace;
 				for(x = 0; x < numLostPackets; x++)
 				{
 					if(maxLost == 10)
 					{
 						maxLost = 0;
-						string html = getHtml(url);	
+						
+		
+						string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
+						post += packetsEncoded;
+						string html = getHtml(url, packetsEncoded);	
 						#warning automatically tokenize and put data into proper queue 
 						string token;
 						istringstream iss(html);
@@ -573,22 +597,27 @@ void* replaceLostPacketsDay2(void *thread_arg)
 						{
 							//push the token
 							sproutFeed.push(token);
-						}		
-						url = "http://www.2sprout.com/missed/?ID=" + BroadcastingServer + "&date=" + nextDate + "&missed="; //reset the url
+						}
+						string url = "http://www.2sprout.com/missed/";
+						post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";						
 					}
 					else
 					{
-						out.clear();
-						out << packetsMissedDay2[x];
-						url.append(out.str());
-						if(x != (numLostPackets -1))
-						{
-							url.append("^");
-						}
-						maxLost++;
+					  char convertBuf[128];
+					  snprintf(convertBuf, sizeof(convertBuf), "%d", packets[x]);
+					  
+					  packetsToReplace.append(convertBuf);
+					  bzero(convertBuf, sizeof(convertBuf));
+					  if(x != (numLostPackets -1))
+					  {
+					      packetsToReplace.append("^");
+					  }
+					  maxLost++;
+                                              
 					}	
-				}				
+				}
 			}
+			
 		}
 		else
 		{
@@ -637,7 +666,6 @@ void* checkLostPackets(void *thread_arg)
 			pthread_mutex_lock(&mylock);
 			packetsRecieved.push_back(lastPacket);
 			pthread_mutex_unlock(&mylock);
-			int sizeOfVector = (int) packetsMissed.size();
 
 			//Check the recieved packets against what was missing
 			//Figure out which are the missing packets
@@ -689,36 +717,40 @@ void* replaceLostPackets(void *thread_arg)
 			string broadcastServerEncoded = base64_encode((const unsigned char*)BroadcastingServer.c_str(), strlen(BroadcastingServer.c_str()));
 			string dateEncoded = base64_encode((const unsigned char*) currentDate.c_str(), strlen(currentDate.c_str()));
 
-			string url = "http://www.2sprout.com/missed/?ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
-			string packetsMissedUrl;			
+			string url = "http://www.2sprout.com/missed/";
+			string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
+			string packetsToReplace;
+
 			int x;
 			if (numLostPackets < 10)
 			{
 				for(x = 0; x < numLostPackets; x++)
 				{	
-                                        char convertBuf[128];
-                                        snprintf(convertBuf, sizeof(convertBuf), "%d", packets[x]);
-                                        cout << convertBuf << endl;
+				  char convertBuf[128];
+				  snprintf(convertBuf, sizeof(convertBuf), "%d", packets[x]);
 
-                                        packetsMissedUrl.append(convertBuf);
-                                        bzero(convertBuf, sizeof(convertBuf));
-					if(x != (numLostPackets - 1))
-					{
-						packetsMissedUrl.append("^");	
-					}
+				  packetsToReplace.append(convertBuf);
+				  bzero(convertBuf, sizeof(convertBuf));
+				  if(x != (numLostPackets - 1))
+				  {
+			       		packetsToReplace.append("^");	
+				  }
 				}
 				
 				
-				string packetsEncoded = base64_encode((const unsigned char*) packetsMissedUrl.c_str(), strlen(packetsMissedUrl.c_str()));
-				url += packetsEncoded;
+				//string packetsEncoded = base64_encode((const unsigned char*) post.c_str(), strlen(post.c_str()));
 				
-				cout << "Recieving missed packets via plaintext url: http://www.2sprout.com/missed/?ID=" << BroadcastingServer << "&date=" << currentDate << "&missed=" << packetsMissedUrl << endl;
+				
+				cout << "Recieving missed packets via plaintext url: http://www.2sprout.com/missed/?ID=" << BroadcastingServer << "&date=" << currentDate << "&missed=" << post << endl;
 				cout << "Recieving missed packets via encoded url: " << url << endl;
 					
 					
 				//Call the url to get the missed packets
 				cout << "calling url: " << url << endl;
-				string html = getHtml(url);
+				string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
+				
+				post += packetsEncoded;
+				string html = getHtml(url, post);
                                 cout << "recieved: " << html << endl;
 				logFile("Recieved Missing Packets");
 				//Tokenize the string based on newlines, since they can't
@@ -734,19 +766,18 @@ void* replaceLostPackets(void *thread_arg)
 			else
 			{
 				int maxLost = 0;	
-				string packetsMissedUrl;
-				
+				string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";;
+				string packetsToReplace;
 				for(x = 0; x < numLostPackets; x++)
 				{
 					if(maxLost == 10)
 					{
 						maxLost = 0;
 						
-					
-						url += packetsMissedUrl;
-						packetsMissedUrl.clear();
-						
-						string html = getHtml(url);	
+		
+						string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
+						post += packetsEncoded;
+						string html = getHtml(url, packetsEncoded);	
 						#warning automatically tokenize and put data into proper queue 
 						string token;
 						istringstream iss(html);
@@ -755,23 +786,22 @@ void* replaceLostPackets(void *thread_arg)
 							//push the token
 							sproutFeed.push(token);
 						}
-						string url = "http://www.2sprout.com/missed/?ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
-
-
-						
+						string url = "http://www.2sprout.com/missed/";
+						post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";						
 					}
 					else
 					{
-                                                /*
-                                                out.clear();
-						out << packetsMissed[x];
-						packetsMissedUrl.append(out.str());
-						if(x != (numLostPackets -1))
-						{
-							packetsMissedUrl.append("^");
-						}
-						maxLost++;
-                                                */
+					  char convertBuf[128];
+					  snprintf(convertBuf, sizeof(convertBuf), "%d", packets[x]);
+					  
+					  packetsToReplace.append(convertBuf);
+					  bzero(convertBuf, sizeof(convertBuf));
+					  if(x != (numLostPackets -1))
+					  {
+					      packetsToReplace.append("^");
+					  }
+					  maxLost++;
+                                              
 					}	
 				}				
 			}
@@ -800,9 +830,7 @@ void* insertToDb(void *thread_arg)
 		connectionString = "host=" + host + " port=" + port + " dbname=" + dbname + " user=" + user + " password=" + pass;
 		PGconn *Conn = PQconnectdb(connectionString.c_str());
 		PGresult* result;
-		int *error;
 		string Query;
-		int size;
 		string s = "";
 		
 		if (PQstatus(Conn) == CONNECTION_BAD)
@@ -924,6 +952,8 @@ void* insertToDb(void *thread_arg)
 		mysql_close(conn); //close the database connection
    	    mysql_library_end(); //stop using the library
 	}
+	
+	return NULL;
 }   
    
    
@@ -1020,7 +1050,7 @@ int readConfig(string path)
 					if(firstSub == "apiKey" && secoundSub != "")
 					{
 						apiKey = secoundSub;	
-						int i;
+						unsigned int i;
 						for (i = 0; i < apiKey.length(); i++)
 						{
 							if(isalnum(apiKey[i]) == 0)
@@ -1057,6 +1087,8 @@ int readConfig(string path)
 		printf("Cannot Open Configuration File\n");
 		exit(0);
 	}
+	
+	return NULL;
 }
 
 
@@ -1234,7 +1266,7 @@ bool registerClient()
 	bzero(Portbuffer, sizeof(Portbuffer));
 	string html = "";
 
-	html = getHtml(url);
+	html = getHtml(url,"");
 	
 	
 	string decoded = base64_decode(html);
@@ -1246,7 +1278,7 @@ bool registerClient()
 	value = XOR(decoded,key);
 	//find the number of "^"
 	int NumSpacesCount = 0;
-	int loop;
+	unsigned int loop;
 	
 	for(loop =0; loop < value.length(); loop++)
 	{
@@ -1289,6 +1321,8 @@ bool registerClient()
 		sleep(2);
 		registerClient();
 	}
+	
+	return NULL;
 }
 
 /*

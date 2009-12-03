@@ -30,7 +30,7 @@ calcCheckSum calculates the total sum of the ASCII characters recieved in the st
 
 int calcCheckSum(string str)
 {
-        int a; //Number of letters
+        unsigned int a; //Number of letters
 		int ASCII = 0;
         for(a = 0; a!=str.length(); ++a) /*Prints out each letter converted into a int value.*/
         {

@@ -27,7 +27,6 @@ bool testConnection(string databaseType, string host, string port, string dbname
 	{
 		string connectionString = "host=" + host + " port=" + port + " dbname=" + dbname + " user=" + user + " password=" + pass;
 		PGconn *Conn = PQconnectdb(connectionString.c_str());
-		PGresult* result;
 
 		if (PQstatus(Conn) == CONNECTION_BAD)
 	    {
@@ -65,4 +64,6 @@ bool testConnection(string databaseType, string host, string port, string dbname
 		
 		return true;	
 	}
+	
+	return false;
 }

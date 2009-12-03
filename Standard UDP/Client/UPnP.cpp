@@ -77,7 +77,6 @@ void setUPNP(char* port)
 	if( rootdescurl
 	  || (devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0)))
 	{
-		struct UPNPDev * device;
 		struct UPNPUrls urls;
 		struct IGDdatas data;
 		i = 1;

@@ -3,5 +3,4 @@
 
 using namespace std;
 
-string getHtml(string url);
-static int writer(char *data, size_t size, size_t nmemb,std::string *writerData);
+string getHtml(string url,string postFields);
