@@ -123,10 +123,15 @@ void catch_sigpipe(int sig_num);
 void* announce(void *thread_arg);
 int closeAnnounce();
 void* castListener(void *thread_arg);
-void* checkPacketReliability(void *thread_arg);
-void* checkLostPacketsDay2(void *thread_arg);
-void* replaceLostPacketsDay2(void *thread_arg);
-void* checkLostPackets(void *thread_arg);
+void *runLostPackets(void *thread_arg);
+void *runLostPacketsDay2(void *thread_arg);
+void *getLostPackets(void *thread_arg);
+void *getLostPacketsDay2(void *thread_arg);
+void checkLostPackets(int day);
+void replaceLostPackets(int day);
+
+
+
 void* insertToDb(void *thread_arg);
 int readConfig(string path);
 void* getFeed(void *thread_arg);

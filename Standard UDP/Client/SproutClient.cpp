@@ -15,12 +15,8 @@ API for passing into a user made application
 typedef struct msgbuf1 {
          long    mtype;
          char    mtext[MSGSZ];
-		 bool 	 fullMsg;
+         bool 	 fullMsg;
          } message_buf1;
-
-
-
-
 
 
 /*
@@ -33,7 +29,9 @@ void* announce(void *thread_arg)
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
 	
-	string url = "http://2sprout.com/refresh/" + port + "/" + apiKey + "/";
+	string url = "http://2sprout.com/refresh/";
+	string post = "ID=" + apiKey + "&port=" + port;
+	
 	port.clear();
 	bzero(Portbuffer, sizeof(Portbuffer));
 	string html = "";
@@ -43,7 +41,8 @@ void* announce(void *thread_arg)
 		logFile("Announcing Client To Server");
 		html.clear();
 		sleep(sleeptime);	
-		html = getHtml(url, "");
+		html = getHtml(url, post);
+		cout << html << endl;
 
 		//Convert the buffer from base64
  		string decoded = base64_decode(html);
@@ -303,9 +302,8 @@ void* checkPacketReliability(void *thread_arg)
 		pthread_mutex_lock(&mylock);
 		if(!unprocessedData.empty())
 		{
-
-			s.clear();
-			//start of critical section
+                    s.clear();
+                    //start of critical section
 		    s = unprocessedData.front();
 			cout << "PACKER RELIABILITY: " << s << endl;
 			unprocessedData.pop();
@@ -316,8 +314,7 @@ void* checkPacketReliability(void *thread_arg)
 			//Tokenize the string
 			istringstream iss(s);
 			int count1 = 0;
-			
-			
+				
 			while(getline(iss,token,'^'))
 			{
 				if(count1 < 4)
@@ -446,199 +443,35 @@ void* checkPacketReliability(void *thread_arg)
 
 
 
-
-void* checkLostPacketsDay2(void *thread_arg)
+void *runLostPackets(void *thread_arg)
 {
-	vector<int> tempVector;
-	while(1)
-	{
-		sleep(2);
-		int sizeOfRecieved = (int) packetsRecievedDay2.size();
-		if(sizeOfRecieved > 1)
-		{
-			//start of critical section
-			pthread_mutex_lock(&mylock);
-			tempVector = packetsRecievedDay2;
-			//end critial section
-			packetsRecievedDay2.clear();		
-			pthread_mutex_unlock(&mylock);
-			//sort the tempVector
-			sort(tempVector.begin(),tempVector.end());
-			int sizeOfTempVector = (int) tempVector.size();
+    checkLostPackets(1);
+}
 
-			/*
-				The Next two lines are for in in between recieving one section of packets
-				and recieving the next section some packets may be lost
-				say you recieved packets..1,2,3,4,7 and the missing packets were calculated
-				and then the next set came in as 9,10,11. This will catch the missing packets
-				between 7 and 9.
-			*/
+void *runLostPacketsDay2(void *thread_arg)
+{
+    checkLostPackets(2);
+}
 
-			int lastPacket = tempVector[sizeOfTempVector-1];
-			pthread_mutex_lock(&mylock);
-			packetsRecievedDay2.push_back(lastPacket);
-			pthread_mutex_unlock(&mylock);
+void *getLostPackets(void *thread_arg)
+{
+    replaceLostPackets(1);
+}
 
-			//Check the recieved packets against what was missing
-			//Figure out which are the missing packets
-			int sizeOfNewPackets = (int) tempVector.size();
-			cout << sizeOfNewPackets << endl;
-			int i;
-			int remainder;
-			for (i = 0; i < sizeOfNewPackets-1; i++)
-			{
-				remainder = tempVector[i+1] - tempVector[i];
-				if(( remainder != 1)) //if they are not sequential
-				{
-					int j;
-					for(j = 1; j < remainder; j ++)
-					{
-						//add these values to the missing packet vector
-						pthread_mutex_lock(&mylock);
-					 	packetsMissedDay2.push_back(tempVector[i] + j);
-						pthread_mutex_unlock(&mylock);	
-					}
-				}
-			}
-			tempVector.clear(); //empty this vector
-		}
-	}
-	
+void *getLostPacketsDay2(void *thread_arg)
+{
+    replaceLostPackets(2);
 }
 
 
-//packetsMissedDay2.empty()
-
-void* replaceLostPacketsDay2(void *thread_arg)
-{
-	while(1)
-	{
-		sleep(10);
-		pthread_mutex_lock(&mylock);
-		if(!packetsMissedDay2.empty())
-		{
-			logFile("Replace Packets Day 2: Notifying server of missing packets");
-			//Make a local copy of the vecotr
-			vector<int> packets = packetsMissedDay2;
-			logFile("Notifying Server Of Missed Packets");
-			printf("**********NOTIFYING SERVER OF MISSED PACKETS***********\n");
-			int numLostPackets = (int)packets.size();	
-			packetsMissedDay2.erase(packetsMissedDay2.begin(), packetsMissedDay2.begin()+numLostPackets); //clear out the vector
-			pthread_mutex_unlock(&mylock);
-			
-			string broadcastServerEncoded = base64_encode((const unsigned char*)BroadcastingServer.c_str(), strlen(BroadcastingServer.c_str()));
-			string dateEncoded = base64_encode((const unsigned char*) currentDate.c_str(), strlen(currentDate.c_str()));
-
-			string url = "http://www.2sprout.com/missed/";
-			string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
-			string packetsToReplace;
-
-			int x;
-			if (numLostPackets < 10)
-			{
-				for(x = 0; x < numLostPackets; x++)
-				{	
-				  char convertBuf[128];
-				  snprintf(convertBuf, sizeof(convertBuf), "%d", packets[x]);
-
-				  packetsToReplace.append(convertBuf);
-				  bzero(convertBuf, sizeof(convertBuf));
-				  if(x != (numLostPackets - 1))
-				  {
-			       		packetsToReplace.append("^");	
-				  }
-				}
-				
-				
-				//string packetsEncoded = base64_encode((const unsigned char*) post.c_str(), strlen(post.c_str()));
-				
-				
-				cout << "Recieving missed packets via plaintext url: http://www.2sprout.com/missed/?ID=" << BroadcastingServer << "&date=" << currentDate << "&missed=" << post << endl;
-				cout << "Recieving missed packets via encoded url: " << url << endl;
-					
-					
-				//Call the url to get the missed packets
-				cout << "calling url: " << url << endl;
-				string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
-				
-				post += packetsEncoded;
-				string html = getHtml(url, post);
-                                cout << "recieved: " << html << endl;
-				logFile("Recieved Missing Packets");
-				//Tokenize the string based on newlines, since they can't
-				//exist cause the json will bark
-				string token;
-				istringstream iss(html);
-				while(getline(iss,token,'\n'))
-				{
-					//push the token
-					sproutFeed.push(token);
-				}
-			}
-			else
-			{
-				int maxLost = 0;	
-				string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";;
-				string packetsToReplace;
-				for(x = 0; x < numLostPackets; x++)
-				{
-					if(maxLost == 10)
-					{
-						maxLost = 0;
-						
-		
-						string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
-						post += packetsEncoded;
-						string html = getHtml(url, packetsEncoded);	
-						#warning automatically tokenize and put data into proper queue 
-						string token;
-						istringstream iss(html);
-						while(getline(iss,token,'\n'))
-						{
-							//push the token
-							sproutFeed.push(token);
-						}
-						string url = "http://www.2sprout.com/missed/";
-						post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";						
-					}
-					else
-					{
-					  char convertBuf[128];
-					  snprintf(convertBuf, sizeof(convertBuf), "%d", packets[x]);
-					  
-					  packetsToReplace.append(convertBuf);
-					  bzero(convertBuf, sizeof(convertBuf));
-					  if(x != (numLostPackets -1))
-					  {
-					      packetsToReplace.append("^");
-					  }
-					  maxLost++;
-                                              
-					}	
-				}
-			}
-			
-		}
-		else
-		{
-			pthread_mutex_unlock(&mylock);
-		}
-	}	
-}
-
-
-
-
-
-
-void* checkLostPackets(void *thread_arg)
+void checkLostPackets(int day)
 {
 	vector<int> tempVector;
 	while(1)
 	{
 		sleep(2);
 		pthread_mutex_lock(&mylock);
-		int sizeOfRecieved = (int) packetsRecieved.size();
+                int sizeOfRecieved = (day == 1) ? (int) packetsRecieved.size() : packetsRecievedDay2.size();
 		pthread_mutex_unlock(&mylock);
 		
 		if(sizeOfRecieved > 1)
@@ -648,7 +481,14 @@ void* checkLostPackets(void *thread_arg)
 			pthread_mutex_lock(&mylock);
 			tempVector = packetsRecieved;
 			//end critial section
-			packetsRecieved.clear();		
+                        if(day==1)
+                        {
+                            packetsRecieved.clear();
+                        }
+                        else
+                        {
+                            packetsRecievedDay2.clear();
+                        }
 			pthread_mutex_unlock(&mylock);
 			//sort the tempVector
 			sort(tempVector.begin(),tempVector.end());
@@ -664,8 +504,15 @@ void* checkLostPackets(void *thread_arg)
 
 			int lastPacket = tempVector[sizeOfTempVector-1];
 			pthread_mutex_lock(&mylock);
-			packetsRecieved.push_back(lastPacket);
-			pthread_mutex_unlock(&mylock);
+                        if(day == 1)
+                        {
+                            packetsRecieved.push_back(lastPacket);
+                        }
+                        else
+                        {
+                            packetsRecievedDay2.push_back(lastPacket);
+                        }
+                        pthread_mutex_unlock(&mylock);
 
 			//Check the recieved packets against what was missing
 			//Figure out which are the missing packets
@@ -685,8 +532,15 @@ void* checkLostPackets(void *thread_arg)
 					{
 						//add these values to the missing packet vector
 						pthread_mutex_lock(&mylock);
-					 	packetsMissed.push_back(tempVector[i] + j);
-						pthread_mutex_unlock(&mylock);	
+                                                if(day == 1)
+                                                {
+                                                    packetsMissed.push_back(tempVector[i] + j);
+                                                }
+                                                else
+                                                {
+                                                    packetsMissedDay2.push_back(tempVector[i] + j);
+                                                }
+                                                pthread_mutex_unlock(&mylock);
 					}
 				}
 			}
@@ -697,22 +551,33 @@ void* checkLostPackets(void *thread_arg)
 
 
 
-void* replaceLostPackets(void *thread_arg)
+void replaceLostPackets(int day)
 {
 		
 	while(1)
 	{
 		sleep(10);
 		pthread_mutex_lock(&mylock);
-		if(!packetsMissed.empty())
+                int sizeOfMissed = (day == 1) ? (int) packetsMissed.size() : packetsMissedDay2.size();
+                pthread_mutex_unlock(&mylock);
+
+                if(sizeOfMissed > 0)
 		{
 			//Make a local copy of the vecotr
-			vector<int> packets = packetsMissed;
+                        pthread_mutex_lock(&mylock);
+                        vector<int> packets = (day == 1) ? packetsMissed : packetsMissedDay2;
 			logFile("Notifying Server Of Missed Packets");
 			printf("**********NOTIFYING SERVER OF MISSED PACKETS***********\n");
-			int numLostPackets = (int)packets.size();	
-			packetsMissed.erase(packetsMissed.begin(), packetsMissed.begin()+numLostPackets); //clear out the vector
-			pthread_mutex_unlock(&mylock);
+                        int numLostPackets = (int)packets.size();
+                        if(day == 1)
+                        {
+                            packetsMissed.erase(packetsMissed.begin(), packetsMissed.begin()+numLostPackets); //clear out the vector
+                        }
+                        else
+                        {
+                            packetsMissedDay2.erase(packetsMissedDay2.begin(), packetsMissedDay2.begin()+numLostPackets); //clear out the vector
+                        }
+                        pthread_mutex_unlock(&mylock);
 			
 			string broadcastServerEncoded = base64_encode((const unsigned char*)BroadcastingServer.c_str(), strlen(BroadcastingServer.c_str()));
 			string dateEncoded = base64_encode((const unsigned char*) currentDate.c_str(), strlen(currentDate.c_str()));
@@ -747,6 +612,7 @@ void* replaceLostPackets(void *thread_arg)
 					
 				//Call the url to get the missed packets
 				cout << "calling url: " << url << endl;
+                                cout << packetsToReplace << endl;
 				string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
 				
 				post += packetsEncoded;
@@ -765,8 +631,11 @@ void* replaceLostPackets(void *thread_arg)
 			}
 			else
 			{
+                                cout << "GREATER tHAN TEN" << endl;
 				int maxLost = 0;	
-				string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";;
+                                string url = "http://www.2sprout.com/missed/";
+
+                                string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
 				string packetsToReplace;
 				for(x = 0; x < numLostPackets; x++)
 				{
@@ -774,10 +643,14 @@ void* replaceLostPackets(void *thread_arg)
 					{
 						maxLost = 0;
 						
-		
+                                                cout << packetsToReplace << endl;
 						string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
-						post += packetsEncoded;
-						string html = getHtml(url, packetsEncoded);	
+                                                packetsToReplace.clear();
+                                                post += packetsEncoded;
+                                                cout << "POST " << post << endl;
+
+                                                string html = getHtml(url, post);
+                                                cout << "recieved: " << html << endl;
 						#warning automatically tokenize and put data into proper queue 
 						string token;
 						istringstream iss(html);
@@ -796,7 +669,7 @@ void* replaceLostPackets(void *thread_arg)
 					  
 					  packetsToReplace.append(convertBuf);
 					  bzero(convertBuf, sizeof(convertBuf));
-					  if(x != (numLostPackets -1))
+                                          if(maxLost != 9)
 					  {
 					      packetsToReplace.append("^");
 					  }
@@ -805,11 +678,6 @@ void* replaceLostPackets(void *thread_arg)
 					}	
 				}				
 			}
-		}
-		else
-		{
-			pthread_mutex_unlock(&mylock);
-			
 		}
 	}
 }
@@ -1261,13 +1129,14 @@ bool registerClient()
   	char Portbuffer[10];
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
-	string url = "http://2sprout.com/connect/" + port + "/" + apiKey + "/";
+	string url = "http://2sprout.com/connect/";
+	string post = "ID=" + apiKey + "&port=" + port;
+	
 	port.clear();
 	bzero(Portbuffer, sizeof(Portbuffer));
 	string html = "";
 
-	html = getHtml(url,"");
-	
+	html = getHtml(url, post);
 	
 	string decoded = base64_decode(html);
   	//XOR with the secret cypher
@@ -1504,10 +1373,10 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		pthread_create(&threads[2], NULL, insertToDb, NULL);		
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
-		pthread_create(&threads[4], NULL, checkLostPackets, NULL);
-		pthread_create(&threads[5], NULL, checkLostPacketsDay2, NULL);
-		pthread_create(&threads[6], NULL, replaceLostPackets, NULL);
-	 	pthread_create(&threads[7], NULL, replaceLostPacketsDay2, NULL);	
+                pthread_create(&threads[4], NULL, runLostPackets, NULL);
+                pthread_create(&threads[5], NULL, runLostPacketsDay2, NULL);
+                pthread_create(&threads[6], NULL, getLostPackets, NULL);
+                pthread_create(&threads[7], NULL, getLostPacketsDay2, NULL);
 	
 		for(i =0; i < 8; i++)
 		{
@@ -1529,10 +1398,10 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[0], NULL, announce, NULL);
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		pthread_create(&threads[2], NULL, checkPacketReliability, NULL);	
-		pthread_create(&threads[3], NULL, checkLostPackets, NULL);
-		pthread_create(&threads[4], NULL, checkLostPacketsDay2, NULL);
-		pthread_create(&threads[5], NULL, replaceLostPackets, NULL);
-		pthread_create(&threads[6], NULL, replaceLostPacketsDay2, NULL);
+                pthread_create(&threads[3], NULL, runLostPackets, NULL);
+                pthread_create(&threads[4], NULL, runLostPacketsDay2, NULL);
+                pthread_create(&threads[5], NULL, getLostPackets, NULL);
+                pthread_create(&threads[6], NULL, getLostPacketsDay2, NULL);
 		pthread_create(&threads[7], NULL, getFeed, NULL);
 		
 		for(i =0; i < 8; i++)
