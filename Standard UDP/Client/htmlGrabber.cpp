@@ -70,7 +70,6 @@ string getHtml(string url, string postFields)
 
 	if (postFields != "")
 	{
-		printf("POSTING\n");
 	  res = curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
 	  if (res != CURLE_OK)
 	  {

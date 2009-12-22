@@ -116,18 +116,15 @@ int closeAnnounce()
 	char Portbuffer[10];
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
-	string url = "http://2sprout.com/disconnect/" + port + "/" + apiKey + "/";
+	string url = "http://2sprout.com/disconnect/";
+	string post = "ID=" + apiKey + "&port=" + port;
 	port.clear();
 	bzero(Portbuffer, sizeof(Portbuffer));
-	curl = curl_easy_init();
-	if(curl)
-	{
-		curl_easy_setopt(curl,CURLOPT_URL, url.c_str());
-		res = curl_easy_perform(curl);
-		curl_easy_cleanup(curl);
-	}
-	
-	return 1;
+	string html = getHtml(url, post);
+	if(html == "")
+		return 1;
+	else
+		return 0;
 }
 
 
@@ -561,23 +558,23 @@ void replaceLostPackets(int day)
                 int sizeOfMissed = (day == 1) ? (int) packetsMissed.size() : packetsMissedDay2.size();
                 pthread_mutex_unlock(&mylock);
 
-                if(sizeOfMissed > 0)
+        if(sizeOfMissed > 0)
 		{
 			//Make a local copy of the vecotr
-                        pthread_mutex_lock(&mylock);
-                        vector<int> packets = (day == 1) ? packetsMissed : packetsMissedDay2;
+            pthread_mutex_lock(&mylock);
+            vector<int> packets = (day == 1) ? packetsMissed : packetsMissedDay2;
 			logFile("Notifying Server Of Missed Packets");
 			printf("**********NOTIFYING SERVER OF MISSED PACKETS***********\n");
-                        int numLostPackets = (int)packets.size();
-                        if(day == 1)
-                        {
-                            packetsMissed.erase(packetsMissed.begin(), packetsMissed.begin()+numLostPackets); //clear out the vector
-                        }
-                        else
-                        {
-                            packetsMissedDay2.erase(packetsMissedDay2.begin(), packetsMissedDay2.begin()+numLostPackets); //clear out the vector
-                        }
-                        pthread_mutex_unlock(&mylock);
+            int numLostPackets = (int)packets.size();
+            if(day == 1)
+            {
+            	packetsMissed.erase(packetsMissed.begin(), packetsMissed.begin()+numLostPackets); //clear out the vector
+            }
+            else
+            {
+            	packetsMissedDay2.erase(packetsMissedDay2.begin(), packetsMissedDay2.begin()+numLostPackets); //clear out the vector
+            }
+            pthread_mutex_unlock(&mylock);
 			
 			string broadcastServerEncoded = base64_encode((const unsigned char*)BroadcastingServer.c_str(), strlen(BroadcastingServer.c_str()));
 			string dateEncoded = base64_encode((const unsigned char*) currentDate.c_str(), strlen(currentDate.c_str()));
@@ -617,7 +614,7 @@ void replaceLostPackets(int day)
 				
 				post += packetsEncoded;
 				string html = getHtml(url, post);
-                                cout << "recieved: " << html << endl;
+                cout << "recieved: " << html << endl;
 				logFile("Recieved Missing Packets");
 				//Tokenize the string based on newlines, since they can't
 				//exist cause the json will bark
@@ -631,11 +628,11 @@ void replaceLostPackets(int day)
 			}
 			else
 			{
-                                cout << "GREATER tHAN TEN" << endl;
+                cout << "GREATER tHAN TEN" << endl;
 				int maxLost = 0;	
-                                string url = "http://www.2sprout.com/missed/";
+                string url = "http://www.2sprout.com/missed/";
 
-                                string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
+                string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
 				string packetsToReplace;
 				for(x = 0; x < numLostPackets; x++)
 				{
@@ -643,14 +640,14 @@ void replaceLostPackets(int day)
 					{
 						maxLost = 0;
 						
-                                                cout << packetsToReplace << endl;
+                        cout << packetsToReplace << endl;
 						string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
-                                                packetsToReplace.clear();
-                                                post += packetsEncoded;
-                                                cout << "POST " << post << endl;
+                        packetsToReplace.clear();
+                        post += packetsEncoded;
+                        cout << "POST " << post << endl;
 
-                                                string html = getHtml(url, post);
-                                                cout << "recieved: " << html << endl;
+                        string html = getHtml(url, post);
+                        cout << "recieved: " << html << endl;
 						#warning automatically tokenize and put data into proper queue 
 						string token;
 						istringstream iss(html);
@@ -659,7 +656,7 @@ void replaceLostPackets(int day)
 							//push the token
 							sproutFeed.push(token);
 						}
-						string url = "http://www.2sprout.com/missed/";
+					    url = "http://www.2sprout.com/missed/";
 						post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";						
 					}
 					else
@@ -669,14 +666,37 @@ void replaceLostPackets(int day)
 					  
 					  packetsToReplace.append(convertBuf);
 					  bzero(convertBuf, sizeof(convertBuf));
-                                          if(maxLost != 9)
+                      if(maxLost != 9)
 					  {
 					      packetsToReplace.append("^");
 					  }
-					  maxLost++;
-                                              
+					  maxLost++;                    
 					}	
-				}				
+				}
+				/*
+				Call the server for the final missing packets < 10
+				*/
+					cout << "PACKETS: ***********" << packetsToReplace << endl;
+					packetsToReplace = packetsToReplace.substr(0, packetsToReplace.size()-1);
+					cout << "PACKETS: ***********" << packetsToReplace << endl;
+					
+					string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
+                    packetsToReplace.clear();
+                    post += packetsEncoded;
+                    cout << "POST " << post << endl;
+
+                    string html = getHtml(url, post);
+                    cout << "recieved: " << html << endl;
+					#warning automatically tokenize and put data into proper queue 
+					string token;
+					istringstream iss(html);
+					while(getline(iss,token,'\n'))
+					{
+						//push the token
+						sproutFeed.push(token);
+					}
+					url = "http://www.2sprout.com/missed/";
+					post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";				
 			}
 		}
 	}

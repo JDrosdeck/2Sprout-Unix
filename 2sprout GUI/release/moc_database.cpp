@@ -1,16 +1,16 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'network.h'
+** Meta object code from reading C++ file 'database.h'
 **
-** Created: Wed Aug 12 14:56:33 2009
+** Created: Sun Dec 20 16:50:34 2009
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.6.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../network.h"
+#include "../database.h"
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'network.h' doesn't include <QObject>."
+#error "The header file 'database.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 62
 #error "This file was generated using the moc from 4.6.0. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -18,7 +18,7 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-static const uint qt_meta_data_Network[] = {
+static const uint qt_meta_data_Database[] = {
 
  // content:
        2,       // revision
@@ -30,44 +30,44 @@ static const uint qt_meta_data_Network[] = {
        0,    0, // constructors
 
  // slots: signature, parameters, type, tag, flags
-       9,    8,    8,    8, 0x08,
-      33,    8,    8,    8, 0x08,
+      10,    9,    9,    9, 0x08,
+      36,    9,    9,    9, 0x08,
 
        0        // eod
 };
 
-static const char qt_meta_stringdata_Network[] = {
-    "Network\0\0on_pushButton_clicked()\0"
-    "on_pushButton_2_clicked()\0"
+static const char qt_meta_stringdata_Database[] = {
+    "Database\0\0on_pushButton_2_clicked()\0"
+    "on_pushButton_3_clicked()\0"
 };
 
-const QMetaObject Network::staticMetaObject = {
-    { &QDialog::staticMetaObject, qt_meta_stringdata_Network,
-      qt_meta_data_Network, 0 }
+const QMetaObject Database::staticMetaObject = {
+    { &QDialog::staticMetaObject, qt_meta_stringdata_Database,
+      qt_meta_data_Database, 0 }
 };
 
-const QMetaObject *Network::metaObject() const
+const QMetaObject *Database::metaObject() const
 {
     return &staticMetaObject;
 }
 
-void *Network::qt_metacast(const char *_clname)
+void *Database::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_Network))
-        return static_cast<void*>(const_cast< Network*>(this));
+    if (!strcmp(_clname, qt_meta_stringdata_Database))
+        return static_cast<void*>(const_cast< Database*>(this));
     return QDialog::qt_metacast(_clname);
 }
 
-int Network::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int Database::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QDialog::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: on_pushButton_clicked(); break;
-        case 1: on_pushButton_2_clicked(); break;
+        case 0: on_pushButton_2_clicked(); break;
+        case 1: on_pushButton_3_clicked(); break;
         default: ;
         }
         _id -= 2;

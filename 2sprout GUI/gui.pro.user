@@ -26,7 +26,7 @@
  </data>
  <data>
   <variable>activebuildconfiguration</variable>
-  <value type="QString" >Debug</value>
+  <value type="QString" >Release</value>
  </data>
  <data>
   <variable>buildConfiguration-Debug</variable>
@@ -34,7 +34,7 @@
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
    <value key="QtVersionId" type="int" >3</value>
    <value key="addQDumper" type="" ></value>
-   <value key="buildDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/gui</value>
+   <value key="buildDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/2sprout/2sprout GUI</value>
   </valuemap>
  </data>
  <data>
@@ -43,6 +43,7 @@
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
    <value key="QtVersionId" type="int" >3</value>
    <value key="addQDumper" type="" ></value>
+   <value key="buildDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/2sprout/2sprout GUI</value>
   </valuemap>
  </data>
  <data>
@@ -56,22 +57,22 @@
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList" >
-    <value type="QString" >Apple_PubSub_Socket_Render=/tmp/launch-qXSQJZ/Render</value>
+    <value type="QString" >Apple_PubSub_Socket_Render=/tmp/launch-HHWDF3/Render</value>
     <value type="QString" >COMMAND_MODE=legacy</value>
-    <value type="QString" >DISPLAY=/tmp/launch-tOLVES/:0</value>
+    <value type="QString" >DISPLAY=/tmp/launch-1VcwMq/:0</value>
     <value type="QString" >HOME=/Users/jonathandrosdeck</value>
     <value type="QString" >LOGNAME=jonathandrosdeck</value>
     <value type="QString" >PATH=/usr/local/Trolltech/Qt-4.6.0/bin:/usr/bin:/bin:/usr/sbin:/sbin</value>
     <value type="QString" >QTDIR=/usr/local/Trolltech/Qt-4.6.0</value>
-    <value type="QString" >SECURITYSESSIONID=fa17f0</value>
+    <value type="QString" >SECURITYSESSIONID=1035f60</value>
     <value type="QString" >SHELL=/bin/bash</value>
-    <value type="QString" >SSH_AUTH_SOCK=/tmp/launch-aPpD03/Listeners</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/launch-Dl9kGN/Listeners</value>
     <value type="QString" >TMPDIR=/var/folders/hX/hXP2REKIH2qGgPN2gzwqu++++TI/-Tmp-/</value>
     <value type="QString" >USER=jonathandrosdeck</value>
     <value type="QString" >__CF_USER_TEXT_ENCODING=0x1F5:0:0</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList" >
-    <value type="QString" >/Users/jonathandrosdeck/Desktop/gui/gui.pro</value>
+    <value type="QString" >/Users/jonathandrosdeck/Desktop/2sprout/2sprout GUI/gui.pro</value>
     <value type="QString" >-spec</value>
     <value type="QString" >macx-g++</value>
     <value type="QString" >-r</value>
@@ -79,7 +80,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString" >/usr/local/Trolltech/Qt-4.6.0/bin/qmake</value>
    <value key="abstractProcess.enabled" type="bool" >false</value>
-   <value key="abstractProcess.workingDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/gui</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/2sprout/2sprout GUI</value>
    <value key="buildConfiguration" type="int" >10</value>
   </valuemap>
  </data>
@@ -88,16 +89,16 @@
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList" >
-    <value type="QString" >Apple_PubSub_Socket_Render=/tmp/launch-qXSQJZ/Render</value>
+    <value type="QString" >Apple_PubSub_Socket_Render=/tmp/launch-HHWDF3/Render</value>
     <value type="QString" >COMMAND_MODE=legacy</value>
-    <value type="QString" >DISPLAY=/tmp/launch-tOLVES/:0</value>
+    <value type="QString" >DISPLAY=/tmp/launch-1VcwMq/:0</value>
     <value type="QString" >HOME=/Users/jonathandrosdeck</value>
     <value type="QString" >LOGNAME=jonathandrosdeck</value>
     <value type="QString" >PATH=/usr/local/Trolltech/Qt-4.6.0/bin:/usr/bin:/bin:/usr/sbin:/sbin</value>
     <value type="QString" >QTDIR=/usr/local/Trolltech/Qt-4.6.0</value>
-    <value type="QString" >SECURITYSESSIONID=fa17f0</value>
+    <value type="QString" >SECURITYSESSIONID=1035f60</value>
     <value type="QString" >SHELL=/bin/bash</value>
-    <value type="QString" >SSH_AUTH_SOCK=/tmp/launch-aPpD03/Listeners</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/launch-Dl9kGN/Listeners</value>
     <value type="QString" >TMPDIR=/var/folders/hX/hXP2REKIH2qGgPN2gzwqu++++TI/-Tmp-/</value>
     <value type="QString" >USER=jonathandrosdeck</value>
     <value type="QString" >__CF_USER_TEXT_ENCODING=0x1F5:0:0</value>
@@ -108,7 +109,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString" >/usr/bin/make</value>
    <value key="abstractProcess.enabled" type="bool" >true</value>
-   <value key="abstractProcess.workingDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/gui</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/2sprout/2sprout GUI</value>
    <valuelist key="makeargs" type="QVariantList" >
     <value type="QString" >debug</value>
    </valuelist>
@@ -125,16 +126,16 @@
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList" >
-    <value type="QString" >Apple_PubSub_Socket_Render=/tmp/launch-qXSQJZ/Render</value>
+    <value type="QString" >Apple_PubSub_Socket_Render=/tmp/launch-HHWDF3/Render</value>
     <value type="QString" >COMMAND_MODE=legacy</value>
-    <value type="QString" >DISPLAY=/tmp/launch-tOLVES/:0</value>
+    <value type="QString" >DISPLAY=/tmp/launch-1VcwMq/:0</value>
     <value type="QString" >HOME=/Users/jonathandrosdeck</value>
     <value type="QString" >LOGNAME=jonathandrosdeck</value>
     <value type="QString" >PATH=/usr/local/Trolltech/Qt-4.6.0/bin:/usr/bin:/bin:/usr/sbin:/sbin</value>
     <value type="QString" >QTDIR=/usr/local/Trolltech/Qt-4.6.0</value>
-    <value type="QString" >SECURITYSESSIONID=fa17f0</value>
+    <value type="QString" >SECURITYSESSIONID=1035f60</value>
     <value type="QString" >SHELL=/bin/bash</value>
-    <value type="QString" >SSH_AUTH_SOCK=/tmp/launch-aPpD03/Listeners</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/launch-Dl9kGN/Listeners</value>
     <value type="QString" >TMPDIR=/var/folders/hX/hXP2REKIH2qGgPN2gzwqu++++TI/-Tmp-/</value>
     <value type="QString" >USER=jonathandrosdeck</value>
     <value type="QString" >__CF_USER_TEXT_ENCODING=0x1F5:0:0</value>
@@ -145,7 +146,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString" >/usr/bin/make</value>
    <value key="abstractProcess.enabled" type="bool" >true</value>
-   <value key="abstractProcess.workingDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/gui</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/2sprout/2sprout GUI</value>
   </valuemap>
  </data>
  <data>
@@ -158,6 +159,32 @@
   <variable>buildconfiguration-Release-buildstep1</variable>
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >Apple_PubSub_Socket_Render=/tmp/launch-HHWDF3/Render</value>
+    <value type="QString" >COMMAND_MODE=legacy</value>
+    <value type="QString" >DISPLAY=/tmp/launch-1VcwMq/:0</value>
+    <value type="QString" >HOME=/Users/jonathandrosdeck</value>
+    <value type="QString" >LOGNAME=jonathandrosdeck</value>
+    <value type="QString" >PATH=/usr/local/Trolltech/Qt-4.6.0/bin:/usr/bin:/bin:/usr/sbin:/sbin</value>
+    <value type="QString" >QTDIR=/usr/local/Trolltech/Qt-4.6.0</value>
+    <value type="QString" >SECURITYSESSIONID=1035f60</value>
+    <value type="QString" >SHELL=/bin/bash</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/launch-Dl9kGN/Listeners</value>
+    <value type="QString" >TMPDIR=/var/folders/hX/hXP2REKIH2qGgPN2gzwqu++++TI/-Tmp-/</value>
+    <value type="QString" >USER=jonathandrosdeck</value>
+    <value type="QString" >__CF_USER_TEXT_ENCODING=0x1F5:0:0</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >/Users/jonathandrosdeck/Desktop/2sprout/2sprout GUI/gui.pro</value>
+    <value type="QString" >-spec</value>
+    <value type="QString" >macx-g++</value>
+    <value type="QString" >-r</value>
+    <value type="QString" >CONFIG+=debug_and_release</value>
+    <value type="QString" >CONFIG+=release</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >/usr/local/Trolltech/Qt-4.6.0/bin/qmake</value>
+   <value key="abstractProcess.enabled" type="bool" >false</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/2sprout/2sprout GUI</value>
    <value key="buildConfiguration" type="int" >8</value>
   </valuemap>
  </data>
@@ -165,6 +192,28 @@
   <variable>buildconfiguration-Release-buildstep2</variable>
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >Apple_PubSub_Socket_Render=/tmp/launch-HHWDF3/Render</value>
+    <value type="QString" >COMMAND_MODE=legacy</value>
+    <value type="QString" >DISPLAY=/tmp/launch-1VcwMq/:0</value>
+    <value type="QString" >HOME=/Users/jonathandrosdeck</value>
+    <value type="QString" >LOGNAME=jonathandrosdeck</value>
+    <value type="QString" >PATH=/usr/local/Trolltech/Qt-4.6.0/bin:/usr/bin:/bin:/usr/sbin:/sbin</value>
+    <value type="QString" >QTDIR=/usr/local/Trolltech/Qt-4.6.0</value>
+    <value type="QString" >SECURITYSESSIONID=1035f60</value>
+    <value type="QString" >SHELL=/bin/bash</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/launch-Dl9kGN/Listeners</value>
+    <value type="QString" >TMPDIR=/var/folders/hX/hXP2REKIH2qGgPN2gzwqu++++TI/-Tmp-/</value>
+    <value type="QString" >USER=jonathandrosdeck</value>
+    <value type="QString" >__CF_USER_TEXT_ENCODING=0x1F5:0:0</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >release</value>
+    <value type="QString" >-w</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >/usr/bin/make</value>
+   <value key="abstractProcess.enabled" type="bool" >true</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/2sprout/2sprout GUI</value>
    <valuelist key="makeargs" type="QVariantList" >
     <value type="QString" >release</value>
    </valuelist>
@@ -180,6 +229,28 @@
   <variable>buildconfiguration-Release-cleanstep1</variable>
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >Apple_PubSub_Socket_Render=/tmp/launch-HHWDF3/Render</value>
+    <value type="QString" >COMMAND_MODE=legacy</value>
+    <value type="QString" >DISPLAY=/tmp/launch-1VcwMq/:0</value>
+    <value type="QString" >HOME=/Users/jonathandrosdeck</value>
+    <value type="QString" >LOGNAME=jonathandrosdeck</value>
+    <value type="QString" >PATH=/usr/local/Trolltech/Qt-4.6.0/bin:/usr/bin:/bin:/usr/sbin:/sbin</value>
+    <value type="QString" >QTDIR=/usr/local/Trolltech/Qt-4.6.0</value>
+    <value type="QString" >SECURITYSESSIONID=1035f60</value>
+    <value type="QString" >SHELL=/bin/bash</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/launch-Dl9kGN/Listeners</value>
+    <value type="QString" >TMPDIR=/var/folders/hX/hXP2REKIH2qGgPN2gzwqu++++TI/-Tmp-/</value>
+    <value type="QString" >USER=jonathandrosdeck</value>
+    <value type="QString" >__CF_USER_TEXT_ENCODING=0x1F5:0:0</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >clean</value>
+    <value type="QString" >-w</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >/usr/bin/make</value>
+   <value key="abstractProcess.enabled" type="bool" >true</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >/Users/jonathandrosdeck/Desktop/2sprout/2sprout GUI</value>
   </valuemap>
  </data>
  <data>

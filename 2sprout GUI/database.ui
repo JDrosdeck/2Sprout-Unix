@@ -26,7 +26,7 @@
    <string>Database</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="icons.qrc">
     <normaloff>:/icons/database_connect.png</normaloff>:/icons/database_connect.png</iconset>
   </property>
   <widget class="QGroupBox" name="groupBox_2">
@@ -281,6 +281,8 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

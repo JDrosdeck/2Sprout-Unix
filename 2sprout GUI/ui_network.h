@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'network.ui'
 **
-** Created: Wed Aug 12 14:56:26 2009
+** Created: Sun Dec 20 16:50:27 2009
 **      by: Qt User Interface Compiler version 4.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
