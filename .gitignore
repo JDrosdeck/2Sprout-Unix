@@ -1,4 +1,11 @@
+2Sprout
+minixmlvalid
+upnpc-static
+test
+api
+2sprout
 *.o
+*~
 *.a
 *.so
 *.pyc
