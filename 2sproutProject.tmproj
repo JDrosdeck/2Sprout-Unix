@@ -85,7 +85,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-12-22T23:36:25Z</date>
+					<date>2009-12-23T20:06:41Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -248,14 +248,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>5</integer>
+				<integer>7</integer>
 				<key>line</key>
-				<integer>679</integer>
+				<integer>3</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>665</integer>
+			<integer>0</integer>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
 		<dict>
@@ -392,7 +392,7 @@
 		<string>Standard UDP/Client/SproutClient.h</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
-	<true/>
+	<false/>
 	<key>windowFrame</key>
 	<string>{{256, 6}, {1107, 872}}</string>
 </dict>

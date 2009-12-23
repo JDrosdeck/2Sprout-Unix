@@ -50,7 +50,7 @@ void* announce(void *thread_arg)
 		string value(decoded);
 		string key(cipher);
 		value = XOR(decoded,key);
-		cout << value << endl;
+		//cout << value << endl;
 		
 		//parse the buffer Password^sleepTime
 		//find the number of "^"
@@ -94,16 +94,26 @@ void* announce(void *thread_arg)
 				updatedPassword = section[1];
 				pthread_mutex_unlock(&mylock);
 				
-				#warning todo: Check The Return value of atoi
-				sleeptime = atoi(section[2].c_str());	
+				sleeptime = atoi(section[2].c_str());
+				switch(sleeptime)
+				{
+					case 0:
+						sleeptime = 30;
+						break;
+					case INT_MAX:
+						sleeptime= 30;
+						break;
+					case INT_MIN:
+						sleeptime = 30;
+						break;
+					default:
+						break;
+				}
 			}
 		}
 	}
 	
 }
-
-//was
-
 
 /*
 This will allow users using the API to stop recieving packets. It relays a POST to the server containing its port number
@@ -111,8 +121,6 @@ it will then delete the proper value from the database based on the ip address i
 */
 int closeAnnounce()
 {
-	CURL *curl;
-	CURLcode res;
 	char Portbuffer[10];
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
@@ -555,8 +563,8 @@ void replaceLostPackets(int day)
 	{
 		sleep(10);
 		pthread_mutex_lock(&mylock);
-                int sizeOfMissed = (day == 1) ? (int) packetsMissed.size() : packetsMissedDay2.size();
-                pthread_mutex_unlock(&mylock);
+        int sizeOfMissed = (day == 1) ? (int) packetsMissed.size() : packetsMissedDay2.size();
+        pthread_mutex_unlock(&mylock);
 
         if(sizeOfMissed > 0)
 		{
@@ -648,7 +656,6 @@ void replaceLostPackets(int day)
 
                         string html = getHtml(url, post);
                         cout << "recieved: " << html << endl;
-						#warning automatically tokenize and put data into proper queue 
 						string token;
 						istringstream iss(html);
 						while(getline(iss,token,'\n'))
@@ -687,7 +694,6 @@ void replaceLostPackets(int day)
 
                     string html = getHtml(url, post);
                     cout << "recieved: " << html << endl;
-					#warning automatically tokenize and put data into proper queue 
 					string token;
 					istringstream iss(html);
 					while(getline(iss,token,'\n'))
@@ -822,7 +828,7 @@ void* insertToDb(void *thread_arg)
     			string mysqlQuery;
 		   
 				
-		  		unsigned long to_len = mysql_real_escape_string (conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()));	//use the built in mysql function to put in escape characters...if ther are any	
+		  		mysql_real_escape_string (conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()));	//use the built in mysql function to put in escape characters...if ther are any	
 				s.clear();
 				mysqlQuery = "INSERT INTO " + table + " ("+ col +") VALUES (\"" + escapedString.c_str() + "\");"; //actual creation of the sql statment
  				if(mysql_query(conn, mysqlQuery.c_str()) != 0)
@@ -1182,33 +1188,50 @@ bool registerClient()
 		sleep(2);
 		registerClient();
 	}
+	else
+	{
 		
-	string token;
-	string section[3];	
-	istringstream iss(value);
-	int count1 = 0;
-	while(getline(iss,token,'^'))
-	{
-		section[count1] = token;
-		count1++;
-	}
+		string token;
+		string section[3];	
+		istringstream iss(value);
+		int count1 = 0;
+		while(getline(iss,token,'^'))
+		{
+			section[count1] = token;
+			count1++;
+		}
 
-	if(section[0] != "" && section[1] != "" && section[2] != "")
-	{
-		cipher = section[0];
-		updatedPassword = section[1];
-		sleeptime = atoi(section[2].c_str());
-		cout << "Client Sucessfully registered" << endl;
-		cout << "cipher: " << cipher << endl;
-		cout << "updated Password" << updatedPassword << endl;
-		cout << sleeptime << endl;
-			       
-	}
-	else //just put in as a failsafe. It should never reach this point.
-	{
-		logFile("Register Client: Wrong input given; re-registering in 2 secounds");
-		sleep(2);
-		registerClient();
+		if(section[0] != "" && section[1] != "" && section[2] != "")
+		{
+			cipher = section[0];
+			updatedPassword = section[1];
+			sleeptime = atoi(section[2].c_str());
+			switch(sleeptime)
+			{
+				case 0:
+					sleeptime = 30;
+					break;
+				case INT_MAX:
+					sleeptime= 30;
+					break;
+				case INT_MIN:
+					sleeptime = 30;
+					break;
+				default:
+					break;
+			}
+
+			cout << "Client Sucessfully registered" << endl;
+			//cout << "cipher: " << cipher << endl;
+			//cout << "updated Password  << updatedPassword << endl;
+			//cout << sleeptime << endl;	       
+		}
+		else //just put in as a failsafe. It should never reach this point.
+		{
+			logFile("Register Client: Wrong input given; re-registering in 2 secounds");
+			sleep(2);
+			registerClient();
+		}
 	}
 	
 	return NULL;
