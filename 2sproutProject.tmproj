@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>2sprout API/sprout.cpp</string>
+	<string>Standard UDP/Client/SproutClient.cpp</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -79,13 +79,15 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/strOperations.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-11-29T18:15:21Z</date>
+					<date>2009-12-29T23:06:13Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-12-28T21:52:39Z</date>
+					<date>2009-12-29T23:06:31Z</date>
+					<key>selected</key>
+					<true/>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -227,33 +229,19 @@
 				<integer>0</integer>
 			</dict>
 		</dict>
-		<key>2sprout API/sprout.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>22</integer>
-				<key>line</key>
-				<integer>36</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>31</integer>
-		</dict>
 		<key>Standard UDP/Client/SproutClient.cpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>7</integer>
+				<integer>17</integer>
 				<key>line</key>
-				<integer>3</integer>
+				<integer>237</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1043</integer>
+			<integer>215</integer>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
 		<dict>
@@ -325,7 +313,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>18</integer>
 		</dict>
 		<key>Standard UDP/Client/strOperations.h</key>
 		<dict>
@@ -387,12 +375,12 @@
 	<key>openDocuments</key>
 	<array>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
-		<string>2sprout API/sprout.cpp</string>
+		<string>Standard UDP/Client/strOperations.cpp</string>
 		<string>Standard UDP/Client/SproutClient.h</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
-	<false/>
+	<true/>
 	<key>windowFrame</key>
-	<string>{{406, 6}, {1107, 872}}</string>
+	<string>{{241, 6}, {1107, 872}}</string>
 </dict>
 </plist>

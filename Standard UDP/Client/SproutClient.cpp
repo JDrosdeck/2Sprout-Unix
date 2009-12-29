@@ -235,10 +235,7 @@ void* castListener(void *thread_arg)
 				unprocessedData.push(value.substr(11,value.length()));
 				pthread_mutex_unlock(&mylock);
 				
-				passedKeys++;
-				logFile("CastListener: Secret Key Passed");
-				cout << "Secret Key Passed " << passedKeys << endl;
-				
+				passedKeys++;				
 				counter++;
 			}
 			else
