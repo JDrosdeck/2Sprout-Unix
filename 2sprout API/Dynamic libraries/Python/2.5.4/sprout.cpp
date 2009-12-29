@@ -34,7 +34,7 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 
 using namespace std;
 
-#define MSGSZ     10
+#define MSGSZ     1024
 
 typedef struct msgbuf1{
     long    mtype;
@@ -99,7 +99,7 @@ char * getSproutItem()
 				printf("Unable to recieve Message\n");	
 	    	}
 		}
-		if(rbuf.fullMsg == true)
+		if(rbuf.fullMsg == true) //this is to catch the very last bit of data that gets sent
 		{
 			completedMessage += rbuf.mtext;
 			bzero(rbuf.mtext, sizeof(rbuf.mtext));

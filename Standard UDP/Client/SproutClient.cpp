@@ -38,7 +38,6 @@ void* announce(void *thread_arg)
 	
 	while(1)
 	{
-		logFile("Announcing Client To Server");
 		html.clear();
 		sleep(sleeptime);	
 		html = getHtml(url, post);
@@ -65,7 +64,6 @@ void* announce(void *thread_arg)
 		}		
 		if(NumSpacesCount != 2)
 		{
-			logFile("Announce: Couldn't Recieve Update");
 			printf("Unable to retrieve update\n");
 			sleeptime = 2;
 		}
@@ -218,7 +216,6 @@ void* castListener(void *thread_arg)
 		if(numbytes < 5000 && unprocessedData.size() < 50000 && counter != 5)
 		{
    	    	string input = rawPacket;
-			cout << "recieved: " << input << endl;
 			bzero(rawPacket, sizeof(rawPacket));
 			numbytes = 0;
 			string decoded = base64_decode(input);
@@ -258,33 +255,24 @@ void* castListener(void *thread_arg)
 				if(value.substr(0,10) == oldPassword)
 				{
 					unprocessedData.push(value.substr(11,value.length()));
-					cout << "Old Value Pushed" << endl;
 					passedKeys++;
-					cout << "Secret Key Passed " << passedKeys << endl;
 				}
 				else
 				{
-					failedKeys++;
-					cout << "Secret Key Failed " << failedKeys << endl;
-					logFile("castListener: Secret Key Failed: " + failedKeys);
-					
-					cout << value.substr(0,10) << " " << oldPassword << endl;
+					failedKeys++;					
+					//cout << value.substr(0,10) << " " << oldPassword << endl;
 				}	
 			}
 						
 			input.clear();
 			value.clear();
 			decoded.clear();	
-			cout << "Passes: " << passedKeys << endl;
-			cout << "Fails: " << failedKeys << endl;
-			
-			
 			
 		}
 		if (counter == 5)
+		{
 			counter++;
-		cout << counter << endl;
-		
+		}		
    }
 	close(sockfd);
 }
@@ -307,10 +295,9 @@ void* checkPacketReliability(void *thread_arg)
 		pthread_mutex_lock(&mylock);
 		if(!unprocessedData.empty())
 		{
-                    s.clear();
-                    //start of critical section
+            s.clear();
+            //start of critical section
 		    s = unprocessedData.front();
-			cout << "PACKER RELIABILITY: " << s << endl;
 			unprocessedData.pop();
 			pthread_mutex_unlock(&mylock);
 			
@@ -337,7 +324,6 @@ void* checkPacketReliability(void *thread_arg)
 				
 				if(BroadcastingServer == "") //this is the first update
 				{
-					logFile("Packet Reliability: Updating Broadcasting Server");
 					cout << "Updating Broadcasting Server" << endl;
 					BroadcastingServer = section[2];
 				}
@@ -393,7 +379,6 @@ void* checkPacketReliability(void *thread_arg)
 					
 					//printf("new date found, current date being overwritten\n");
 					pthread_mutex_lock(&mylock);
-					logFile("packet reliability: New Date Found");
 					currentDate.clear();
 					currentDate = section[0];
 					packetsRecieved.push_back(atoi(section[1].c_str()));
@@ -429,7 +414,6 @@ void* checkPacketReliability(void *thread_arg)
 				//Add only the message to the sproutQueue
 				
 				pthread_mutex_lock(&mylock);
-				logFile("packet Reliability: Adding Packet To Vector of recieved packet Numbers");
 		 		sproutFeed.push(section[3]);
 				pthread_mutex_unlock(&mylock);
 			
@@ -476,24 +460,23 @@ void checkLostPackets(int day)
 	{
 		sleep(2);
 		pthread_mutex_lock(&mylock);
-                int sizeOfRecieved = (day == 1) ? (int) packetsRecieved.size() : packetsRecievedDay2.size();
+        int sizeOfRecieved = (day == 1) ? (int) packetsRecieved.size() : packetsRecievedDay2.size();
 		pthread_mutex_unlock(&mylock);
 		
 		if(sizeOfRecieved > 1)
 		{
-			logFile("Lost Packets: Calculating Lost Packets");
 			//start of critical section
 			pthread_mutex_lock(&mylock);
 			tempVector = packetsRecieved;
+            if(day==1)
+            {
+            	packetsRecieved.clear();
+            }
+            else
+            {
+            	packetsRecievedDay2.clear();
+            }
 			//end critial section
-                        if(day==1)
-                        {
-                            packetsRecieved.clear();
-                        }
-                        else
-                        {
-                            packetsRecievedDay2.clear();
-                        }
 			pthread_mutex_unlock(&mylock);
 			//sort the tempVector
 			sort(tempVector.begin(),tempVector.end());
@@ -509,43 +492,40 @@ void checkLostPackets(int day)
 
 			int lastPacket = tempVector[sizeOfTempVector-1];
 			pthread_mutex_lock(&mylock);
-                        if(day == 1)
-                        {
-                            packetsRecieved.push_back(lastPacket);
-                        }
-                        else
-                        {
-                            packetsRecievedDay2.push_back(lastPacket);
-                        }
-                        pthread_mutex_unlock(&mylock);
+            if(day == 1)
+            {
+            	packetsRecieved.push_back(lastPacket);
+            }
+            else
+            {
+            	packetsRecievedDay2.push_back(lastPacket);
+            }
+            pthread_mutex_unlock(&mylock);
 
 			//Check the recieved packets against what was missing
 			//Figure out which are the missing packets
 			int sizeOfNewPackets = (int) tempVector.size();
-			cout << sizeOfNewPackets << endl;
 			int i;
 			int remainder;
 			for (i = 0; i < sizeOfNewPackets-1; i++)
 			{
 				remainder = tempVector[i+1] - tempVector[i];
 				if(( remainder != 1)) //if they are not sequential
-				{
-					logFile("Missing Packets: Found Missing Packet");
-					
+				{					
 					int j;
 					for(j = 1; j < remainder; j ++)
 					{
 						//add these values to the missing packet vector
 						pthread_mutex_lock(&mylock);
-                                                if(day == 1)
-                                                {
-                                                    packetsMissed.push_back(tempVector[i] + j);
-                                                }
-                                                else
-                                                {
-                                                    packetsMissedDay2.push_back(tempVector[i] + j);
-                                                }
-                                                pthread_mutex_unlock(&mylock);
+                        if(day == 1)
+                        {
+                        	packetsMissed.push_back(tempVector[i] + j);
+                        }
+                        else
+                        {
+                        	packetsMissedDay2.push_back(tempVector[i] + j);
+                        }
+                        pthread_mutex_unlock(&mylock);
 					}
 				}
 			}
@@ -571,7 +551,6 @@ void replaceLostPackets(int day)
 			//Make a local copy of the vecotr
             pthread_mutex_lock(&mylock);
             vector<int> packets = (day == 1) ? packetsMissed : packetsMissedDay2;
-			logFile("Notifying Server Of Missed Packets");
 			printf("**********NOTIFYING SERVER OF MISSED PACKETS***********\n");
             int numLostPackets = (int)packets.size();
             if(day == 1)
@@ -605,25 +584,14 @@ void replaceLostPackets(int day)
 				  {
 			       		packetsToReplace.append("^");	
 				  }
-				}
-				
-				
-				//string packetsEncoded = base64_encode((const unsigned char*) post.c_str(), strlen(post.c_str()));
-				
-				
-				cout << "Recieving missed packets via plaintext url: http://www.2sprout.com/missed/?ID=" << BroadcastingServer << "&date=" << currentDate << "&missed=" << post << endl;
-				cout << "Recieving missed packets via encoded url: " << url << endl;
-					
+				}					
 					
 				//Call the url to get the missed packets
-				cout << "calling url: " << url << endl;
-                                cout << packetsToReplace << endl;
+                cout << packetsToReplace << endl;
 				string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
 				
 				post += packetsEncoded;
 				string html = getHtml(url, post);
-                cout << "recieved: " << html << endl;
-				logFile("Recieved Missing Packets");
 				//Tokenize the string based on newlines, since they can't
 				//exist cause the json will bark
 				string token;
@@ -758,17 +726,10 @@ void* insertToDb(void *thread_arg)
 				if (PQresultStatus(result) != PGRES_COMMAND_OK) 
 				{	
 					string error = PQerrorMessage(Conn);
-					logFile("Insert To DB: INSERT FAILED" + error);
 				    fprintf(stderr, "INSERT failed: %s", PQerrorMessage(Conn));			   
-				}
-				else
-				{
-					logFile("Insert To DB: Data Inserted");
-					cout << "Data Inserted" << endl;
 				}	
 				Query.clear();
 				PQclear(result);
-				logFile("Insert To DB: Clearing Query");
 			}
 			
 			else
@@ -999,7 +960,6 @@ the API.
 void* getFeed(void *thread_arg)
 {
 
-	logFile("API: Initializing API");
     int msgflg = IPC_CREAT | 0666;
     key_t key;
     message_buf1 sbuf;
@@ -1036,9 +996,7 @@ void* getFeed(void *thread_arg)
 				
 				while(s.size() > 1024)
 				{
-					logFile("API: Value to big to send in one take");
 					string toSend = s.substr(0,1024);
-					cout << "toSend: " << toSend << endl;
 					s = s.substr(1024,s.size());
 					cout << "s: " << s << endl;
 		  			sbuf.mtype = 1;
@@ -1058,8 +1016,6 @@ void* getFeed(void *thread_arg)
 					
 		  			sbuf.mtype = 1;
 					sbuf.fullMsg = true;
-					logFile("API: Sending: " + s + " Through API");
-					cout << "TRYING TO SEND= " << s << endl;
 					bzero(sbuf.mtext, sizeof(sbuf.mtext));
 		    		(void) strncpy(sbuf.mtext, s.c_str(), strlen(s.c_str()));
 		    		buf_length = strlen(sbuf.mtext) + 1;
@@ -1079,11 +1035,8 @@ void* getFeed(void *thread_arg)
 			}
 			else
 			{
-				logFile("API: Item Small enough to send in one take");
 				sbuf.mtype = 1;
 				sbuf.fullMsg = true;
-				logFile("API: Sending: " + s + " Through API");
-				cout << "TRYING TO SEND= " << s << endl;
 				bzero(sbuf.mtext, sizeof(sbuf.mtext));
 	    		(void) strncpy(sbuf.mtext, s.c_str(), strlen(s.c_str()));
 	    		buf_length = strlen(sbuf.mtext) + 1;
@@ -1150,8 +1103,6 @@ cipher, secretkey and wait time until it should refresh the keys
 
 bool registerClient()
 {
-
-	logFile("Registering Client");
   	char Portbuffer[10];
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
@@ -1162,8 +1113,9 @@ bool registerClient()
 	bzero(Portbuffer, sizeof(Portbuffer));
 	string html = "";
 
+	cout << "Contacting 2Sprout" << endl;
 	html = getHtml(url, post);
-	
+	cout << "Client Registerd" << endl;
 	string decoded = base64_decode(html);
   	//XOR with the secret cypher
 	string value(decoded);
@@ -1228,7 +1180,6 @@ bool registerClient()
 		}
 		else //just put in as a failsafe. It should never reach this point.
 		{
-			logFile("Register Client: Wrong input given; re-registering in 2 secounds");
 			sleep(2);
 			registerClient();
 		}
@@ -1252,7 +1203,6 @@ void showVersion()
 
 void registerSignals()
 {
-	logFile("registerSignals: Registering Signals");
 	signal(SIGINT, cleanup); //redirect the signal so that when you press ctrl+c it deletes the named pipes
 	signal(SIGTERM, cleanup);
 	signal(SIGKILL, cleanup);
@@ -1265,11 +1215,8 @@ void registerSignals()
 2sproutClient takes in two arguments in the following form [-p port_number] [-c configuration_path]
 */
 int main(int argc, char *argv[])
-{
-	logFile("Starting Client");
-	
-	registerSignals();
-	
+{	
+	registerSignals();	
 	string path = "/usr/local/etc/2sprout.conf";
 	/*
 	This will loop through the array of command line arguments searching for the preFix which is the -* and the 
