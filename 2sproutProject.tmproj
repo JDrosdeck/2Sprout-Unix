@@ -79,13 +79,13 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/strOperations.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-12-29T23:06:13Z</date>
+					<date>2010-01-01T19:47:08Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-12-29T23:06:31Z</date>
+					<date>2010-01-01T20:46:20Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -93,7 +93,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.h</string>
 					<key>lastUsed</key>
-					<date>2009-12-09T23:49:08Z</date>
+					<date>2010-01-01T19:47:08Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -234,44 +234,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>17</integer>
+				<integer>20</integer>
 				<key>line</key>
-				<integer>237</integer>
+				<integer>1035</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>215</integer>
-		</dict>
-		<key>Standard UDP/Client/SproutClient.h</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>25</integer>
-				<key>line</key>
-				<integer>115</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>93</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>115</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>116</integer>
-			</dict>
+			<integer>1027</integer>
 		</dict>
 		<key>Standard UDP/Client/UPnP.cpp</key>
 		<dict>
@@ -300,20 +270,6 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
-		</dict>
-		<key>Standard UDP/Client/strOperations.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>8</integer>
-				<key>line</key>
-				<integer>32</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>18</integer>
 		</dict>
 		<key>Standard UDP/Client/strOperations.h</key>
 		<dict>
@@ -375,12 +331,10 @@
 	<key>openDocuments</key>
 	<array>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
-		<string>Standard UDP/Client/strOperations.cpp</string>
-		<string>Standard UDP/Client/SproutClient.h</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{241, 6}, {1107, 872}}</string>
+	<string>{{334, 0}, {973, 878}}</string>
 </dict>
 </plist>

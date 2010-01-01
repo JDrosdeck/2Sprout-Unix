@@ -8,23 +8,6 @@
  * interface file instead. 
  * ----------------------------------------------------------------------------- */
 
-
-#ifdef __cplusplus
-template<class T> class SwigValueWrapper {
-    T *tt;
-public:
-    SwigValueWrapper() : tt(0) { }
-    SwigValueWrapper(const SwigValueWrapper<T>& rhs) : tt(new T(*rhs.tt)) { }
-    SwigValueWrapper(const T& t) : tt(new T(t)) { }
-    ~SwigValueWrapper() { delete tt; } 
-    SwigValueWrapper& operator=(const T& t) { delete tt; tt = new T(t); return *this; }
-    operator T&() const { return *tt; }
-    T *operator&() { return tt; }
-private:
-    SwigValueWrapper& operator=(const SwigValueWrapper<T>& rhs);
-};
-#endif
-
 /* -----------------------------------------------------------------------------
  *  This section contains generic SWIG labels for method/variable
  *  declarations/attributes, and other compiler dependent labels.
@@ -177,10 +160,10 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
   while (except_ptr->code != code && except_ptr->code)
     except_ptr++;
 
-  jenv->ExceptionClear();
-  excep = jenv->FindClass(except_ptr->java_exception);
+  (*jenv)->ExceptionClear(jenv);
+  excep = (*jenv)->FindClass(jenv, except_ptr->java_exception);
   if (excep)
-    jenv->ThrowNew(excep, msg);
+    (*jenv)->ThrowNew(jenv, excep, msg);
 }
 
 
@@ -203,7 +186,7 @@ SWIGEXPORT jstring JNICALL Java_sproutJNI_getSproutItem(JNIEnv *jenv, jclass jcl
   (void)jenv;
   (void)jcls;
   result = (char *)getSproutItem();
-  if(result) jresult = jenv->NewStringUTF((const char *)result);
+  if(result) jresult = (*jenv)->NewStringUTF(jenv, (const char *)result);
   return jresult;
 }
 

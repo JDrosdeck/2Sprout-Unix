@@ -9,23 +9,6 @@
  * ----------------------------------------------------------------------------- */
 
 #define SWIGRUBY
-
-#ifdef __cplusplus
-template<class T> class SwigValueWrapper {
-    T *tt;
-public:
-    SwigValueWrapper() : tt(0) { }
-    SwigValueWrapper(const SwigValueWrapper<T>& rhs) : tt(new T(*rhs.tt)) { }
-    SwigValueWrapper(const T& t) : tt(new T(t)) { }
-    ~SwigValueWrapper() { delete tt; } 
-    SwigValueWrapper& operator=(const T& t) { delete tt; tt = new T(t); return *this; }
-    operator T&() const { return *tt; }
-    T *operator&() { return tt; }
-private:
-    SwigValueWrapper& operator=(const SwigValueWrapper<T>& rhs);
-};
-#endif
-
 /* -----------------------------------------------------------------------------
  *  This section contains generic SWIG labels for method/variable
  *  declarations/attributes, and other compiler dependent labels.
@@ -1558,11 +1541,8 @@ static VALUE mSprout;
 #define SWIG_VERSION SWIGVERSION
 
 
-#define SWIG_as_voidptr(a) const_cast< void * >(static_cast< const void * >(a)) 
-#define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),reinterpret_cast< void** >(a)) 
-
-
-#include <stdexcept>
+#define SWIG_as_voidptr(a) (void *)((const void *)(a)) 
+#define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a)) 
 
 
 extern char* getSproutItem();
@@ -1588,9 +1568,9 @@ SWIG_FromCharPtrAndSize(const char* carray, size_t size)
     if (size > LONG_MAX) {
       swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
       return pchar_descriptor ? 
-	SWIG_NewPointerObj(const_cast< char * >(carray), pchar_descriptor, 0) : Qnil;
+	SWIG_NewPointerObj((char *)(carray), pchar_descriptor, 0) : Qnil;
     } else {
-      return rb_str_new(carray, static_cast< long >(size));
+      return rb_str_new(carray, (long)(size));
     }
   } else {
     return Qnil;
@@ -1882,6 +1862,6 @@ SWIGEXPORT void Init_sprout(void) {
   }
   
   SWIG_RubyInitializeTrackings();
-  rb_define_module_function(mSprout, "getSproutItem", VALUEFUNC(_wrap_getSproutItem), -1);
+  rb_define_module_function(mSprout, "getSproutItem", _wrap_getSproutItem, -1);
 }
 

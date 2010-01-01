@@ -15,7 +15,7 @@ API for passing into a user made application
 typedef struct msgbuf1 {
          long    mtype;
          char    mtext[MSGSZ];
-         bool 	 fullMsg;
+         int 	 fullMsg;
          } message_buf1;
 
 
@@ -997,7 +997,7 @@ void* getFeed(void *thread_arg)
 					s = s.substr(1024,s.size());
 					cout << "s: " << s << endl;
 		  			sbuf.mtype = 1;
-					sbuf.fullMsg = false;
+					sbuf.fullMsg = 0;
 					bzero(sbuf.mtext, sizeof(sbuf.mtext));
 		    		(void) strncpy(sbuf.mtext, toSend.c_str(), strlen(toSend.c_str()));
 		    		buf_length = strlen(sbuf.mtext) + 1;
@@ -1012,7 +1012,7 @@ void* getFeed(void *thread_arg)
 				{
 					
 		  			sbuf.mtype = 1;
-					sbuf.fullMsg = true;
+					sbuf.fullMsg = 1;
 					bzero(sbuf.mtext, sizeof(sbuf.mtext));
 		    		(void) strncpy(sbuf.mtext, s.c_str(), strlen(s.c_str()));
 		    		buf_length = strlen(sbuf.mtext) + 1;
@@ -1033,7 +1033,7 @@ void* getFeed(void *thread_arg)
 			else
 			{
 				sbuf.mtype = 1;
-				sbuf.fullMsg = true;
+				sbuf.fullMsg = 1;
 				bzero(sbuf.mtext, sizeof(sbuf.mtext));
 	    		(void) strncpy(sbuf.mtext, s.c_str(), strlen(s.c_str()));
 	    		buf_length = strlen(sbuf.mtext) + 1;

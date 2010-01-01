@@ -10,23 +10,6 @@
 
 #define SWIGPYTHON
 #define SWIG_PYTHON_DIRECTOR_NO_VTABLE
-
-#ifdef __cplusplus
-template<class T> class SwigValueWrapper {
-    T *tt;
-public:
-    SwigValueWrapper() : tt(0) { }
-    SwigValueWrapper(const SwigValueWrapper<T>& rhs) : tt(new T(*rhs.tt)) { }
-    SwigValueWrapper(const T& t) : tt(new T(t)) { }
-    ~SwigValueWrapper() { delete tt; } 
-    SwigValueWrapper& operator=(const T& t) { delete tt; tt = new T(t); return *this; }
-    operator T&() const { return *tt; }
-    T *operator&() { return tt; }
-private:
-    SwigValueWrapper& operator=(const SwigValueWrapper<T>& rhs);
-};
-#endif
-
 /* -----------------------------------------------------------------------------
  *  This section contains generic SWIG labels for method/variable
  *  declarations/attributes, and other compiler dependent labels.
@@ -2490,71 +2473,8 @@ static swig_module_info swig_module = {swig_types, 1, 0, 0, 0, 0};
 #define SWIG_VERSION SWIGVERSION
 
 
-#define SWIG_as_voidptr(a) const_cast< void * >(static_cast< const void * >(a)) 
-#define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),reinterpret_cast< void** >(a)) 
-
-
-#include <stdexcept>
-
-
-namespace swig {
-  class PyObject_ptr {
-  protected:
-    PyObject *_obj;
-
-  public:
-    PyObject_ptr() :_obj(0)
-    {
-    }
-
-    PyObject_ptr(const PyObject_ptr& item) : _obj(item._obj)
-    {
-      Py_XINCREF(_obj);      
-    }
-    
-    PyObject_ptr(PyObject *obj, bool initial_ref = true) :_obj(obj)
-    {
-      if (initial_ref) Py_XINCREF(_obj);
-    }
-    
-    PyObject_ptr & operator=(const PyObject_ptr& item) 
-    {
-      Py_XINCREF(item._obj);
-      Py_XDECREF(_obj);
-      _obj = item._obj;
-      return *this;      
-    }
-    
-    ~PyObject_ptr() 
-    {
-      Py_XDECREF(_obj);
-    }
-    
-    operator PyObject *() const
-    {
-      return _obj;
-    }
-
-    PyObject *operator->() const
-    {
-      return _obj;
-    }
-  };
-}
-
-
-namespace swig {
-  struct PyObject_var : PyObject_ptr {
-    PyObject_var(PyObject* obj = 0) : PyObject_ptr(obj, false) { }
-    
-    PyObject_var & operator = (PyObject* obj)
-    {
-      Py_XDECREF(_obj);
-      _obj = obj;
-      return *this;      
-    }
-  };
-}
+#define SWIG_as_voidptr(a) (void *)((const void *)(a)) 
+#define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a)) 
 
 
 extern char* getSproutItem();
@@ -2580,9 +2500,9 @@ SWIG_FromCharPtrAndSize(const char* carray, size_t size)
     if (size > INT_MAX) {
       swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
       return pchar_descriptor ? 
-	SWIG_NewPointerObj(const_cast< char * >(carray), pchar_descriptor, 0) : SWIG_Py_Void();
+	SWIG_NewPointerObj((char *)(carray), pchar_descriptor, 0) : SWIG_Py_Void();
     } else {
-      return PyString_FromStringAndSize(carray, static_cast< int >(size));
+      return PyString_FromStringAndSize(carray, (int)(size));
     }
   } else {
     return SWIG_Py_Void();

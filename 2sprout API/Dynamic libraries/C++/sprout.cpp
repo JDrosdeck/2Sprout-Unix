@@ -38,7 +38,7 @@ using namespace std;
 typedef struct msgbuf1{
     long    mtype;
     char    mtext[MSGSZ];
-	bool 	fullMsg;
+	int 	fullMsg;
 } message_buf1;
 
 
@@ -82,14 +82,14 @@ char * getSproutItem()
 		exit(1);
     }
 
-	if(rbuf.fullMsg == true)
+	if(rbuf.fullMsg == 1)
 	{
 		completedMessage = rbuf.mtext;
 	}
 
 	else
 	{
-		while(rbuf.fullMsg == false)
+		while(rbuf.fullMsg == 0)
 		{
 			completedMessage += rbuf.mtext;
 			bzero(rbuf.mtext, sizeof(rbuf.mtext));
@@ -98,7 +98,7 @@ char * getSproutItem()
 				printf("Unable to recieve Message\n");	
 	    	}
 		}
-		if(rbuf.fullMsg == true) //this is to catch the very last bit of data that gets sent
+		if(rbuf.fullMsg == 1) //this is to catch the very last bit of data that gets sent
 		{
 			completedMessage += rbuf.mtext;
 			bzero(rbuf.mtext, sizeof(rbuf.mtext));
@@ -107,7 +107,6 @@ char * getSproutItem()
 
 	char * message = (char *)malloc(sizeof(char) * strlen(completedMessage.c_str()));
 	message = strdup(completedMessage.c_str());
-	//return (char *)completedMessage.c_str();	
 	return message;
 }
 

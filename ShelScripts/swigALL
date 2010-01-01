@@ -1,35 +1,35 @@
 #!/bin/bash
 
 cd ~/Desktop/2sprout/2sprout\ API/
-cp sprout.cpp sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/2.5.4/
-cp sprout.cpp sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/2.6.2/
-cp sprout.cpp sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/3.0
-cp sprout.cpp sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/C#/
-cp sprout.cpp sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Java/
-cp sprout.cpp sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Ruby/
-cp sprout.cpp sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/C++/
+cp sprout.c sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/2.5.4/
+cp sprout.c sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/2.6.2/
+cp sprout.c sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/3.0
+cp sprout.c sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/C#/
+cp sprout.c sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Java/
+cp sprout.c sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Ruby/
+cp sprout.c sprout.h sprout.i ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/C++/
 
 
 
 
 cd ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/2.5.4/
-swig -c++ -python sprout.i
-g++ -c *.cpp sprout_wrap.cxx -I/usr/include/python2.5 -I/usr/lib/python2.5
-g++ -bundle -flat_namespace -undefined suppress -arch i386  -o _sprout.so *.o
+swig -python sprout.i
+gcc -c *.c sprout_wrap.c -I/usr/include/python2.5 -I/usr/lib/python2.5
+gcc -bundle -flat_namespace -undefined suppress -arch i386  -o _sprout.so *.o
 cp sprout.py _sprout.so ~/Desktop/2sprout/2sprout\ API/Test\ Applications/Python\ test\ app/2.5.4/
 
 
 cd ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Python/2.6.2/
-swig -c++ -python sprout.i
-g++ -c *.cpp sprout_wrap.cxx -I/usr/local/include/python2.6 -I/usr/local/lib/python2.6
-g++ -bundle -flat_namespace -undefined suppress -arch i386  -o _sprout.so *.o
+swig -python sprout.i
+gcc -c *.c sprout_wrap.c -I/usr/local/include/python2.6 -I/usr/local/lib/python2.6
+gcc -bundle -flat_namespace -undefined suppress -arch i386  -o _sprout.so *.o
 cp sprout.py _sprout.so ~/Desktop/2sprout/2sprout\ API/Test\ Applications/Python\ test\ app/2.6.2/
 
 
 cd ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/C#/
-swig -c++ -csharp sprout.i
-g++ -c -FPIC *.cpp sprout_wrap.cxx
-g++ -bundle -flat_namespace -undefined suppress -arch i386 *.o -o libsprout.so
+swig -csharp sprout.i
+gcc -FPIC *.c sprout_wrap.c
+gcc -bundle -flat_namespace -undefined suppress -arch i386 *.o -o libsprout.so
 cp sproutPINVOKE.cs sprout.cs libsprout.so ~/Desktop/2sprout/2sprout\ API/Test\ Applications/C#/
 cd ~/Desktop/2sprout/2sprout\ API/Test\ Applications/C#/ 
 mcs test.cs sprout.cs sproutPINVOKE.cs
@@ -37,23 +37,23 @@ mcs test.cs sprout.cs sproutPINVOKE.cs
 
 
 cd ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Java/
-swig -c++ -java sprout.i
-g++ -c -FPIC *.cpp
-g++ -c -FPIC sprout_wrap.cxx -I/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Headers 
-g++ -bundle -flat_namespace -undefined suppress -arch i386  -o libsprout.so *.o
+swig -java sprout.i
+gcc -c -FPIC *.c
+gcc -c -FPIC sprout_wrap.c -I/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Headers 
+gcc -bundle -flat_namespace -undefined suppress -arch i386  -o libsprout.so *.o
 cp sproutJNI.java sprout.java libsprout.so ~/Desktop/2sprout/2sprout\ API/Test\ Applications/Java/
 cd ~/Desktop/2sprout/2sprout\ API/Test\ Applications/Java/ 
 javac test.java sprout.java sproutJNI.java
 
 
-cd ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/C++/
-g++ -L/usr/local/2sprout/lib -lsprout -o api test.cpp 
-cp api sprout.h ~/Desktop/2sprout/2sprout\ API/Test\ Applications/C++\ test\ app/
+#cd ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/C++/
+#gcc -L/usr/local/2sprout/lib -lsprout -o api test.cpp 
+#cp api sprout.h ~/Desktop/2sprout/2sprout\ API/Test\ Applications/C++\ test\ app/
 
 
 cd ~/Desktop/2sprout/2sprout\ API/Dynamic\ libraries/Ruby/
-swig -c++ -ruby sprout.i
-g++ -c *.cpp sprout.h 
-g++ -FPIC -c sprout_wrap.cxx -I/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin9.0 
-g++ -bundle -flat_namespace -undefined suppress -arch i386 -lz *.o -o sprout.bundle
+swig -ruby sprout.i
+gcc -c *.c sprout.h 
+gcc -FPIC -c sprout_wrap.c -I/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin9.0 
+gcc -bundle -flat_namespace -undefined suppress -arch i386 -lz *.o -o sprout.bundle
 cp sprout.bundle ~/Desktop/2sprout/2sprout\ API/Test\ Applications/Ruby\ test\ app/

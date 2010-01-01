@@ -4,6 +4,7 @@ def get2sproutData()
   while 1
   s = Sprout.getSproutItem()
   print s
+  print "\n"
   end
 end
 
