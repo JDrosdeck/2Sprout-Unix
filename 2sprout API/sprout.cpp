@@ -105,7 +105,9 @@ char * getSproutItem()
 		}
 	}
 
-	return (char *)completedMessage.c_str();	
+	char * message = (char *)malloc(sizeof(char) * strlen(completedMessage.c_str()));
+	message = strdup(completedMessage.c_str());
+	return message;
 }
 
 

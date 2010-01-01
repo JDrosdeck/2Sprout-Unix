@@ -3,7 +3,6 @@ THIS IS AN UNPUBLISHED WORK CONTAINING 2SPROUT INC CONFIDENTIAL AND PROPRIETARY 
 DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTLY PROHIBITED.
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -106,7 +105,10 @@ char * getSproutItem()
 		}
 	}
 
-	return (char *)completedMessage.c_str();	
+	char * message = (char *)malloc(sizeof(char) * strlen(completedMessage.c_str()));
+	message = strdup(completedMessage.c_str());
+	//return (char *)completedMessage.c_str();	
+	return message;
 }
 
 
