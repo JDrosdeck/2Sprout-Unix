@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -51,20 +50,6 @@ Includes for mysql C library
 int MYPORT = 0;		//port which the client is bound to 
 
 bool useDatabase = true;
-
-/*
-Declarations for networking code
-*/
-
-/*
-char *ipAdd;
-int sockfd;
-struct sockaddr_in my_addr;    // my address information
-struct sockaddr_in their_addr; // connector's address information
-socklen_t addr_len;
-int numbytes;
-char buf[maxPipe];
-*/
 
 queue<string> sproutFeed; //this is the queue where the approved data is located
 queue<string> unprocessedData; //this is the queue for data that has yet been tested

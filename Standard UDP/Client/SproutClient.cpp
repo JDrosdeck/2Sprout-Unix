@@ -29,8 +29,8 @@ void* announce(void *thread_arg)
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
 	
-	string url = "http://2sprout.com/refresh/";
-	string post = "ID=" + apiKey + "&port=" + port;
+	string url = "http://2sprout.com/client/keepalive/" + port + "/" + apiKey + "/";
+	//string post = "ID=" + apiKey + "&port=" + port;
 	
 	port.clear();
 	bzero(Portbuffer, sizeof(Portbuffer));
@@ -40,7 +40,7 @@ void* announce(void *thread_arg)
 	{
 		html.clear();
 		sleep(sleeptime);	
-		html = getHtml(url, post);
+		html = getHtml(url, "");
 		cout << html << endl;
 
 		//Convert the buffer from base64
@@ -122,11 +122,11 @@ int closeAnnounce()
 	char Portbuffer[10];
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
-	string url = "http://2sprout.com/disconnect/";
-	string post = "ID=" + apiKey + "&port=" + port;
+	string url = "http://2sprout.com/disconnect/" + port + "/" + apiKey +"/";
+	//string post = "ID=" + apiKey + "&port=" + port;
 	port.clear();
 	bzero(Portbuffer, sizeof(Portbuffer));
-	string html = getHtml(url, post);
+	string html = getHtml(url, "");
 	if(html == "")
 		return 1;
 	else
@@ -226,6 +226,7 @@ void* castListener(void *thread_arg)
 			string key(cipher);
 			
 			value = XOR(decoded,key);
+			cout << value << endl;
 			
 			pthread_mutex_unlock(&mylock);
 						
@@ -290,10 +291,14 @@ void* checkPacketReliability(void *thread_arg)
 	while(1)
 	{
 		pthread_mutex_lock(&mylock);
-		if(!unprocessedData.empty())
+		int sizeOfUnprocessedData = unprocessedData.size();
+		pthread_mutex_unlock(&mylock);
+		
+		if(sizeOfUnprocessedData != 0)
 		{
             s.clear();
             //start of critical section
+			pthread_mutex_lock(&mylock);
 		    s = unprocessedData.front();
 			unprocessedData.pop();
 			pthread_mutex_unlock(&mylock);
@@ -418,7 +423,6 @@ void* checkPacketReliability(void *thread_arg)
 		}
 		else
 		{
-			pthread_mutex_unlock(&mylock);
 			if(usleep(1000) == -1)
 			{
 				printf("sleep failed\n");
@@ -475,6 +479,7 @@ void checkLostPackets(int day)
             }
 			//end critial section
 			pthread_mutex_unlock(&mylock);
+			
 			//sort the tempVector
 			sort(tempVector.begin(),tempVector.end());
 			int sizeOfTempVector = (int) tempVector.size();
@@ -703,9 +708,14 @@ void* insertToDb(void *thread_arg)
  		while(1)
  		{
 			pthread_mutex_lock(&mylock);
- 			if(!sproutFeed.empty())
+			int sizeOfSproutFeed = sproutFeed.size();
+			pthread_mutex_unlock(&mylock);
+			
+			
+ 			if(sizeOfSproutFeed != 0)
 	 		{
 				s.clear();
+				pthread_mutex_lock(&mylock);
 			    s = sproutFeed.front();
 				cout << "SproutFeed " << s << endl;
 				sproutFeed.pop();
@@ -731,14 +741,11 @@ void* insertToDb(void *thread_arg)
 			
 			else
 			{
-				pthread_mutex_unlock(&mylock);
 				if(usleep(1000) == -1)
 				{
 					printf("sleep failed\n");
 				}
 			}
-			
-			
 		}
 		PQfinish(Conn);
 		
@@ -771,16 +778,18 @@ void* insertToDb(void *thread_arg)
     
     	while(1)
  		{
- 			if(sproutFeed.empty())
- 			{
-				if(usleep(1000) == -1)
-				{
-					printf("Sleeping Error");
-				}
-			}
-			else//while the queue has items
+			pthread_mutex_lock(&mylock);
+			int sizeOfSproutFeed = sproutFeed.size();
+			pthread_mutex_unlock(&mylock);
+			
+ 			if(sizeOfSproutFeed != 0)
 			{
+				pthread_mutex_lock(&mylock);
 				string s = sproutFeed.front();
+				sproutFeed.pop();
+          		
+				pthread_mutex_unlock(&mylock);
+				
 				printf("read in: %s\n", s.c_str());
 		 		string escapedString;    
     			string mysqlQuery;
@@ -796,10 +805,14 @@ void* insertToDb(void *thread_arg)
           		}
           		
 				mysqlQuery.clear();
-          		sproutFeed.pop();
 			}
- 
-    
+			else
+			{
+				if(usleep(1000) == -1)
+				{
+					printf("sleeping Error\n");
+				}
+			}
 		}    
 		mysql_close(conn); //close the database connection
    	    mysql_library_end(); //stop using the library
@@ -993,9 +1006,10 @@ void* getFeed(void *thread_arg)
 				
 				while(s.size() > 1024)
 				{
+					cout << "GREATER THAN 1024" << endl;
 					string toSend = s.substr(0,1024);
-					s = s.substr(1024,s.size());
-					cout << "s: " << s << endl;
+					s = s.substr(1024, s.size());
+					//cout << "s: " << s << endl;
 		  			sbuf.mtype = 1;
 					sbuf.fullMsg = 0;
 					bzero(sbuf.mtext, sizeof(sbuf.mtext));
@@ -1008,13 +1022,14 @@ void* getFeed(void *thread_arg)
 		    		}
 	
 				}
-				if(s.size() < 1024)
+				if(s.size() <= 1024)
 				{
 					
 		  			sbuf.mtype = 1;
 					sbuf.fullMsg = 1;
 					bzero(sbuf.mtext, sizeof(sbuf.mtext));
-		    		(void) strncpy(sbuf.mtext, s.c_str(), strlen(s.c_str()));
+					char * stringToBuffer = (char *)s.c_str();
+		    		strncpy(sbuf.mtext, stringToBuffer, strlen(stringToBuffer));
 		    		buf_length = strlen(sbuf.mtext) + 1;
 	
 		    		if (msgsnd(msqid, &sbuf, sizeof(sbuf), false) < 0) 
@@ -1103,15 +1118,16 @@ bool registerClient()
   	char Portbuffer[10];
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
-	string url = "http://2sprout.com/connect/";
-	string post = "ID=" + apiKey + "&port=" + port;
+	string url = "http://2sprout.com/client/connect/" + port + "/" + apiKey + "/";
+	cout << url << endl;
+	//string post = "ID=" + apiKey + "&port=" + port;
 	
 	port.clear();
 	bzero(Portbuffer, sizeof(Portbuffer));
 	string html = "";
 
 	cout << "Contacting 2Sprout" << endl;
-	html = getHtml(url, post);
+	html = getHtml(url, "");
 	cout << "Client Registerd" << endl;
 	string decoded = base64_decode(html);
   	//XOR with the secret cypher
@@ -1121,6 +1137,7 @@ bool registerClient()
 	string key("2#sPr0uT5!");
 	value = XOR(decoded,key);
 	//find the number of "^"
+	cout << value << endl;
 	int NumSpacesCount = 0;
 	unsigned int loop;
 	
@@ -1360,10 +1377,10 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		pthread_create(&threads[2], NULL, insertToDb, NULL);		
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
-                pthread_create(&threads[4], NULL, runLostPackets, NULL);
-                pthread_create(&threads[5], NULL, runLostPacketsDay2, NULL);
-                pthread_create(&threads[6], NULL, getLostPackets, NULL);
-                pthread_create(&threads[7], NULL, getLostPacketsDay2, NULL);
+        pthread_create(&threads[4], NULL, runLostPackets, NULL);
+        pthread_create(&threads[5], NULL, runLostPacketsDay2, NULL);
+        pthread_create(&threads[6], NULL, getLostPackets, NULL);
+        pthread_create(&threads[7], NULL, getLostPacketsDay2, NULL);
 	
 		for(i =0; i < 8; i++)
 		{
@@ -1385,10 +1402,10 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[0], NULL, announce, NULL);
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		pthread_create(&threads[2], NULL, checkPacketReliability, NULL);	
-                pthread_create(&threads[3], NULL, runLostPackets, NULL);
-                pthread_create(&threads[4], NULL, runLostPacketsDay2, NULL);
-                pthread_create(&threads[5], NULL, getLostPackets, NULL);
-                pthread_create(&threads[6], NULL, getLostPacketsDay2, NULL);
+        pthread_create(&threads[3], NULL, runLostPackets, NULL);
+        pthread_create(&threads[4], NULL, runLostPacketsDay2, NULL);
+        pthread_create(&threads[5], NULL, getLostPackets, NULL);
+        pthread_create(&threads[6], NULL, getLostPacketsDay2, NULL);
 		pthread_create(&threads[7], NULL, getFeed, NULL);
 		
 		for(i =0; i < 8; i++)

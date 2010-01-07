@@ -85,7 +85,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2010-01-01T20:46:20Z</date>
+					<date>2010-01-07T19:55:18Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -93,7 +93,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.h</string>
 					<key>lastUsed</key>
-					<date>2010-01-01T19:47:08Z</date>
+					<date>2010-01-07T01:07:40Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -234,14 +234,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>20</integer>
+				<integer>30</integer>
 				<key>line</key>
-				<integer>1035</integer>
+				<integer>128</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1027</integer>
+			<integer>96</integer>
+		</dict>
+		<key>Standard UDP/Client/SproutClient.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>52</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>45</integer>
 		</dict>
 		<key>Standard UDP/Client/UPnP.cpp</key>
 		<dict>
@@ -330,11 +344,12 @@
 	</dict>
 	<key>openDocuments</key>
 	<array>
+		<string>Standard UDP/Client/SproutClient.h</string>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
-	<true/>
+	<false/>
 	<key>windowFrame</key>
-	<string>{{334, 0}, {973, 878}}</string>
+	<string>{{305, 0}, {973, 878}}</string>
 </dict>
 </plist>

@@ -174,7 +174,7 @@ void MainWindow::on_pushButton_clicked()
     connect(client, SIGNAL(readyReadStandardOutput()),
             this, SLOT(readSTDOut()));
 
-    client->start("2sproutClient",args);
+    client->start("2Sprout",args);
     if(client->isOpen())
     {
         ui->textEdit->append("Client Sucessfully Started");

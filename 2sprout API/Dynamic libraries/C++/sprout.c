@@ -34,7 +34,9 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 firstCatch is used to determine if the message was to big if this is the very first message of the set. This
 allows for the differention between a malloc and realloc.
 */
-int firstCatch = 0;
+
+char* completedMessage = NULL;
+char * message;
 
 typedef struct msgbuf1{
     long    mtype;
@@ -45,7 +47,6 @@ typedef struct msgbuf1{
 
 message_buf1  rbuf;
 
-char message[];
 /*
 2Sprout API getSproutItem()
 This function will return a char pointer to the next piece of data
@@ -54,7 +55,6 @@ This function will return a char pointer to the next piece of data
 char * getSproutItem()
 {
 	
-	bzero(message, strlen(message));
 	int msqid;
     key_t key;
 	int msgflg = 0666;
@@ -65,8 +65,8 @@ char * getSproutItem()
      * the server.
      */
     key = 5121;
+	int firstCatch = 0;
 	
-	char* completedMessage;
 	
     if ((msqid = msgget(key, msgflg)) < 0) {
 		printf("Unable to interact with Client. Is the client running?\n");
@@ -84,8 +84,10 @@ char * getSproutItem()
 
 	if(rbuf.fullMsg == 1)
 	{
-		completedMessage = (char *)malloc(sizeof(char) * strlen(rbuf.mtext)-1);
-		strncpy(completedMessage, rbuf.mtext, strlen(rbuf.mtext));
+		printf("FULL MESSAGE\n");
+		completedMessage = rbuf.mtext ;	
+		return completedMessage;
+		
 	}
 
 	else
@@ -95,15 +97,17 @@ char * getSproutItem()
 			if(firstCatch == 0)
 			{
 				firstCatch = 1;
-				completedMessage = (char *)malloc(sizeof(char) * strlen(rbuf.mtext)-1);
-				strncpy(completedMessage, rbuf.mtext, strlen(rbuf.mtext)-1);
+				completedMessage = (char *)malloc(sizeof(char) * strlen(rbuf.mtext));
+				printf("ALLOCATED MEMORY\n");
+				strncpy(completedMessage, rbuf.mtext, strlen(rbuf.mtext));
 			}
 			else
 			{
-				completedMessage = realloc(completedMessage, strlen(completedMessage) + strlen(rbuf.mtext));
+				printf("RE_ALLOCATING MEMORY\n\n\n\n");
+				completedMessage = (char *)realloc(completedMessage, strlen(completedMessage)+strlen(rbuf.mtext)*sizeof(char));
 				strncat(completedMessage, rbuf.mtext, strlen(rbuf.mtext));
 			}
-			bzero(rbuf.mtext, sizeof(rbuf.mtext));
+			
 			if (msgrcv(msqid, &rbuf, sizeof(rbuf), 1, 0) < 0) 
 			{
 				printf("Unable to recieve Message\n");	
@@ -111,17 +115,22 @@ char * getSproutItem()
 		}
 		if(rbuf.fullMsg == 1) //this is to catch the very last bit of data that gets sent
 		{
+			printf("RETRIVING FINAL BITS\n");
 			completedMessage = realloc(completedMessage, strlen(completedMessage) + strlen(rbuf.mtext));
 			strncat(completedMessage, rbuf.mtext, strlen(rbuf.mtext));
-			//completedMessage += rbuf.mtext;
-			bzero(rbuf.mtext, sizeof(rbuf.mtext));
 		}
+		
+		bzero(rbuf.mtext, sizeof(rbuf.mtext));
+		
 	}
 
-	    message[strlen(completedMessage)+1]; //we need to make sure we grab the /0 on the end
-		strncpy(message ,completedMessage, strlen(completedMessage)+1);
-		free (completedMessage);
-
+//	    message[strlen(completedMessage)+1]; //we need to make sure we grab the /0 on the end
+//		bzero(message, strlen(message));
+//		strncpy(message ,completedMessage, strlen(completedMessage)+1);
+	
+ 	message = strdup(completedMessage);
+	free(completedMessage);
+	
 	return message;
 }
 
