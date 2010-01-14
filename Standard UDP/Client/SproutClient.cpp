@@ -199,7 +199,6 @@ void* castListener(void *thread_arg)
 	
 	cout << "Waiting for updates.." << endl;
 
-	int counter = 0;
 	int passedKeys = 0;
 	int failedKeys =0;
  	while(1)
@@ -212,65 +211,63 @@ void* castListener(void *thread_arg)
    		}
 	         
     	rawPacket[numbytes] = '\0';
+		
 
-		if(numbytes < 5000 && unprocessedData.size() < 50000 && counter != 5)
+		if(numbytes < 5000 && unprocessedData.size() < 50000)
 		{
    	    	string input = rawPacket;
+			cout << input << endl;
 			bzero(rawPacket, sizeof(rawPacket));
 			numbytes = 0;
 			string decoded = base64_decode(input);
 			pthread_mutex_lock(&mylock);
-			
-			
 			string value(decoded);
 			string key(cipher);
-			
-			value = XOR(decoded,key);
-			cout << value << endl;
-			
+			value = XOR(decoded,key);			
 			pthread_mutex_unlock(&mylock);
-						
-			if(value.substr(0,10) == updatedPassword)
-			{
+					
+			if(value.size() > 10 && value.substr(0,10) == updatedPassword)
+			{	
+				cout << "Updated Key Passed" << endl;
 				pthread_mutex_lock(&mylock);
 				unprocessedData.push(value.substr(11,value.length()));
 				pthread_mutex_unlock(&mylock);
+				cout << value.substr(11,value.length()) << endl;
 				
 				passedKeys++;				
-				counter++;
 			}
 			else
 			{
-				
-				counter++;
 				value.clear();
 				key.clear();
 				pthread_mutex_lock(&mylock);
 				key = oldCipher;
 				value = XOR(decoded, key);
 				pthread_mutex_unlock(&mylock);
-				
-				if(value.substr(0,10) == oldPassword)
+				if(value.size() > 10 && value.substr(0,10) == oldPassword)
 				{
+					cout << "Old Password Passed " << oldPassword << endl;
+					pthread_mutex_lock(&mylock);
 					unprocessedData.push(value.substr(11,value.length()));
+					pthread_mutex_unlock(&mylock);
+					
+					cout << value.substr(11,value.length()) << endl;
 					passedKeys++;
 				}
 				else
 				{
+					cout << "KEY FAILED" << endl;
 					failedKeys++;					
 					//cout << value.substr(0,10) << " " << oldPassword << endl;
 				}	
 			}
+			
 						
 			input.clear();
 			value.clear();
 			decoded.clear();	
 			
-		}
-		if (counter == 5)
-		{
-			counter++;
-		}		
+		}	
    }
 	close(sockfd);
 }
@@ -311,7 +308,7 @@ void* checkPacketReliability(void *thread_arg)
 				
 			while(getline(iss,token,'^'))
 			{
-				if(count1 < 4)
+				if(count1 < 3)
 				{
 					section[count1] = token;
 				}
@@ -321,22 +318,8 @@ void* checkPacketReliability(void *thread_arg)
 		
 			iss.clear();
 			
-			if(section[0]  != "" && section[1] != "" && section[2] != "" && section[3] != "") //make sure we have all the parts
+			if(section[0]  != "" && section[1] != "" && section[2] != "") //make sure we have all the parts
 			{	
-				
-				if(BroadcastingServer == "") //this is the first update
-				{
-					cout << "Updating Broadcasting Server" << endl;
-					BroadcastingServer = section[2];
-				}
-				if(BroadcastingServer != section[2]) //we switched broadcasters, So contract 2sprout and retrieve all the missed packets for the previous broadcaster
-				{
-					/*
-					Contact the server and retrieve all lost updates
-					*/
-					
-					BroadcastingServer = section[2];
-				}
 				
 				if(currentDate == "")
 				{
@@ -416,7 +399,7 @@ void* checkPacketReliability(void *thread_arg)
 				//Add only the message to the sproutQueue
 				
 				pthread_mutex_lock(&mylock);
-		 		sproutFeed.push(section[3]);
+		 		sproutFeed.push(section[2]);
 				pthread_mutex_unlock(&mylock);
 			
 			}
@@ -565,11 +548,10 @@ void replaceLostPackets(int day)
             }
             pthread_mutex_unlock(&mylock);
 			
-			string broadcastServerEncoded = base64_encode((const unsigned char*)BroadcastingServer.c_str(), strlen(BroadcastingServer.c_str()));
 			string dateEncoded = base64_encode((const unsigned char*) currentDate.c_str(), strlen(currentDate.c_str()));
 
 			string url = "http://www.2sprout.com/missed/";
-			string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
+			string post = "date=" + dateEncoded + "&missed=";
 			string packetsToReplace;
 
 			int x;
@@ -610,7 +592,7 @@ void replaceLostPackets(int day)
 				int maxLost = 0;	
                 string url = "http://www.2sprout.com/missed/";
 
-                string post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";
+                string post = "date=" + dateEncoded + "&missed=";
 				string packetsToReplace;
 				for(x = 0; x < numLostPackets; x++)
 				{
@@ -634,7 +616,7 @@ void replaceLostPackets(int day)
 							sproutFeed.push(token);
 						}
 					    url = "http://www.2sprout.com/missed/";
-						post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";						
+						post ="date=" + dateEncoded + "&missed=";						
 					}
 					else
 					{
@@ -672,7 +654,7 @@ void replaceLostPackets(int day)
 						sproutFeed.push(token);
 					}
 					url = "http://www.2sprout.com/missed/";
-					post = "ID=" + broadcastServerEncoded + "&date=" + dateEncoded + "&missed=";				
+					post = "date=" + dateEncoded + "&missed=";				
 			}
 		}
 	}
@@ -1309,9 +1291,7 @@ int main(int argc, char *argv[])
 				{
 					cout << "Unable to connect to database. Please check configuration" << endl;
 					exit(1);
-				}
-				
-				
+				}		
 			}
 			
 		}
