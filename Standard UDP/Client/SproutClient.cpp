@@ -5,7 +5,14 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 */
 #include "SproutClient.h"
 
-
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <syslog.h>
 
 
 /*
@@ -576,19 +583,26 @@ void replaceLostPackets(int day)
 				
 				post += packetsEncoded;
 				string html = getHtml(url, post);
-				//Tokenize the string based on newlines, since they can't
-				//exist cause the json will bark
-				string token;
-				istringstream iss(html);
-				while(getline(iss,token,'\n'))
+				
+				//Check to make sure the server didn't error out
+				if(html.substr(0,15) == "Missed Packets:")
 				{
-					//push the token
-					sproutFeed.push(token);
+				
+					html = html.substr(16);
+					//Tokenize the string based on newlines, since they can't
+					//exist cause the json will bark
+					string token;
+					istringstream iss(html);
+					while(getline(iss,token,'\n'))
+					{
+						//push the token
+						sproutFeed.push(token);
+					}
 				}
 			}
 			else
 			{
-                cout << "GREATER tHAN TEN" << endl;
+                cout << "GREATER THAN TEN" << endl;
 				int maxLost = 0;	
                 string url = "http://www.2sprout.com/missed/";
 
@@ -1211,7 +1225,8 @@ void registerSignals()
 2sproutClient takes in two arguments in the following form [-p port_number] [-c configuration_path]
 */
 int main(int argc, char *argv[])
-{	
+{
+	
 	registerSignals();	
 	string path = "/usr/local/etc/2sprout.conf";
 	/*
@@ -1315,12 +1330,6 @@ int main(int argc, char *argv[])
 	
 	readConfig(path); 	//read the configuration file for database access.
 	
-	
-
-	
-	
-	
-	
 	if(useUPNP == "true")
 	{
 		char portBuffer[20];
@@ -1329,6 +1338,48 @@ int main(int argc, char *argv[])
 		memset(portBuffer, '\0', sizeof(portBuffer));
     
 	}
+	
+	
+	/* Our process ID and Session ID */
+	pid_t pid, sid;
+
+	/* Fork off the parent process */
+	pid = fork();
+	if (pid < 0) 
+	{
+		exit(EXIT_FAILURE);
+	}
+	/* If we got a good PID, then
+	we can exit the parent process. */
+	if (pid > 0) 
+	{
+		exit(EXIT_SUCCESS);
+	}
+
+	/* Change the file mode mask */
+	umask(0);
+
+	/* Open any logs here */        
+
+	/* Create a new SID for the child process */
+	sid = setsid();
+	if (sid < 0) 
+	{
+		/* Log the failure */
+	    exit(EXIT_FAILURE);
+	}
+
+	/* Change the current working directory */
+	if ((chdir("/")) < 0) 
+	{
+	 	/* Log the failure */
+	    exit(EXIT_FAILURE);
+	}
+
+	/* Close out the standard file descriptors */
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 	
 	
 	if(useDatabase == true)
