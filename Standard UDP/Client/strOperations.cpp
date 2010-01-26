@@ -24,6 +24,7 @@ string XOR(string value,string key)
     return retval;
 }
 
+
 /*
 calcCheckSum calculates the total sum of the ASCII characters recieved in the string
 */

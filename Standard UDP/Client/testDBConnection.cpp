@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <cstdlib>
@@ -16,7 +15,7 @@ Includes for mysql C library
 #include <my_global.h> 
 #include <my_sys.h> 
 #include <mysql.h>
-
+#include "log.h"
 
 using namespace std;
 
@@ -30,6 +29,7 @@ bool testConnection(string databaseType, string host, string port, string dbname
 
 		if (PQstatus(Conn) == CONNECTION_BAD)
 	    {
+			  logFile("Unable to connect to database (Postgresql)", "ERROR");
 	        fprintf(stderr,"Failed to connect to database\n");
 	        fprintf(stderr,"%s\n",PQerrorMessage(Conn));
 	        PQfinish(Conn);
@@ -43,6 +43,8 @@ bool testConnection(string databaseType, string host, string port, string dbname
 			printf("Detecting Tables\n");
 			if(PQresultStatus(result) != PGRES_TUPLES_OK)
 			{
+				logFile("Tuples not ok (Postgresql)", "ERROR");
+				
 				PQclear(result);
 			}
 			else
@@ -63,6 +65,7 @@ bool testConnection(string databaseType, string host, string port, string dbname
 					PGresult* colResult = PQexec(Conn, colExists.c_str());
 					if(PQresultStatus(colResult) != PGRES_TUPLES_OK)
 					{
+						logFile("Tuples not ok (Postgresql)", "ERROR");
 						PQclear(colResult);
 					}
 					else
@@ -104,6 +107,8 @@ bool testConnection(string databaseType, string host, string port, string dbname
  
     	if(mysql_real_connect(conn, (char *)host.c_str(), (char *)user.c_str(), (char *)pass.c_str(), (char *)dbname.c_str(), atoi(port.c_str()), NULL,0) == NULL)
     	{
+			logFile("Unable to connect to database (Mysql)", "ERROR");
+	
     		mysql_close(conn);
   	      mysql_library_end(); //stop using the library
 
@@ -131,10 +136,13 @@ bool testConnection(string databaseType, string host, string port, string dbname
 					printf("%s\n", createTableQuery.c_str());
 					if(mysql_real_query(conn, createTableQuery.c_str(), (unsigned int)strlen(createTableQuery.c_str())) == 0)
 					{
+						logFile("Table created successfully", "INFO");
+						
 						printf("Table created successfully\n");
 					}
 					else
 					{
+						logFile("Tuples not ok (Mysql)", "ERROR");
 						printf("failed to create table\n Error Code: %u\n Description: %s\n", mysql_errno(conn), mysql_error(conn));
 					}
 					
@@ -155,11 +163,19 @@ bool testConnection(string databaseType, string host, string port, string dbname
 					
 					if(mysql_real_query(conn, createdColumn.c_str(), (unsigned int)strlen(createdColumn.c_str())) == 0)
 					{
+						logFile("Table created successfully", "INFO");
+						
 						printf("Table created successfully\n");
 					}
 					else
 					{
+						
+						string errorDes = mysql_error(conn);
+						logFile("Failed to create table (Mysql) " + errorDes, "ERROR");
 						printf("failed to create table\n Error Code: %u\n Description: %s\n", mysql_errno(conn), mysql_error(conn));
+						mysql_close(conn); //close the database connection
+						mysql_library_end(); //stop using the library
+						return false;
 					}
 					if(mysql_real_query(conn, createdColumnID.c_str(), (unsigned int)strlen(createdColumnID.c_str())) == 0)
 					{
@@ -167,7 +183,12 @@ bool testConnection(string databaseType, string host, string port, string dbname
 					}
 					else
 					{
+						string errorDes = mysql_error(conn);
+						logFile("Failed to create table (Mysql)" + errorDes, "ERROR");
 						printf("failed to create table\n Error Code: %u\n Description: %s\n", mysql_errno(conn), mysql_error(conn));
+						mysql_close(conn); //close the database connection
+						mysql_library_end(); //stop using the library
+						return false;
 					}
 					
 				}
@@ -179,8 +200,6 @@ bool testConnection(string databaseType, string host, string port, string dbname
 			}
 			
 		}
-		
-		
 		mysql_close(conn); //close the database connection
 		mysql_library_end(); //stop using the library
 	   

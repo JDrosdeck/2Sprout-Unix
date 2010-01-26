@@ -15,8 +15,6 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <syslog.h>
 
 
-void writeLog(char * logMessage);
-
 /*
 Used for created a message for SYS V Message Queues, which is used for passing data from the client into the 
 API for passing into a user made application
@@ -26,6 +24,14 @@ typedef struct msgbuf1 {
          char    mtext[MSGSZ];
          int 	 fullMsg;
          } message_buf1;
+
+
+string deObsfucate(string encoded)
+{
+	string decoded = base64_decode(encoded);
+	//string unencrypted = XOR(decoded, "4hgjfdnghfj#@1()mvn&*#@");
+	return decoded;
+}
 
 
 /*
@@ -74,7 +80,6 @@ void* announce(void *thread_arg)
 		if(NumSpacesCount != 2)
 		{
 			printf("Unable to retrieve update\n");
-			writeLog("Unable to retrieve update\n");
 			sleeptime = 2;
 		}
 		else
@@ -120,7 +125,6 @@ void* announce(void *thread_arg)
 			}
 		}
 	}
-	
 }
 
 /*
@@ -180,7 +184,6 @@ void* castListener(void *thread_arg)
     hints.ai_flags = AI_PASSIVE; // use my IP
 
     if ((rv = getaddrinfo(NULL, Portbuffer, &hints, &servinfo)) != 0) {
-		writeLog("Unable to get addrInfo\n");
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
         exit(1);
     }
@@ -204,7 +207,6 @@ void* castListener(void *thread_arg)
 
     if (p == NULL) {
         fprintf(stderr, "listener: failed to bind socket\n");
-		writeLog("Failed To Bind Socket\n");
         exit(1);
     }
 	
@@ -218,7 +220,6 @@ void* castListener(void *thread_arg)
     	addr_len = sizeof their_addr;   		
     	if ((numbytes = recvfrom(sockfd, (void *) rawPacket, sizeof(rawPacket) , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
     	{
-			writeLog("recvfrom failed\n");
         	perror("recvfrom\n");
         	exit(1);
    		}
@@ -270,7 +271,6 @@ void* castListener(void *thread_arg)
 				{
 					cout << "KEY FAILED" << endl;
 					failedKeys++;	
-					writeLog("Key Failed\n");
 					//cout << value.substr(0,10) << " " << oldPassword << endl;
 				}	
 			}			
@@ -581,7 +581,7 @@ void replaceLostPackets(int day)
 				}					
 					
 				//Call the url to get the missed packets
-                cout << packetsToReplace << endl;
+            cout << packetsToReplace << endl;
 				string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
 				
 				post += packetsEncoded;
@@ -605,11 +605,11 @@ void replaceLostPackets(int day)
 			}
 			else
 			{
-                cout << "GREATER THAN TEN" << endl;
-				int maxLost = 0;	
-                string url = "http://www.2sprout.com/missed/";
-
-                string post = "date=" + dateEncoded + "&missed=";
+            cout << "GREATER THAN TEN" << endl;
+				int maxLost = 0;
+					
+            string url = "http://www.2sprout.com/missed/";
+            string post = "date=" + dateEncoded + "&missed=";
 				string packetsToReplace;
 				for(x = 0; x < numLostPackets; x++)
 				{
@@ -617,14 +617,13 @@ void replaceLostPackets(int day)
 					{
 						maxLost = 0;
 						
-                        cout << packetsToReplace << endl;
+                  cout << packetsToReplace << endl;
 						string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
-                        packetsToReplace.clear();
-                        post += packetsEncoded;
-                        cout << "POST " << post << endl;
-
-                        string html = getHtml(url, post);
-                        cout << "recieved: " << html << endl;
+                  packetsToReplace.clear();
+                  post += packetsEncoded;
+                  cout << "POST " << post << endl;
+                  string html = getHtml(url, post);
+                  cout << "recieved: " << html << endl;
 						string token;
 						istringstream iss(html);
 						while(getline(iss,token,'\n'))
@@ -657,12 +656,11 @@ void replaceLostPackets(int day)
 					cout << "PACKETS: ***********" << packetsToReplace << endl;
 					
 					string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
-                    packetsToReplace.clear();
-                    post += packetsEncoded;
-                    cout << "POST " << post << endl;
-
-                    string html = getHtml(url, post);
-                    cout << "recieved: " << html << endl;
+               packetsToReplace.clear();
+               post += packetsEncoded;
+               cout << "POST " << post << endl;
+               string html = getHtml(url, post);
+               cout << "recieved: " << html << endl;
 					string token;
 					istringstream iss(html);
 					while(getline(iss,token,'\n'))
@@ -698,6 +696,8 @@ void* insertToDb(void *thread_arg)
 		
 		if (PQstatus(Conn) == CONNECTION_BAD)
     	{
+			logFile("Unable to connect to database (Postgresql)", "ERROR");
+			
         	fprintf(stderr,"Failed to connect to database\n");
         	fprintf(stderr,"%s\n",PQerrorMessage(Conn));
         	PQfinish(Conn);
@@ -732,7 +732,9 @@ void* insertToDb(void *thread_arg)
 				if (PQresultStatus(result) != PGRES_COMMAND_OK) 
 				{	
 					string error = PQerrorMessage(Conn);
-				    fprintf(stderr, "INSERT failed: %s", PQerrorMessage(Conn));			   
+				   fprintf(stderr, "INSERT failed: %s", PQerrorMessage(Conn));
+					logFile("Insert Failed (Postgresql) " + error, "ERROR");
+					
 				}	
 				Query.clear();
 				PQclear(result);
@@ -743,6 +745,8 @@ void* insertToDb(void *thread_arg)
 				if(usleep(1000) == -1)
 				{
 					printf("sleep failed\n");
+					logFile("Unable to sleep", "ERROR");
+					
 				}
 			}
 		}
@@ -756,6 +760,8 @@ void* insertToDb(void *thread_arg)
 		
     	if (mysql_library_init(0,NULL,NULL))
 		{
+			logFile("Unable to initialize Mysql Library", "ERROR");
+			
 			cout << "Library init failed" << endl;
 			exit(1);
 		}
@@ -764,6 +770,7 @@ void* insertToDb(void *thread_arg)
 	
     	if(conn == NULL)
     	{
+			logFile("Mysql Initiation failed", "ERROR");
     		cout << "Mysql initiation failed" << endl;
     		exit(1);
     	}
@@ -771,6 +778,8 @@ void* insertToDb(void *thread_arg)
     	if(mysql_real_connect(conn, (char *)host.c_str(), (char *)user.c_str(), (char *)pass.c_str(), (char *)dbname.c_str(), atoi(port.c_str()), NULL,0) == NULL)
     	{
     		cout << "connection to server failed" << endl;
+			logFile("Unable to connect to server (Mysql)", "ERROR");
+
     		mysql_close(conn);
     		exit(1);
     	}
@@ -800,6 +809,7 @@ void* insertToDb(void *thread_arg)
  				if(mysql_real_query(conn, mysqlQuery.c_str(), (unsigned int)strlen(mysqlQuery.c_str())) != 0)
  		  		{
 					mysqlQuery.clear();
+					logFile("INSERT Failed (Mysql)", "ERROR");
  		   	   cout << "error query failed" << endl;
           	}
           		
@@ -942,12 +952,15 @@ int readConfig(string path)
 		
 		else if(numOfArgsFound != 11 )
 		{
+			logFile("Configuration file not formatted correctly", "ERROR");		
 			printf("Configuration File is not Formatted Correctly...Exiting\n");
 			exit(0);	
 		}
 	}
 	else
 	{
+		logFile("Unable to open configuration file", "ERROR");
+		
 		printf("Cannot Open Configuration File\n");
 		exit(0);
 	}
@@ -1054,6 +1067,7 @@ void* getFeed(void *thread_arg)
 
 	    		if (msgsnd(msqid, &sbuf, sizeof(sbuf), false) < 0) 
 				{
+						logFile("Unable to recieve message", "ERROR");
 	       			perror("msgsnd");
 	    		}	
 				else
@@ -1087,13 +1101,16 @@ void cleanup(int sig_num)
     /* re-set the signal handler again to catch_int, for next time */
 	void registerSignals();
 	unlink(sproutPipe);
+	logFile("Cleaning up", "INFO");
+	
 	printf("Cleaning Files\n");
-    fflush(stdout);
+   fflush(stdout);
 	closeAnnounce();
 	if(useDatabase == false)
 	{
 		if(msgctl(msqid, IPC_RMID, NULL) == 1) //Delete the Message Queue
 		{
+			logFile("Error closing message queue msgctl", "ERROR");
 			perror("Error closing message queue msgctl");
 		}
 	}
@@ -1117,7 +1134,10 @@ bool registerClient()
   	char Portbuffer[10];
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
+	
+	
 	string url = "http://2sprout.com/client/connect/" + port + "/" + apiKey + "/";
+	cout << "**********************" << endl;
 	cout << url << endl;
 	//string post = "ID=" + apiKey + "&port=" + port;
 	
@@ -1186,6 +1206,8 @@ bool registerClient()
 					break;
 			}
 
+			logFile("Client registerd", "INFO");
+			
 			cout << "Client Sucessfully registered" << endl;
 			//cout << "cipher: " << cipher << endl;
 			//cout << "updated Password  << updatedPassword << endl;
@@ -1224,23 +1246,29 @@ void registerSignals()
 	signal(SIGHUP, cleanup);
 }
 
-void writeLog(char * logMessage)
-{
-	FILE *file;
-	file = fopen("/etc/2sprout.log", "a+");
-	fprintf(file, logMessage);
-	fclose(file);	
-}
-
-
-
-
 
 /*
 2sproutClient takes in two arguments in the following form [-p port_number] [-c configuration_path]
 */
 int main(int argc, char *argv[])
 {
+	
+	
+/*
+	//string value = XOR("http://2sprout.com/client/connect/","4hgjfdnghffj#@1()mvn&*#@");
+	string encoded = base64_encode((const unsigned char*)"http://2sprout.com/client/connect/", strlen("http://2sprout.com/client/connect/"));
+	
+	cout << encoded << endl;
+	
+	string plainText = deObsfucate("aHR0cDovLzJzcHJvdXQuY29tL2NsaWVudC9jb25uZWN0Lw==");
+	cout << plainText << endl;
+	
+	exit(1);
+*/	
+	
+	
+	
+	
 	
 	
 	registerSignals();	
@@ -1343,8 +1371,10 @@ int main(int argc, char *argv[])
 	}
 	
 
+
 	
 	readConfig(path); 	//read the configuration file for database access.
+	logFile("Configuration SET", "INFO");
 	cout << "Configuration Set" << endl;
 	cout << "Starting 2Sprout daemon" << endl;
 	
@@ -1367,6 +1397,7 @@ int main(int argc, char *argv[])
 	pid = fork();
 	if (pid < 0) 
 	{
+		logFile("Unable to fork", "ERROR");
 		exit(EXIT_FAILURE);
 	}
 
@@ -1380,13 +1411,15 @@ int main(int argc, char *argv[])
 	sid = setsid();
 	if (sid < 0) 
 	{
-		writeLog("unable to get SID\n");
+		logFile("Unable to get session id", "ERROR");
+	
 	    exit(EXIT_FAILURE);
 	}
 
 	if ((chdir("/")) < 0) 
 	{
-		writeLog("Unable To Change current working directory\n");
+		logFile("Unable to change directory", "ERROR");
+	
 	    exit(EXIT_FAILURE);
 	}
 	*/
@@ -1410,6 +1443,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
+			logFile("Unable to connect to database. Check configuration", "ERROR");	
 			cout << "Unable to connect to database. Please check configuration" << endl;
 			exit(1);
 		}

@@ -13,7 +13,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/Makefile</string>
 					<key>lastUsed</key>
-					<date>2009-09-07T23:37:37Z</date>
+					<date>2010-01-26T17:52:31Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -25,13 +25,13 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/base64.h</string>
 					<key>lastUsed</key>
-					<date>2009-08-22T21:15:21Z</date>
+					<date>2010-01-26T15:27:59Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/base64.cpp</string>
 					<key>lastUsed</key>
-					<date>2009-08-22T02:11:26Z</date>
+					<date>2010-01-26T15:27:46Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -61,7 +61,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/testDBConnection.cpp</string>
 					<key>lastUsed</key>
-					<date>2010-01-25T21:13:01Z</date>
+					<date>2010-01-26T19:22:09Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -69,31 +69,43 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/testDBConnection.h</string>
 					<key>lastUsed</key>
-					<date>2009-08-31T04:37:33Z</date>
+					<date>2010-01-26T17:54:27Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/strOperations.h</string>
 					<key>lastUsed</key>
-					<date>2009-08-29T18:57:05Z</date>
+					<date>2010-01-26T17:54:09Z</date>
+				</dict>
+				<dict>
+					<key>filename</key>
+					<string>Standard UDP/Client/log.cpp</string>
+					<key>lastUsed</key>
+					<date>2010-01-26T17:54:30Z</date>
+				</dict>
+				<dict>
+					<key>filename</key>
+					<string>Standard UDP/Client/log.h</string>
+					<key>lastUsed</key>
+					<date>2010-01-26T17:54:26Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/strOperations.cpp</string>
 					<key>lastUsed</key>
-					<date>2010-01-01T19:47:08Z</date>
+					<date>2010-01-26T17:54:03Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2010-01-25T21:13:01Z</date>
+					<date>2010-01-26T17:53:45Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.h</string>
 					<key>lastUsed</key>
-					<date>2010-01-14T16:12:17Z</date>
+					<date>2010-01-26T17:53:51Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -229,34 +241,6 @@
 				<integer>0</integer>
 			</dict>
 		</dict>
-		<key>Standard UDP/Client/SproutClient.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>1412</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>1394</integer>
-		</dict>
-		<key>Standard UDP/Client/SproutClient.h</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>61</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>39</integer>
-		</dict>
 		<key>Standard UDP/Client/UPnP.cpp</key>
 		<dict>
 			<key>caret</key>
@@ -285,14 +269,72 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>Standard UDP/Client/strOperations.h</key>
+		<key>Standard UDP/Client/base64.cpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>23</integer>
+				<integer>26</integer>
 				<key>line</key>
-				<integer>4</integer>
+				<integer>13</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>3</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>46</integer>
+				<key>line</key>
+				<integer>13</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>26</integer>
+				<key>line</key>
+				<integer>13</integer>
+			</dict>
+		</dict>
+		<key>Standard UDP/Client/base64.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>48</integer>
+				<key>line</key>
+				<integer>3</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Standard UDP/Client/log.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>52</integer>
+				<key>line</key>
+				<integer>43</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>1</integer>
+		</dict>
+		<key>Standard UDP/Client/log.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>43</integer>
+				<key>line</key>
+				<integer>3</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -304,23 +346,23 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>70</integer>
+				<integer>5</integer>
 				<key>line</key>
-				<integer>40</integer>
+				<integer>144</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>27</integer>
+			<integer>0</integer>
 		</dict>
 		<key>Standard UDP/Client/testDBConnection.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>20</integer>
-				<key>line</key>
 				<integer>0</integer>
+				<key>line</key>
+				<integer>1</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -344,13 +386,14 @@
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>Standard UDP/Client/SproutClient.h</string>
-		<string>Standard UDP/Client/SproutClient.cpp</string>
 		<string>Standard UDP/Client/testDBConnection.cpp</string>
+		<string>Standard UDP/Client/log.h</string>
+		<string>Standard UDP/Client/testDBConnection.h</string>
+		<string>Standard UDP/Client/log.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{181, 15}, {1088, 813}}</string>
+	<string>{{226, 0}, {1133, 878}}</string>
 </dict>
 </plist>
