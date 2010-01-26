@@ -15,6 +15,8 @@ DISCLOSURE, USE, OR REPRODUCTION WITHOUT AUTHORIZATION OF 2SPROUT INC IS STRICTL
 #include <syslog.h>
 
 
+void writeLog(char * logMessage);
+
 /*
 Used for created a message for SYS V Message Queues, which is used for passing data from the client into the 
 API for passing into a user made application
@@ -72,6 +74,7 @@ void* announce(void *thread_arg)
 		if(NumSpacesCount != 2)
 		{
 			printf("Unable to retrieve update\n");
+			writeLog("Unable to retrieve update\n");
 			sleeptime = 2;
 		}
 		else
@@ -177,6 +180,7 @@ void* castListener(void *thread_arg)
     hints.ai_flags = AI_PASSIVE; // use my IP
 
     if ((rv = getaddrinfo(NULL, Portbuffer, &hints, &servinfo)) != 0) {
+		writeLog("Unable to get addrInfo\n");
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
         exit(1);
     }
@@ -200,6 +204,7 @@ void* castListener(void *thread_arg)
 
     if (p == NULL) {
         fprintf(stderr, "listener: failed to bind socket\n");
+		writeLog("Failed To Bind Socket\n");
         exit(1);
     }
 	
@@ -213,13 +218,13 @@ void* castListener(void *thread_arg)
     	addr_len = sizeof their_addr;   		
     	if ((numbytes = recvfrom(sockfd, (void *) rawPacket, sizeof(rawPacket) , 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
     	{
+			writeLog("recvfrom failed\n");
         	perror("recvfrom\n");
         	exit(1);
    		}
 	         
     	rawPacket[numbytes] = '\0';
 		
-
 		if(numbytes < 5000 && unprocessedData.size() < 50000)
 		{
    	    	string input = rawPacket;
@@ -264,12 +269,11 @@ void* castListener(void *thread_arg)
 				else
 				{
 					cout << "KEY FAILED" << endl;
-					failedKeys++;					
+					failedKeys++;	
+					writeLog("Key Failed\n");
 					//cout << value.substr(0,10) << " " << oldPassword << endl;
 				}	
-			}
-			
-						
+			}			
 			input.clear();
 			value.clear();
 			decoded.clear();	
@@ -529,8 +533,7 @@ void checkLostPackets(int day)
 
 
 void replaceLostPackets(int day)
-{
-		
+{		
 	while(1)
 	{
 		sleep(10);
@@ -794,11 +797,11 @@ void* insertToDb(void *thread_arg)
 		  		mysql_real_escape_string (conn, (char *)escapedString.c_str(), (char *)s.c_str(), strlen(s.c_str()));	//use the built in mysql function to put in escape characters...if ther are any	
 				s.clear();
 				mysqlQuery = "INSERT INTO " + table + " ("+ col +") VALUES (\"" + escapedString.c_str() + "\");"; //actual creation of the sql statment
- 				if(mysql_query(conn, mysqlQuery.c_str()) != 0)
+ 				if(mysql_real_query(conn, mysqlQuery.c_str(), (unsigned int)strlen(mysqlQuery.c_str())) != 0)
  		  		{
 					mysqlQuery.clear();
- 		   			cout << "error query failed" << endl;
-          		}
+ 		   	   cout << "error query failed" << endl;
+          	}
           		
 				mysqlQuery.clear();
 			}
@@ -1221,11 +1224,24 @@ void registerSignals()
 	signal(SIGHUP, cleanup);
 }
 
+void writeLog(char * logMessage)
+{
+	FILE *file;
+	file = fopen("/etc/2sprout.log", "a+");
+	fprintf(file, logMessage);
+	fclose(file);	
+}
+
+
+
+
+
 /*
 2sproutClient takes in two arguments in the following form [-p port_number] [-c configuration_path]
 */
 int main(int argc, char *argv[])
 {
+	
 	
 	registerSignals();	
 	string path = "/usr/local/etc/2sprout.conf";
@@ -1296,7 +1312,7 @@ int main(int argc, char *argv[])
 			if(preFix == "-d") //this is used for testing the database connection
 			{
 				readConfig(path);
-				bool ableToConnect = testConnection(database, host,port,dbname,user,pass);
+				bool ableToConnect = testConnection(database, host,port,dbname,user,pass, table, col);
 				if(ableToConnect == true)
 				{
 					cout <<"Database Connection Successful." << endl;
@@ -1329,6 +1345,9 @@ int main(int argc, char *argv[])
 
 	
 	readConfig(path); 	//read the configuration file for database access.
+	cout << "Configuration Set" << endl;
+	cout << "Starting 2Sprout daemon" << endl;
+	
 	
 	if(useUPNP == "true")
 	{
@@ -1341,53 +1360,50 @@ int main(int argc, char *argv[])
 	
 	
 	/* Our process ID and Session ID */
+/*	
+	
 	pid_t pid, sid;
 
-	/* Fork off the parent process */
 	pid = fork();
 	if (pid < 0) 
 	{
 		exit(EXIT_FAILURE);
 	}
-	/* If we got a good PID, then
-	we can exit the parent process. */
+
 	if (pid > 0) 
 	{
 		exit(EXIT_SUCCESS);
 	}
 
-	/* Change the file mode mask */
 	umask(0);
 
-	/* Open any logs here */        
-
-	/* Create a new SID for the child process */
 	sid = setsid();
 	if (sid < 0) 
 	{
-		/* Log the failure */
+		writeLog("unable to get SID\n");
 	    exit(EXIT_FAILURE);
 	}
 
-	/* Change the current working directory */
 	if ((chdir("/")) < 0) 
 	{
-	 	/* Log the failure */
+		writeLog("Unable To Change current working directory\n");
 	    exit(EXIT_FAILURE);
 	}
+	*/
 
 	/* Close out the standard file descriptors */
-	close(STDIN_FILENO);
-	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
+//	close(STDIN_FILENO);
+//	close(STDOUT_FILENO);
+//	close(STDERR_FILENO);
 	
 	
 	if(useDatabase == true)
     {	
 		//Test To make sure we can access the database
 
+		
 		cout << "Testing Database Configuration..." << endl;
-		bool ableToConnect = testConnection(database, host,port,dbname,user,pass);
+		bool ableToConnect = testConnection(database, host,port,dbname,user,pass, table,col);
 		if(ableToConnect == true)
 		{
 			cout <<"Database Connection Successful." << endl;
@@ -1408,10 +1424,10 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		pthread_create(&threads[2], NULL, insertToDb, NULL);		
 		pthread_create(&threads[3], NULL, checkPacketReliability, NULL);	
-        pthread_create(&threads[4], NULL, runLostPackets, NULL);
-        pthread_create(&threads[5], NULL, runLostPacketsDay2, NULL);
-        pthread_create(&threads[6], NULL, getLostPackets, NULL);
-        pthread_create(&threads[7], NULL, getLostPacketsDay2, NULL);
+      pthread_create(&threads[4], NULL, runLostPackets, NULL);
+      pthread_create(&threads[5], NULL, runLostPacketsDay2, NULL);
+      pthread_create(&threads[6], NULL, getLostPackets, NULL);
+      pthread_create(&threads[7], NULL, getLostPacketsDay2, NULL);
 	
 		for(i =0; i < 8; i++)
 		{
@@ -1433,10 +1449,10 @@ int main(int argc, char *argv[])
 		pthread_create(&threads[0], NULL, announce, NULL);
 		pthread_create(&threads[1], NULL, castListener, NULL);
 		pthread_create(&threads[2], NULL, checkPacketReliability, NULL);	
-        pthread_create(&threads[3], NULL, runLostPackets, NULL);
-        pthread_create(&threads[4], NULL, runLostPacketsDay2, NULL);
-        pthread_create(&threads[5], NULL, getLostPackets, NULL);
-        pthread_create(&threads[6], NULL, getLostPacketsDay2, NULL);
+      pthread_create(&threads[3], NULL, runLostPackets, NULL);
+      pthread_create(&threads[4], NULL, runLostPacketsDay2, NULL);
+      pthread_create(&threads[5], NULL, getLostPackets, NULL);
+      pthread_create(&threads[6], NULL, getLostPacketsDay2, NULL);
 		pthread_create(&threads[7], NULL, getFeed, NULL);
 		
 		for(i =0; i < 8; i++)

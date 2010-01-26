@@ -105,12 +105,6 @@ char * getSproutItem()
 		}
 	}
  
-	//char * message = (char *)malloc(sizeof(char) * strlen(completedMessage.c_str()));
-	//message = strdup(completedMessage.c_str());
-//	message = (char *)completedMessage.c_str();
-//	cout << completedMessage << endl;
-//	return (char *)completedMessage.c_str();	
-//	return message;
 	char * message = (char *)malloc(sizeof(char) * strlen(completedMessage.c_str()));
 	message = strdup(completedMessage.c_str());
 	return message;
