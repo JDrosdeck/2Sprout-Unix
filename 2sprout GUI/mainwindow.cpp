@@ -170,6 +170,7 @@ void MainWindow::on_pushButton_clicked()
     printf("%s", portArg.toStdString().c_str());
     args.append(portArg);
     args.append("-c/tmp/2sprout.conf");
+    args.append("-g");
 
     connect(client, SIGNAL(readyReadStandardOutput()),
             this, SLOT(readSTDOut()));

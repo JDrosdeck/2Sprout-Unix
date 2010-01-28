@@ -56,7 +56,7 @@ void* announce(void *thread_arg)
 		html.clear();
 		sleep(sleeptime);	
 		html = getHtml(url, "");
-		cout << html << endl;
+		//cout << html << endl;
 
 		//Convert the buffer from base64
  		string decoded = base64_decode(html);
@@ -179,37 +179,40 @@ void* castListener(void *thread_arg)
 	
 	
 	memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC; // set to AF_INET to force IPv4
-    hints.ai_socktype = SOCK_DGRAM;
-    hints.ai_flags = AI_PASSIVE; // use my IP
+   hints.ai_family = AF_UNSPEC; // set to AF_INET to force IPv4
+   hints.ai_socktype = SOCK_DGRAM;
+   hints.ai_flags = AI_PASSIVE; // use my IP
 
-    if ((rv = getaddrinfo(NULL, Portbuffer, &hints, &servinfo)) != 0) {
+   if ((rv = getaddrinfo(NULL, Portbuffer, &hints, &servinfo)) != 0) 
+	{
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
         exit(1);
-    }
+   }
 
-    // loop through all the results and bind to the first we can
-    for(p = servinfo; p != NULL; p = p->ai_next) {
-        if ((sockfd = socket(p->ai_family, p->ai_socktype,
-                p->ai_protocol)) == -1) {
-            perror("listener: socket");
-            continue;
-        }
+   // loop through all the results and bind to the first we can
+   for(p = servinfo; p != NULL; p = p->ai_next) 
+	{
+   	if ((sockfd = socket(p->ai_family, p->ai_socktype,p->ai_protocol)) == -1)
+ 		{
+      	perror("listener: socket");
+         continue;
+      }
 
-        if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-            close(sockfd);
-            perror("listener: bind");
-            continue;
-        }
+      if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) 
+		{
+      	close(sockfd);
+         perror("listener: bind");
+         continue;
+      }
 
         break;
-    }
+   }
 
-    if (p == NULL) {
-        fprintf(stderr, "listener: failed to bind socket\n");
-        exit(1);
-    }
-	
+   if (p == NULL)
+	{
+   	fprintf(stderr, "listener: failed to bind socket\n");
+      exit(1);
+   }
 	
 	cout << "Waiting for updates.." << endl;
 
@@ -222,14 +225,14 @@ void* castListener(void *thread_arg)
     	{
         	perror("recvfrom\n");
         	exit(1);
-   		}
+   	}
 	         
     	rawPacket[numbytes] = '\0';
 		
 		if(numbytes < 5000 && unprocessedData.size() < 50000)
 		{
-   	    	string input = rawPacket;
-			cout << input << endl;
+   	   string input = rawPacket;
+			//cout << input << endl;
 			bzero(rawPacket, sizeof(rawPacket));
 			numbytes = 0;
 			string decoded = base64_decode(input);
@@ -241,11 +244,11 @@ void* castListener(void *thread_arg)
 					
 			if(value.size() > 10 && value.substr(0,10) == updatedPassword)
 			{	
-				cout << "Updated Key Passed" << endl;
+				//cout << "Updated Key Passed" << endl;
 				pthread_mutex_lock(&mylock);
 				unprocessedData.push(value.substr(11,value.length()));
 				pthread_mutex_unlock(&mylock);
-				cout << value.substr(11,value.length()) << endl;
+				//cout << value.substr(11,value.length()) << endl;
 				
 				passedKeys++;				
 			}
@@ -259,17 +262,17 @@ void* castListener(void *thread_arg)
 				pthread_mutex_unlock(&mylock);
 				if(value.size() > 10 && value.substr(0,10) == oldPassword)
 				{
-					cout << "Old Password Passed " << oldPassword << endl;
+					//cout << "Old Password Passed " << oldPassword << endl;
 					pthread_mutex_lock(&mylock);
 					unprocessedData.push(value.substr(11,value.length()));
 					pthread_mutex_unlock(&mylock);
 					
-					cout << value.substr(11,value.length()) << endl;
+					//cout << value.substr(11,value.length()) << endl;
 					passedKeys++;
 				}
 				else
 				{
-					cout << "KEY FAILED" << endl;
+					//cout << "KEY FAILED" << endl;
 					failedKeys++;	
 					//cout << value.substr(0,10) << " " << oldPassword << endl;
 				}	
@@ -1018,7 +1021,6 @@ void* getFeed(void *thread_arg)
 				
 				while(s.size() > 1024)
 				{
-					cout << "GREATER THAN 1024" << endl;
 					string toSend = s.substr(0,1024);
 					s = s.substr(1024, s.size());
 					//cout << "s: " << s << endl;
@@ -1100,9 +1102,7 @@ void cleanup(int sig_num)
 {
     /* re-set the signal handler again to catch_int, for next time */
 	void registerSignals();
-	unlink(sproutPipe);
 	logFile("Cleaning up", "INFO");
-	
 	printf("Cleaning Files\n");
    fflush(stdout);
 	closeAnnounce();
@@ -1137,8 +1137,6 @@ bool registerClient()
 	
 	
 	string url = "http://2sprout.com/client/connect/" + port + "/" + apiKey + "/";
-	cout << "**********************" << endl;
-	cout << url << endl;
 	//string post = "ID=" + apiKey + "&port=" + port;
 	
 	port.clear();
@@ -1156,7 +1154,6 @@ bool registerClient()
 	string key("2#sPr0uT5!");
 	value = XOR(decoded,key);
 	//find the number of "^"
-	cout << value << endl;
 	int NumSpacesCount = 0;
 	unsigned int loop;
 	
@@ -1252,23 +1249,7 @@ void registerSignals()
 */
 int main(int argc, char *argv[])
 {
-	
-	
-/*
-	//string value = XOR("http://2sprout.com/client/connect/","4hgjfdnghffj#@1()mvn&*#@");
-	string encoded = base64_encode((const unsigned char*)"http://2sprout.com/client/connect/", strlen("http://2sprout.com/client/connect/"));
-	
-	cout << encoded << endl;
-	
-	string plainText = deObsfucate("aHR0cDovLzJzcHJvdXQuY29tL2NsaWVudC9jb25uZWN0Lw==");
-	cout << plainText << endl;
-	
-	exit(1);
-*/	
-	
-	
-	
-	
+	bool guiMode = false;
 	
 	
 	registerSignals();	
@@ -1288,7 +1269,7 @@ int main(int argc, char *argv[])
 			string preFix = input.substr(0,2);
 			string postFix = input.substr(2, strlen(input.c_str()));
 		
-			if(preFix != "-p" && preFix != "-c" && preFix != "-h" && preFix != "-v" && preFix != "-d")
+			if(preFix != "-p" && preFix != "-c" && preFix != "-h" && preFix != "-v" && preFix != "-d" && preFix != "-g")
 			{
 				printf("Unknown Option: %s\n", input.c_str());
 				showHelp();
@@ -1337,6 +1318,11 @@ int main(int argc, char *argv[])
 				showVersion();
 				exit(1);
 			}
+			if(preFix == "-g")
+			{
+				guiMode = true;
+			}
+			
 			if(preFix == "-d") //this is used for testing the database connection
 			{
 				readConfig(path);
@@ -1390,45 +1376,46 @@ int main(int argc, char *argv[])
 	
 	
 	/* Our process ID and Session ID */
-/*	
-	
-	pid_t pid, sid;
 
-	pid = fork();
-	if (pid < 0) 
+
+	if(guiMode == false)
 	{
-		logFile("Unable to fork", "ERROR");
-		exit(EXIT_FAILURE);
-	}
+		pid_t pid, sid;
 
-	if (pid > 0) 
-	{
-		exit(EXIT_SUCCESS);
-	}
+		pid = fork();
+		if (pid < 0) 
+		{
+			logFile("Unable to fork", "ERROR");
+			exit(EXIT_FAILURE);
+		}
 
-	umask(0);
+		if (pid > 0) 
+		{
+			exit(EXIT_SUCCESS);
+		}
 
-	sid = setsid();
-	if (sid < 0) 
-	{
-		logFile("Unable to get session id", "ERROR");
+		umask(0);
+
+		sid = setsid();
+		if (sid < 0) 
+		{
+			logFile("Unable to get session id", "ERROR");
+	   	exit(EXIT_FAILURE);
+		}
+
+		if ((chdir("/")) < 0) 
+		{		
+			logFile("Unable to change directory", "ERROR");
 	
-	    exit(EXIT_FAILURE);
-	}
-
-	if ((chdir("/")) < 0) 
-	{
-		logFile("Unable to change directory", "ERROR");
+	   	exit(EXIT_FAILURE);
+		}
 	
-	    exit(EXIT_FAILURE);
-	}
-	*/
 
-	/* Close out the standard file descriptors */
-//	close(STDIN_FILENO);
-//	close(STDOUT_FILENO);
-//	close(STDERR_FILENO);
-	
+		/* Close out the standard file descriptors */
+		close(STDIN_FILENO);
+		close(STDOUT_FILENO);
+		close(STDERR_FILENO);
+	}
 	
 	if(useDatabase == true)
     {	
