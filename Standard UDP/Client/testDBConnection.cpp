@@ -8,7 +8,6 @@ Includes for postgres C library
 #include <libpq-fe.h>
 #include <iomanip>
 
-
 /*
 Includes for mysql C library
 */
@@ -132,7 +131,7 @@ bool testConnection(string databaseType, string host, string port, string dbname
 				if(resultCount == 0) //The table does not exist
 				{
 					//create the table
-					string createTableQuery = "CREATE TABLE \`" + dbname + "\`.\`" + table + "\`(\`id\` INT NOT NULL AUTO_INCREMENT, \`" + col + "\` text NOT NULL, PRIMARY KEY (\`id\`)) CHARACTER SET utf8;";
+					string createTableQuery = "CREATE TABLE `" + dbname + "`.`" + table + "`(`id` INT NOT NULL AUTO_INCREMENT, `" + col + "` text NOT NULL, PRIMARY KEY (`id`)) CHARACTER SET utf8;";
 					printf("%s\n", createTableQuery.c_str());
 					if(mysql_real_query(conn, createTableQuery.c_str(), (unsigned int)strlen(createTableQuery.c_str())) == 0)
 					{
@@ -158,8 +157,8 @@ bool testConnection(string databaseType, string host, string port, string dbname
 				if(colResultCount == 0) //The Table exists but the column does not
 				{
 					
-					string createdColumn = "ALTER TABLE \`" + dbname +"\`.\`" + table + "\` ADD COLUMN \`" + col + "\` text NOT NULL;";
-					string createdColumnID = "ALTER TABLE \`" + dbname + "\`.\`" + table + "\` ADD COLUMN \`id\` INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (\`id\`);";
+					string createdColumn = "ALTER TABLE `" + dbname +"`.`" + table + "` ADD COLUMN `" + col + "` text NOT NULL;";
+					string createdColumnID = "ALTER TABLE `" + dbname + "`.`" + table + "` ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`);";
 					
 					if(mysql_real_query(conn, createdColumn.c_str(), (unsigned int)strlen(createdColumn.c_str())) == 0)
 					{
@@ -189,10 +188,8 @@ bool testConnection(string databaseType, string host, string port, string dbname
 						mysql_close(conn); //close the database connection
 						mysql_library_end(); //stop using the library
 						return false;
-					}
-					
+					}		
 				}
-				
 			}
 			else
 			{

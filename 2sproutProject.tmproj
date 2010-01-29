@@ -61,19 +61,19 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/testDBConnection.cpp</string>
 					<key>lastUsed</key>
-					<date>2010-01-26T20:34:26Z</date>
+					<date>2010-01-28T22:00:44Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/testDBConnection.h</string>
 					<key>lastUsed</key>
-					<date>2010-01-28T12:04:22Z</date>
+					<date>2010-01-28T22:00:47Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
 					<string>Standard UDP/Client/strOperations.h</string>
 					<key>lastUsed</key>
-					<date>2010-01-28T12:06:16Z</date>
+					<date>2010-01-28T22:00:45Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -97,7 +97,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2010-01-28T13:26:10Z</date>
+					<date>2010-01-28T22:10:47Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -111,7 +111,7 @@
 					<key>filename</key>
 					<string>pysock.py</string>
 					<key>lastUsed</key>
-					<date>2009-08-29T16:12:46Z</date>
+					<date>2010-01-28T21:13:40Z</date>
 				</dict>
 			</array>
 			<key>expanded</key>
@@ -246,14 +246,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>4</integer>
 				<key>line</key>
-				<integer>985</integer>
+				<integer>591</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>983</integer>
+			<integer>572</integer>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
 		<dict>
@@ -397,28 +397,42 @@
 			<key>firstVisibleLine</key>
 			<integer>2</integer>
 		</dict>
-		<key>Standard UDP/Client/testDBConnection.cpp</key>
+		<key>Standard UDP/Client/strOperations.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>3</integer>
+				<integer>23</integer>
 				<key>line</key>
-				<integer>201</integer>
+				<integer>4</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>pysock.py</key>
+		<key>Standard UDP/Client/testDBConnection.cpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>8</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>39</integer>
+				<integer>9</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>18</integer>
+		</dict>
+		<key>Standard UDP/Client/testDBConnection.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -429,10 +443,13 @@
 	<key>openDocuments</key>
 	<array>
 		<string>Standard UDP/Client/SproutClient.cpp</string>
+		<string>Standard UDP/Client/strOperations.h</string>
+		<string>Standard UDP/Client/testDBConnection.h</string>
+		<string>Standard UDP/Client/testDBConnection.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{154, 0}, {1133, 878}}</string>
+	<string>{{449, 0}, {1133, 878}}</string>
 </dict>
 </plist>

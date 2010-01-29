@@ -537,6 +537,7 @@ void checkLostPackets(int day)
 
 void replaceLostPackets(int day)
 {		
+	int maxReplace = 10;
 	while(1)
 	{
 		sleep(10);
@@ -549,7 +550,6 @@ void replaceLostPackets(int day)
 			//Make a local copy of the vecotr
             pthread_mutex_lock(&mylock);
             vector<int> packets = (day == 1) ? packetsMissed : packetsMissedDay2;
-			printf("**********NOTIFYING SERVER OF MISSED PACKETS***********\n");
             int numLostPackets = (int)packets.size();
             if(day == 1)
             {
@@ -568,7 +568,7 @@ void replaceLostPackets(int day)
 			string packetsToReplace;
 
 			int x;
-			if (numLostPackets < 10)
+			if (numLostPackets < maxReplace)
 			{
 				for(x = 0; x < numLostPackets; x++)
 				{	
@@ -588,9 +588,21 @@ void replaceLostPackets(int day)
 				string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
 				
 				post += packetsEncoded;
+								
 				string html = getHtml(url, post);
+				int htmlLength = html.size();
+				while(htmlLength < 15 || html.substr(0,15) != "Missed Packets:")
+				{
+					cout << "Failed getting packets" << endl;
+					html.clear();
+					html = getHtml(url, post);
+					if(usleep(5000) == -1)
+					{
+						cout << "Sleeping error" << endl;
+					}
+				}
 				
-				//Check to make sure the server didn't error out
+				//Check to make sure the server didn't error out				
 				if(html.substr(0,15) == "Missed Packets:")
 				{
 				
@@ -608,25 +620,20 @@ void replaceLostPackets(int day)
 			}
 			else
 			{
-            cout << "GREATER THAN TEN" << endl;
-				int maxLost = 0;
-					
+				int maxLost = 0;					
             string url = "http://www.2sprout.com/missed/";
             string post = "date=" + dateEncoded + "&missed=";
 				string packetsToReplace;
 				for(x = 0; x < numLostPackets; x++)
 				{
-					if(maxLost == 10)
+					if(maxLost == maxReplace)
 					{
 						maxLost = 0;
 						
-                  cout << packetsToReplace << endl;
 						string packetsEncoded = base64_encode((const unsigned char*) packetsToReplace.c_str(), strlen(packetsToReplace.c_str()));
                   packetsToReplace.clear();
                   post += packetsEncoded;
-                  cout << "POST " << post << endl;
                   string html = getHtml(url, post);
-                  cout << "recieved: " << html << endl;
 						string token;
 						istringstream iss(html);
 						while(getline(iss,token,'\n'))
@@ -634,7 +641,7 @@ void replaceLostPackets(int day)
 							//push the token
 							sproutFeed.push(token);
 						}
-					    url = "http://www.2sprout.com/missed/";
+					   url = "http://www.2sprout.com/missed/";
 						post ="date=" + dateEncoded + "&missed=";						
 					}
 					else
@@ -644,7 +651,7 @@ void replaceLostPackets(int day)
 					  
 					  packetsToReplace.append(convertBuf);
 					  bzero(convertBuf, sizeof(convertBuf));
-                      if(maxLost != 9)
+                 if(maxLost != maxReplace-1)
 					  {
 					      packetsToReplace.append("^");
 					  }
@@ -930,18 +937,13 @@ int readConfig(string path)
 						unsigned int i;
 						for (i = 0; i < apiKey.length(); i++)
 						{
-							if(isalnum(apiKey[i]) == 0)
+							if(isalnum(apiKey[i]) == 0 && apiKey[i] != '-')
 							{
 								cout << "API Key has invalid character, Check configuration file." << endl;
 								exit(0);	
 							}
 								
 						}	
-						if(apiKey.length() != 10)
-						{
-							cout << "API Key is not a valid length, Check configuration file." << endl;
-							exit(0);
-						}
 						numOfArgsFound++;	
 					}
 				}	
@@ -955,6 +957,7 @@ int readConfig(string path)
 		
 		else if(numOfArgsFound != 11 )
 		{
+			cout << numOfArgsFound << endl;
 			logFile("Configuration file not formatted correctly", "ERROR");		
 			printf("Configuration File is not Formatted Correctly...Exiting\n");
 			exit(0);	
@@ -1145,6 +1148,12 @@ bool registerClient()
 
 	cout << "Contacting 2Sprout" << endl;
 	html = getHtml(url, "");
+	if(html == "API Key does not exist")
+	{
+		cout << "API Key does not exist. Please register at http://2sprout.com/signup/ for an API key" << endl;
+		logFile("API Key does not exist. Please register at http://2sprout.com/signup/ for an API key", "ERROR");
+		exit(0);
+	}
 	cout << "Client Registerd" << endl;
 	string decoded = base64_decode(html);
   	//XOR with the secret cypher

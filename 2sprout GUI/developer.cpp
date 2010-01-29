@@ -51,32 +51,31 @@ void Developer::on_pushButton_clicked()
     if(m_ui->lineEdit->text().isEmpty() == false)
     {
         int keyLength = m_ui->lineEdit->text().length();
-        if(keyLength == 10)
-        {
-            int x;\
-            for(x=0;x < keyLength; x++)
-            {
-                if((m_ui->lineEdit->text().at(x).isLetterOrNumber()) == false)
-                {
-                     keyOk = false;
-                     m_ui->label_2->clear();
-                     m_ui->label_2->setText("Improper API Character");
-                }
 
-            }
-            if(keyOk == true)
+        int x;
+        for(x=0;x < keyLength; x++)
+        {
+            if((m_ui->lineEdit->text().at(x).isLetterOrNumber()) == false && m_ui->lineEdit->text().at(x).toAscii() != '-')
             {
-                apiKey.clear();
-                apiKey = m_ui->lineEdit->text();
-                this->close();
+
+                 keyOk = false;
+                 m_ui->label_2->clear();
+                 m_ui->label_2->setText("Improper API Character");
             }
+
         }
-    else
-    {
-        m_ui->label_2->clear();
-        m_ui->label_2->setText("Input proper API key");
+        if(keyOk == true)
+        {
+            apiKey.clear();
+            apiKey = m_ui->lineEdit->text();
+            this->close();
+        }
+
+        else
+        {
+            m_ui->label_2->clear();
+            m_ui->label_2->setText("Input proper API key");
+        }
     }
-}
-m_ui->label_2->clear();
-m_ui->label_2->setText("Input proper API key");
+
 }
