@@ -28,9 +28,13 @@ typedef struct msgbuf1 {
 
 string deObsfucate(string encoded)
 {
-	string decoded = base64_decode(encoded);
-	//string unencrypted = XOR(decoded, "4hgjfdnghfj#@1()mvn&*#@");
-	return decoded;
+	char what[9];
+	int code = 45485867;
+	sprintf(what,"%i", code);
+	
+	encoded = base64_decode(encoded);
+	string unencrypted = XOR(encoded, what);
+	return unencrypted;
 }
 
 
@@ -43,9 +47,10 @@ void* announce(void *thread_arg)
 	char Portbuffer[5];
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
+	//unencryped url: http://2sprout.com/client/keepalive/
+	string unencryptedURL = deObsfucate("XEFASA8XGQVHRUZXQEwYVFtYG1tZUVNZQBpfXVBIV1tdQ1EX");
 	
-	string url = "http://2sprout.com/client/keepalive/" + port + "/" + apiKey + "/";
-	//string post = "ID=" + apiKey + "&port=" + port;
+	string url = unencryptedURL + port + "/" + apiKey + "/";
 	
 	port.clear();
 	bzero(Portbuffer, sizeof(Portbuffer));
@@ -136,7 +141,10 @@ int closeAnnounce()
 	char Portbuffer[10];
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
-	string url = "http://2sprout.com/disconnect/" + port + "/" + apiKey +"/";
+	//unencryped url:  "http://2sprout.com/disconnect/"
+	string UnencrptedUrl = deObsfucate("XEFASA8XGQVHRUZXQEwYVFtYG1xcS1VYWltRW0EX");
+	
+	string url = UnencrptedUrl + port + "/" + apiKey +"/";
 	//string post = "ID=" + apiKey + "&port=" + port;
 	port.clear();
 	bzero(Portbuffer, sizeof(Portbuffer));
@@ -561,9 +569,11 @@ void replaceLostPackets(int day)
             }
             pthread_mutex_unlock(&mylock);
 			
-			string dateEncoded = base64_encode((const unsigned char*) currentDate.c_str(), strlen(currentDate.c_str()));
+			 string dateEncoded = base64_encode((const unsigned char*) currentDate.c_str(), strlen(currentDate.c_str()));
 
-			string url = "http://www.2sprout.com/missed/";
+			//encrypted url: http://www.2sprout.com/missed/
+			string url = deObsfucate("XEFASA8XGUBDQhoKRkhEWEFBGltaVRlaXUZHXVEX");
+
 			string post = "date=" + dateEncoded + "&missed=";
 			string packetsToReplace;
 
@@ -614,6 +624,7 @@ void replaceLostPackets(int day)
 					while(getline(iss,token,'\n'))
 					{
 						//push the token
+						cout << token << endl;
 						sproutFeed.push(token);
 					}
 				}
@@ -621,8 +632,9 @@ void replaceLostPackets(int day)
 			else
 			{
 				int maxLost = 0;					
-            string url = "http://www.2sprout.com/missed/";
-            string post = "date=" + dateEncoded + "&missed=";
+				//encrypted url: http://www.2sprout.com/missed/
+				string url = deObsfucate("XEFASA8XGUBDQhoKRkhEWEFBGltaVRlaXUZHXVEX");    
+				string post = "date=" + dateEncoded + "&missed=";
 				string packetsToReplace;
 				for(x = 0; x < numLostPackets; x++)
 				{
@@ -641,8 +653,9 @@ void replaceLostPackets(int day)
 							//push the token
 							sproutFeed.push(token);
 						}
-					   url = "http://www.2sprout.com/missed/";
-						post ="date=" + dateEncoded + "&missed=";						
+					//encrypted url: http://www.2sprout.com/missed/
+					url = deObsfucate("XEFASA8XGUBDQhoKRkhEWEFBGltaVRlaXUZHXVEX");
+					post ="date=" + dateEncoded + "&missed=";						
 					}
 					else
 					{
@@ -678,7 +691,9 @@ void replaceLostPackets(int day)
 						//push the token
 						sproutFeed.push(token);
 					}
-					url = "http://www.2sprout.com/missed/";
+					//encrypted url: http://www.2sprout.com/missed/
+					url = deObsfucate("XEFASA8XGUBDQhoKRkhEWEFBGltaVRlaXUZHXVEX");
+					
 					post = "date=" + dateEncoded + "&missed=";				
 			}
 		}
@@ -1138,8 +1153,10 @@ bool registerClient()
 	sprintf(Portbuffer, "%i", MYPORT);
 	string port = Portbuffer;
 	
-	
-	string url = "http://2sprout.com/client/connect/" + port + "/" + apiKey + "/";
+	//Unencrypted URL: http://2sprout.com/client/connect/
+	string unEncryptedUrl = deObsfucate("XEFASA8XGQVHRUZXQEwYVFtYG1tZUVNZQBpXV1tWU1RAGg==");
+	string url = unEncryptedUrl + port + "/" + apiKey + "/";
+	cout << url << endl;
 	//string post = "ID=" + apiKey + "&port=" + port;
 	
 	port.clear();
@@ -1159,9 +1176,11 @@ bool registerClient()
   	//XOR with the secret cypher
 	string value(decoded);
 	
-	#warning "This Cipher should not be hardcoded, take out when ssl is implemented"
-	string key("2#sPr0uT5!");
+	//Unencrypted code: 2#sPr0uT5!
+	string key = deObsfucate("BhZHaEcIQ2MBFA==");
+	cout << key << endl;
 	value = XOR(decoded,key);
+	cout << value << endl;
 	//find the number of "^"
 	int NumSpacesCount = 0;
 	unsigned int loop;
@@ -1258,6 +1277,26 @@ void registerSignals()
 */
 int main(int argc, char *argv[])
 {
+	
+/*
+		
+		char what[9];
+		int code = 45485867;
+		sprintf(what,"%i", code);
+		
+		
+		
+		cout << what << endl;
+		//string decoded = base64_decode(encoded);
+		string unencrypted = XOR("http://2sprout.com/client/keepalive/", what);
+      unencrypted = base64_encode(reinterpret_cast<const unsigned char*>(unencrypted.c_str()), unencrypted.length());
+		cout << unencrypted << endl;
+		string g = deObsfucate(unencrypted);
+		cout << g << endl;
+		exit(0);
+*/	
+
+	
 	bool guiMode = false;
 	
 	

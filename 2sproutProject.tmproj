@@ -61,7 +61,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/testDBConnection.cpp</string>
 					<key>lastUsed</key>
-					<date>2010-01-28T22:00:44Z</date>
+					<date>2010-01-29T20:15:35Z</date>
 				</dict>
 				<dict>
 					<key>filename</key>
@@ -97,7 +97,7 @@
 					<key>filename</key>
 					<string>Standard UDP/Client/SproutClient.cpp</string>
 					<key>lastUsed</key>
-					<date>2010-01-28T22:10:47Z</date>
+					<date>2010-01-29T23:14:32Z</date>
 					<key>selected</key>
 					<true/>
 				</dict>
@@ -246,14 +246,30 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>4</integer>
+				<integer>36</integer>
 				<key>line</key>
-				<integer>591</integer>
+				<integer>31</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>572</integer>
+			<integer>1455</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>49</integer>
+				<key>line</key>
+				<integer>31</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>36</integer>
+				<key>line</key>
+				<integer>31</integer>
+			</dict>
 		</dict>
 		<key>Standard UDP/Client/SproutClient.h</key>
 		<dict>
@@ -423,7 +439,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>18</integer>
+			<integer>0</integer>
 		</dict>
 		<key>Standard UDP/Client/testDBConnection.h</key>
 		<dict>
@@ -450,6 +466,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{449, 0}, {1133, 878}}</string>
+	<string>{{0, 0}, {1363, 878}}</string>
 </dict>
 </plist>
